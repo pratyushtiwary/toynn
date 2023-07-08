@@ -94,7 +94,7 @@ export class GradientDescent extends Optimizer {
   }
 }
 
-export class StocasticGradientDescent extends GradientDescent {
+export class StochasticGradientDescent extends GradientDescent {
   /**
    * Reference: https://stackoverflow.com/a/11935263
    */
@@ -127,7 +127,7 @@ export class StocasticGradientDescent extends GradientDescent {
 export default {
   Optimizer,
   GradientDescent,
-  StocasticGradientDescent,
+  StochasticGradientDescent,
   GD: GradientDescent,
-  SGD: StocasticGradientDescent,
+  SGD: StochasticGradientDescent,
 };

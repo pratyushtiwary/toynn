@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.StocasticGradientDescent = exports.GradientDescent = exports.Optimizer = void 0;
+exports.StochasticGradientDescent = exports.GradientDescent = exports.Optimizer = void 0;
 class Optimizer {
     constructor() {
         this.alpha = undefined;
@@ -68,7 +68,7 @@ class GradientDescent extends Optimizer {
     }
 }
 exports.GradientDescent = GradientDescent;
-class StocasticGradientDescent extends GradientDescent {
+class StochasticGradientDescent extends GradientDescent {
     /**
      * Reference: https://stackoverflow.com/a/11935263
      */
@@ -92,12 +92,12 @@ class StocasticGradientDescent extends GradientDescent {
         return { x: shuffledX, y: shuffledY };
     }
 }
-exports.StocasticGradientDescent = StocasticGradientDescent;
+exports.StochasticGradientDescent = StochasticGradientDescent;
 exports.default = {
     Optimizer,
     GradientDescent,
-    StocasticGradientDescent,
+    StochasticGradientDescent,
     GD: GradientDescent,
-    SGD: StocasticGradientDescent,
+    SGD: StochasticGradientDescent,
 };
 //# sourceMappingURL=index.js.map

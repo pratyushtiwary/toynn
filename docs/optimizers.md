@@ -41,7 +41,7 @@ This is called by the train function before each epoch. The main objective of th
 
 This function is called by train for optimizing parameters. X and Y passed are single item from the Array<NArray>.
 
-## StocasticGradientDescent
+### StochasticGradientDescent
 
 Alias: SGD
 
