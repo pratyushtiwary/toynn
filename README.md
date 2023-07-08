@@ -92,7 +92,7 @@ console.log(model.forward(newData).max().index); // 0
 
 ## Docs
 
-Checkout the `docs` folder for documentation regarding different classes.
+Checkout the [`docs`](docs) folder for documentation regarding different classes.
 
 ## References
 
