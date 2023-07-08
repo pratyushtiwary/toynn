@@ -1,0 +1,20 @@
+{
+  "name": "toynn",
+  "version": "1.0.0",
+  "description": "Neural Network Library for AI and ML newbies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "keywords": [
+    "toynn",
+    "neural",
+    "network"
+  ],
+  "author": "Pratyush Tiwary",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.1.6"
+  }
+}
