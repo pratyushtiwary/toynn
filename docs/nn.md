@@ -100,4 +100,4 @@ You can use it as getter and setter
 
 ## References
 
-- https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/ :- Optimization for weights in gradient descent is taken from here along with Layer's logic
+- [Optimization for weights in gradient descent is taken from here along with Layer's logic](https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/)

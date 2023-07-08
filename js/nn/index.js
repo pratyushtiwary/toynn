@@ -87,10 +87,11 @@ class NN {
         });
         return recent;
     }
-    train({ x, y, epochs, alpha = 0.001, verbose = false, loss = errors_1.default.RSS, optimizer = new optimizers_1.GradientDescent(alpha), }) {
+    train({ x, y, epochs, alpha = 0.001, verbose = false, loss = errors_1.default.RSS, optimizer = new optimizers_1.GradientDescent(), }) {
+        optimizer.alpha = alpha;
         let losses = [], accuracies = [], l;
-        ({ x, y } = optimizer.process(x, y));
         for (let i = 0; i < epochs; i++) {
+            ({ x, y } = optimizer.process(x, y));
             l = [];
             for (let j = 0; j < x.length; j++) {
                 if (!(x[j] instanceof narray_1.default)) {
@@ -118,7 +119,8 @@ class NN {
     }
 }
 exports.NN = NN;
-_NN_layers = new WeakMap(), _NN_name = new WeakMap(), _NN_instances = new WeakSet(), _NN_backprop = function _NN_backprop({ x, y, alpha = 0.001, optimizer = new optimizers_1.GradientDescent(alpha), }) {
+_NN_layers = new WeakMap(), _NN_name = new WeakMap(), _NN_instances = new WeakSet(), _NN_backprop = function _NN_backprop({ x, y, alpha = 0.001, optimizer = new optimizers_1.GradientDescent(), }) {
+    optimizer.alpha = alpha;
     if (!(x instanceof narray_1.default) && x instanceof Array) {
         x = new narray_1.default(x);
     }

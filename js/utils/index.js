@@ -37,7 +37,8 @@ const utils = {
     },
     loop: ({ start = 0, end, func }) => {
         const len = end;
-        for (let i = start; i < end; i += 11) {
+        let i = start;
+        while (i < end) {
             func(i);
             if (i + 1 < len) {
                 func(i + 1);
@@ -69,6 +70,7 @@ const utils = {
             if (i + 10 < len) {
                 func(i + 10);
             }
+            i += 11;
         }
     },
 };

@@ -212,11 +212,12 @@ class NArray {
             return new NArray(final).reshape(this.length, this.length);
         }
         else if (this.ndim === 2) {
+            let smaller = this.shape[0] < this.shape[1] ? this.shape[0] : this.shape[1];
             let final = [];
             final[0] = __classPrivateFieldGet(this, _NArray_arr, "f")[0];
             utils_1.default.loop({
                 start: 1,
-                end: this.shape[0],
+                end: smaller,
                 func: (i) => {
                     final[i] = __classPrivateFieldGet(this, _NArray_arr, "f")[this.shape[1] * i + i];
                 },
@@ -387,6 +388,10 @@ class NArray {
             tempShape1 = shape1;
             tempShape2 = shape2;
             breakage = tempShape2[tempShape2.length - 2];
+        }
+        if (this.length === 1 || y.length === 1) {
+            tempShape1 = shape1;
+            tempShape2 = shape2;
         }
         const shape1Last = tempShape1[tempShape1.length - 1], shape2Last = tempShape2[tempShape2.length - 1], newLen = NArray.calcNoOfElems(...newShape), iterCond = newLen * shape1Last;
         utils_1.default.loop({

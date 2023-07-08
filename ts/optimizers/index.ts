@@ -13,11 +13,7 @@ export interface OptimizerInput {
 }
 
 export class Optimizer {
-  _alpha: number = undefined;
-
-  constructor(alpha: number = 0.01) {
-    this._alpha = alpha;
-  }
+  alpha: number = undefined;
 
   process(x: Array<any>, y: Array<any>): OptimizerProcessReturn {
     return { x, y };
@@ -85,12 +81,10 @@ export class GradientDescent extends Optimizer {
     // calculate new adjusted weights and biases
     for (let i = 0; i < layers.length; i++) {
       adjustedWeights[i] = layers[i].weights.sub(
-        weightGradients[i].mul(this._alpha)
+        weightGradients[i].mul(this.alpha)
       );
-      adjustedBiases[i] = layers[i].bias.sub(biasGradients[i].mul(this._alpha));
+      adjustedBiases[i] = layers[i].bias.sub(biasGradients[i].mul(this.alpha));
     }
-
-    // console.log(adjustedWeights[0].real, adjustedBiases[0].real);
 
     // update these new weights and biases
     for (let i = 0; i < layers.length; i++) {
@@ -100,7 +94,40 @@ export class GradientDescent extends Optimizer {
   }
 }
 
+export class StocasticGradientDescent extends GradientDescent {
+  /**
+   * Reference: https://stackoverflow.com/a/11935263
+   */
+  process(x: Array<any>, y: Array<any>): OptimizerProcessReturn {
+    if (x.length !== y.length) {
+      throw Error(`X and Y length mismatch
+      
+      How can you fix it?
+      Make sure that the X and Y passed are of the same length.`);
+    }
+    let shuffledX = x.slice(0),
+      shuffledY = y.slice(0),
+      i = x.length,
+      temp: NArray,
+      index: number;
+    while (i--) {
+      index = Math.floor((i + 1) * Math.random());
+      temp = shuffledX[index];
+      shuffledX[index] = shuffledX[i];
+      shuffledX[i] = temp;
+
+      temp = shuffledY[index];
+      shuffledY[index] = shuffledY[i];
+      shuffledY[i] = temp;
+    }
+    return { x: shuffledX, y: shuffledY };
+  }
+}
+
 export default {
   Optimizer,
   GradientDescent,
+  StocasticGradientDescent,
+  GD: GradientDescent,
+  SGD: StocasticGradientDescent,
 };

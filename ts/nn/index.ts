@@ -99,8 +99,9 @@ export class NN {
     x,
     y,
     alpha = 0.001,
-    optimizer = new GradientDescent(alpha),
+    optimizer = new GradientDescent(),
   }: BackPropInput) {
+    optimizer.alpha = alpha;
     if (!(x instanceof NArray) && x instanceof Array) {
       x = new NArray(x);
     } else if (!(x instanceof NArray)) {
@@ -131,13 +132,14 @@ export class NN {
     alpha = 0.001,
     verbose = false,
     loss = errors.RSS,
-    optimizer = new GradientDescent(alpha),
+    optimizer = new GradientDescent(),
   }: TrainInput) {
+    optimizer.alpha = alpha;
     let losses = [],
       accuracies = [],
       l: Array<any>;
-    ({ x, y } = optimizer.process(x, y));
     for (let i = 0; i < epochs; i++) {
+      ({ x, y } = optimizer.process(x, y));
       l = [];
       for (let j = 0; j < x.length; j++) {
         if (!(x[j] instanceof NArray)) {

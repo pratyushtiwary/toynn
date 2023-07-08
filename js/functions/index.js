@@ -164,5 +164,5 @@ const functions = {
     softmax: new Softmax(),
     tanh: new Tanh(),
 };
-exports.default = functions;
+exports.default = Object.assign(Object.assign({}, functions), { ActivationFunction });
 //# sourceMappingURL=index.js.map

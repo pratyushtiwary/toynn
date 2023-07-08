@@ -3,7 +3,7 @@ import NArray from "./narray";
 import utils from "./utils";
 import nn from "./nn";
 import functions from "./functions";
-import { ActivationFunction } from "./functions";
+import optimizers from "./optimizers";
 
 export default {
   errors,
@@ -11,5 +11,5 @@ export default {
   utils,
   ...nn,
   functions,
-  ActivationFunction,
+  optimizers,
 };

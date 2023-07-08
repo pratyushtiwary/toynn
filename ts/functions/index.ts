@@ -208,4 +208,7 @@ const functions = {
   tanh: new Tanh(),
 };
 
-export default functions;
+export default {
+  ...functions,
+  ActivationFunction,
+};

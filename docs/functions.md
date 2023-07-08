@@ -36,5 +36,5 @@ You can use formula and gradient getter to get the respective values.
 
 ## References
 
-- https://www.analyticsvidhya.com/blog/2020/01/fundamentals-deep-learning-activation-functions-when-to-use-them/ :- Most of the activation function's formula and gradient is taken from here,
-- https://github.com/2015xli/multilayer-perceptron/blob/master/multilayer-perceptron-batch.ipynb :- Gradient for softmax is taken from here
+- [Most of the activation function's formula and gradient is taken from here](https://www.analyticsvidhya.com/blog/2020/01/fundamentals-deep-learning-activation-functions-when-to-use-them/),
+- [Gradient for softmax is taken from here](https://github.com/2015xli/multilayer-perceptron/blob/master/multilayer-perceptron-batch.ipynb)

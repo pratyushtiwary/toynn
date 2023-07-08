@@ -16,45 +16,6 @@ let k = NArray.arange(32).reshape(2, 2, 4, 2);
 console.log(k.T.real); // transpose the NArray and convert to Array
 ```
 
-## Benchmark
-
-Creation x 182 ops/sec ±7.57% (56 runs sampled)
-Avg. Time Taken: 0.005482847321428571 (in secs)
-Transpose x 1,045 ops/sec ±4.31% (77 runs sampled)
-Avg. Time Taken: 0.0009566256334551809 (in secs)
-Dot x 39.77 ops/sec ±11.08% (52 runs sampled)
-Avg. Time Taken: 0.025145046794871787 (in secs)
-Flatten x 18,070,725 ops/sec ±5.51% (75 runs sampled)
-Avg. Time Taken: 5.533812388339641e-8 (in secs)
-Map x 226 ops/sec ±1.94% (79 runs sampled)
-Avg. Time Taken: 0.004433656645569623 (in secs)
-Add x 67.85 ops/sec ±0.65% (63 runs sampled)
-Avg. Time Taken: 0.014738354761904764 (in secs)
-Sub x 68.60 ops/sec ±0.56% (64 runs sampled)
-Avg. Time Taken: 0.014577041796875 (in secs)
-Div x 60.90 ops/sec ±1.96% (59 runs sampled)
-Avg. Time Taken: 0.01641966440677966 (in secs)
-Mul x 57.36 ops/sec ±2.50% (56 runs sampled)
-Avg. Time Taken: 0.017432614732142856 (in secs)
-Pow x 30.99 ops/sec ±1.42% (51 runs sampled)
-Avg. Time Taken: 0.03226735392156864 (in secs)
-Sum x 98.93 ops/sec ±9.21% (66 runs sampled)
-Avg. Time Taken: 0.010108087121212118 (in secs)
-Diag x 59,460 ops/sec ±7.61% (59 runs sampled)
-Avg. Time Taken: 0.000016818155847354984 (in secs)
-Reshape x 828,837 ops/sec ±5.53% (74 runs sampled)
-Avg. Time Taken: 0.000001206509129117817 (in secs)
-Get x 20.43 ops/sec ±1.04% (35 runs sampled)
-Avg. Time Taken: 0.048954482857142864 (in secs)
-Real x 20.71 ops/sec ±0.82% (35 runs sampled)
-Avg. Time Taken: 0.04828314857142857 (in secs)
-zeroes x 131 ops/sec ±2.26% (67 runs sampled)
-Avg. Time Taken: 0.007662473320895522 (in secs)
-arange x 128 ops/sec ±1.32% (74 runs sampled)
-Avg. Time Taken: 0.007795639961389958 (in secs)
-randn x 17,857,592 ops/sec ±5.74% (72 runs sampled)
-Avg. Time Taken: 5.599859097984838e-8 (in secs)
-
 ## Static Functions
 
 ### arange(start=0,end=undefined,step=1)
@@ -326,6 +287,16 @@ let k = NArray.arange(32).reshape(2, 2, 4, 2);
 console.log(k.max());
 ```
 
+### daig()
+
+Returns diagonal matrix, it only works on 1 and 2-d NArrays.
+
+```js
+// imports
+let k = NArray.arange(32).reshape(8, 4);
+console.log(k.diag().real);
+```
+
 ## References
 
-- https://stackoverflow.com/a/32034565 :- Transpose is implemented using the logic explained in this answer
+- [Transpose is implemented using the logic explained in this answer](https://stackoverflow.com/a/32034565)

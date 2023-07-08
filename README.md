@@ -12,6 +12,8 @@ A toy NN library for JS to play and learn NN concepts.
 
 The below model is based on AND's truth table.
 
+Using JS:
+
 ```js
 const toynn = require("toynn");
 
@@ -43,13 +45,15 @@ model.train({
   verbose: true,
   loss: toynn.errors.MSE,
   epochs: 100,
-  alpha: 0.1,
+  alpha: 0.001,
 });
 
 // Make prediction
 const newData = new toynn.NArray([1, 0]).reshape(1, 2);
 console.log(model.forward(newData).max().index); // 0
 ```
+
+Using TS:
 
 ```ts
 const toynn = require("toynn/ts");
@@ -82,13 +86,15 @@ model.train({
   verbose: true,
   loss: toynn.errors.MSE,
   epochs: 100,
-  alpha: 0.1,
+  alpha: 0.001,
 });
 
 // Make prediction
 const newData = new toynn.NArray([1, 0]).reshape(1, 2);
 console.log(model.forward(newData).max().index); // 0
 ```
+
+**Note: If you want to use import syntax in JS you can use the following `import toynn from "toynn/js"`**
 
 ## Docs
 
