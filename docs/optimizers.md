@@ -21,7 +21,7 @@ You can set alpha property as it is public. Alpha defines the learning rate of y
 Setting custom alpha
 
 ```js
-myOptimizer = new toynn.optimizers.SGD();
+myOptimizer = new toynn.optimizers.GD();
 
 myOptimizer.alpha = 0.001;
 ```
