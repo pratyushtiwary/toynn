@@ -1,6 +1,6 @@
 {
   "name": "toynn",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Neural Network Library for AI and ML newbies",
   "main": "index.js",
   "scripts": {
