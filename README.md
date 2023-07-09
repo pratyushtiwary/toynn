@@ -61,7 +61,7 @@ console.log(model.forward(newData).max().index); // 0
 Using TS:
 
 ```ts
-const toynn = require("toynn/ts");
+import toynn from "toynn/ts";
 
 const model: toynn.NN = new toynn.NN("myModel");
 
