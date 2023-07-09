@@ -16,35 +16,35 @@ class ActivationFunction {
     
     How to fix this?
     If you are the developer of this activation function, try overwritting the formula getter with the formula.
-    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same.`);
+    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
     }
     get gradient() {
         throw Error(`Gradient for the activation function is not defined.
     
     How to fix this?
     If you are the developer of this activation function, try overwritting the gradient getter with the gradient formula.
-    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same.`);
+    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
     }
     calcGradient(x) {
         throw Error(`Gradient Calculation for the activation function is not defined.
     
     How to fix this?
     If you are the developer of this activation function, try overwritting the calcGradient function.
-    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same.`);
+    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
     }
     calculate(x) {
         throw Error(`Calculation for the activation function is not defined.
     
     How to fix this?
     If you are the developer of this activation function, try overwritting the calculate function.
-    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same.`);
+    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
     }
     toString() {
         throw Error(`Name for the activation function is not defined.
     
     How to fix this?
     If you are the developer of this activation function, try overwritting the toString function.
-    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same.`);
+    If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
     }
 }
 exports.ActivationFunction = ActivationFunction;

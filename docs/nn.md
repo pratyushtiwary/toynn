@@ -12,7 +12,7 @@ You can create a model without using this class.
 const myModel = new NN("modelName");
 ```
 
-## Function defined for NN
+## Member functions of NN class
 
 - add(obj: Layer)
 
@@ -39,6 +39,14 @@ Alpha: Learning Rate,
 Verbose: If set to true, prints epoch number and accuracy,
 Loss: Used to calculate loss, which is then used to calculate accuracy,
 Optimizer: Element which optimizes your model
+
+- structure: String
+
+Returns Layer's configuration in form of a String
+
+- explain(x: NArray): String
+
+Returns the explanation of possibly what's going on under the hood based on the x passed.
 
 ## Layer
 

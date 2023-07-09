@@ -28,6 +28,7 @@ class NArray {
         _NArray_length.set(this, undefined);
         _NArray_computedStrides.set(this, undefined);
         _NArray_ndim.set(this, undefined);
+        this.printThreshold = 5;
         if (obj instanceof Array) {
             __classPrivateFieldSet(this, _NArray_arr, obj, "f");
             __classPrivateFieldSet(this, _NArray_arr, Array.from(__classPrivateFieldGet(this, _NArray_arr, "f")), "f");
@@ -494,6 +495,19 @@ class NArray {
         return JSON.stringify(this.real, null, 4);
     }
     toString() {
+        if (this.length > this.printThreshold) {
+            let finalStr = "";
+            for (let i = 0; i < this.shape.length; i++) {
+                finalStr += "[";
+            }
+            finalStr += __classPrivateFieldGet(this, _NArray_arr, "f")[0];
+            finalStr += "...";
+            finalStr += __classPrivateFieldGet(this, _NArray_arr, "f")[this.length - 1];
+            for (let i = 0; i < this.shape.length; i++) {
+                finalStr += "]";
+            }
+            return finalStr;
+        }
         return JSON.stringify(this.real);
     }
     valueOf() {

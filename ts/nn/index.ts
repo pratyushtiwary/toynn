@@ -1,14 +1,14 @@
 import errors from "../errors";
 import { StatErrorReturn, StatErrorInput } from "../errors";
 import { ActivationFunction, ActivationFunctionType } from "../functions";
-import optimizers, { Optimizer, GradientDescent } from "../optimizers";
+import { Optimizer, GradientDescent } from "../optimizers";
 import NArray from "../narray";
 
 let nLayer = 0;
 
 interface BackPropInput {
-  x: Array<any> | NArray;
-  y: Array<any> | NArray;
+  x: Array<NArray> | NArray;
+  y: Array<NArray> | NArray;
   alpha?: number;
   optimizer?: Optimizer;
 }
@@ -24,6 +24,8 @@ interface TrainInput extends BackPropInput {
 export class NN {
   #layers: Array<Layer> = [];
   #name: String = undefined;
+  #trained: boolean = false;
+  #lastOptimizerUser: Optimizer;
 
   constructor(name: String) {
     /**
@@ -102,6 +104,7 @@ export class NN {
     optimizer = new GradientDescent(),
   }: BackPropInput) {
     optimizer.alpha = alpha;
+    this.#lastOptimizerUser = optimizer;
     if (!(x instanceof NArray) && x instanceof Array) {
       x = new NArray(x);
     } else if (!(x instanceof NArray)) {
@@ -134,6 +137,7 @@ export class NN {
     loss = errors.RSS,
     optimizer = new GradientDescent(),
   }: TrainInput) {
+    this.#trained = true;
     optimizer.alpha = alpha;
     let losses = [],
       accuracies = [],
@@ -164,6 +168,46 @@ export class NN {
       }
     }
     return [losses, accuracies];
+  }
+
+  get structure(): String {
+    let structure = ``;
+
+    this.#layers.forEach((e, i) => {
+      structure += `Layer ${i + 1}: (${e.inputSize}, ${
+        e.outputSize
+      }), activation function: ${e.activationFunction.toString()} \n`;
+    });
+    structure = structure.replace("\n$", "");
+    return structure;
+  }
+
+  explain(x: NArray): String {
+    let explanation = `\n`;
+    let recent: NArray;
+
+    explanation += `No. of layers: ${this.#layers.length}\n`;
+
+    explanation += `Each layers uses the formula: x*weigths + bias\n`;
+
+    this.#layers.forEach((e, i) => {
+      if (i === 0) {
+        recent = e.forward(x);
+        explanation += `Layer 1 output: ${recent.toString()}\n`;
+      } else {
+        recent = e.forward(recent);
+        explanation += `Layer ${i + 1} output: ${recent.toString()}\n`;
+      }
+    });
+
+    if (this.#trained) {
+      explanation += `\n\n----------------- Optimization Steps --------------------\n\n`;
+      explanation += this.#lastOptimizerUser.steps
+        .map((e) => (e.toLowerCase().startsWith("note") ? e : "- " + e))
+        .join("\n");
+    }
+
+    return explanation;
   }
 }
 
@@ -294,7 +338,7 @@ export class Layer {
       While trying to compute result for Layer ${this.name} a number is returned rather than an NArray
       
       How can you fix it?
-      Try raising an issue if you see this error along with the code for neural network and your training dataset`);
+      Try raising an issue if you see this error along with the code for neural network and your training dataset on https://github.com/pratyushtiwary/toynn`);
     }
     z1 = z1.add(this.bias);
     let a1 = this.#activationFunction.calculate(z1).reshape(1, this.outputSize);

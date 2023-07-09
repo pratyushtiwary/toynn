@@ -6,6 +6,7 @@ class NArray {
   #length: undefined | number = undefined;
   #computedStrides: undefined | Array<number> = undefined;
   #ndim: undefined | number = undefined;
+  printThreshold: number = 5;
 
   constructor(obj: Array<any> | NArray) {
     /**
@@ -706,6 +707,25 @@ class NArray {
   }
 
   toString(): String {
+    if (this.length > this.printThreshold) {
+      let finalStr = "";
+
+      for (let i = 0; i < this.shape.length; i++) {
+        finalStr += "[";
+      }
+
+      finalStr += this.#arr[0];
+
+      finalStr += "...";
+
+      finalStr += this.#arr[this.length - 1];
+
+      for (let i = 0; i < this.shape.length; i++) {
+        finalStr += "]";
+      }
+
+      return finalStr;
+    }
     return JSON.stringify(this.real);
   }
 

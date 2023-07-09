@@ -14,6 +14,13 @@ class Optimizer {
     How can you fix this?
     Try overloading the optimize method.`);
     }
+    get steps() {
+        throw Error(`Steps not implemented.
+    
+    How to fix this?
+    If you are the developer, try overwritting the steps getter,
+    Else, try raising an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
+    }
 }
 exports.Optimizer = Optimizer;
 class GradientDescent extends Optimizer {
@@ -39,20 +46,20 @@ class GradientDescent extends Optimizer {
             layersOp.push(recent);
         });
         weightErrors[layersOp.length - 1] = layersOp[layersOp.length - 1].sub(y);
+        weightGradients[layersOp.length - 1] = weightErrors[layersOp.length - 1];
         biasGradients[layersOp.length - 1] = layers[layersOp.length - 1].activationFunction.calcGradient(layersOp[layersOp.length - 1].sub(y));
-        // calculate errors for weight and gradient for bias
+        // calculate errors and gradient for weight and gradient for bias
         for (let i = layers.length - 2; i >= 0; i--) {
             weightErrors[i] = layers[i + 1].weights.dot(weightErrors[i + 1].T);
-            weightErrors[i] = weightErrors[i].T.mul(layers[i].activationFunction.calcGradient(layersOp[i]));
+            weightGradients[i] = weightErrors[i].T.mul(layers[i].activationFunction.calcGradient(layersOp[i]));
             biasGradients[i] = layers[i].activationFunction.calcGradient(layersOp[i]);
         }
-        // calculate gradients for weights
         for (let i = 0; i < layers.length; i++) {
             if (i === 0) {
-                weightGradients[0] = x.T.dot(weightErrors[0]);
+                weightGradients[0] = x.T.dot(weightGradients[0]);
             }
             else {
-                weightGradients[i] = layersOp[i - 1].T.dot(weightErrors[i]);
+                weightGradients[i] = layersOp[i - 1].T.dot(weightGradients[i]);
             }
         }
         // calculate new adjusted weights and biases
@@ -65,6 +72,20 @@ class GradientDescent extends Optimizer {
             layers[i].weights = adjustedWeights[i];
             layers[i].bias = adjustedBiases[i];
         }
+    }
+    get steps() {
+        return [
+            "Find the error, using y^ - y",
+            "Start from last layer's weights dot product by the transpose of the error, this will provide error for second last layer",
+            "Perform the above step iteratively for each layer, replace last layer by n layer and second last layer by n - 1 layer",
+            "Now that we have each layer's error, iteratively multiply the error's transpose with gradient of that layer's output",
+            "Now once we have the gradient, multiply the gradient with the x's transpose provided by you for the 1st layer",
+            "For 2nd layer till n layer multiply previous layer output's transpose by that layer's gradient",
+            "Now again iterate through layers and subtract the previous step's output by the weights of the respective layer after multiplying by alpha",
+            "For bias, simply find the gradient of each layer's output",
+            "Then subtract that result from that layer's bias after multiplying by alpha",
+            "Note: You can get gradient for activation functions by using `activationFunction.gradient`",
+        ];
     }
 }
 exports.GradientDescent = GradientDescent;
@@ -90,6 +111,12 @@ class StochasticGradientDescent extends GradientDescent {
             shuffledY[i] = temp;
         }
         return { x: shuffledX, y: shuffledY };
+    }
+    get steps() {
+        return [
+            "Shuffle x and y passed before each epochs, then for each epoch follow the below steps",
+            ...super.steps,
+        ];
     }
 }
 exports.StochasticGradientDescent = StochasticGradientDescent;

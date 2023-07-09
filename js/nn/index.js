@@ -13,7 +13,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _NN_instances, _NN_layers, _NN_name, _NN_backprop, _Layer_instances, _Layer_weights, _Layer_bias, _Layer_activationFunction, _Layer_generateWeights;
+var _NN_instances, _NN_layers, _NN_name, _NN_trained, _NN_lastOptimizerUser, _NN_backprop, _Layer_instances, _Layer_weights, _Layer_bias, _Layer_activationFunction, _Layer_generateWeights;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Layer = exports.NN = void 0;
 const errors_1 = __importDefault(require("../errors"));
@@ -26,6 +26,8 @@ class NN {
         _NN_instances.add(this);
         _NN_layers.set(this, []);
         _NN_name.set(this, undefined);
+        _NN_trained.set(this, false);
+        _NN_lastOptimizerUser.set(this, void 0);
         /**
          * Takes in a name and allows users to create a skeleton which holds layer and activation function
          * Object of this class also allows user to backpropogate and predict
@@ -88,6 +90,7 @@ class NN {
         return recent;
     }
     train({ x, y, epochs, alpha = 0.001, verbose = false, loss = errors_1.default.RSS, optimizer = new optimizers_1.GradientDescent(), }) {
+        __classPrivateFieldSet(this, _NN_trained, true, "f");
         optimizer.alpha = alpha;
         let losses = [], accuracies = [], l;
         for (let i = 0; i < epochs; i++) {
@@ -117,10 +120,42 @@ class NN {
         }
         return [losses, accuracies];
     }
+    get structure() {
+        let structure = ``;
+        __classPrivateFieldGet(this, _NN_layers, "f").forEach((e, i) => {
+            structure += `Layer ${i + 1}: (${e.inputSize}, ${e.outputSize}), activation function: ${e.activationFunction.toString()} \n`;
+        });
+        structure = structure.replace("\n$", "");
+        return structure;
+    }
+    explain(x) {
+        let explanation = `\n`;
+        let recent;
+        explanation += `No. of layers: ${__classPrivateFieldGet(this, _NN_layers, "f").length}\n`;
+        explanation += `Each layers uses the formula: x*weigths + bias\n`;
+        __classPrivateFieldGet(this, _NN_layers, "f").forEach((e, i) => {
+            if (i === 0) {
+                recent = e.forward(x);
+                explanation += `Layer 1 output: ${recent.toString()}\n`;
+            }
+            else {
+                recent = e.forward(recent);
+                explanation += `Layer ${i + 1} output: ${recent.toString()}\n`;
+            }
+        });
+        if (__classPrivateFieldGet(this, _NN_trained, "f")) {
+            explanation += `\n\n----------------- Optimization Steps --------------------\n\n`;
+            explanation += __classPrivateFieldGet(this, _NN_lastOptimizerUser, "f").steps
+                .map((e) => (e.toLowerCase().startsWith("note") ? e : "- " + e))
+                .join("\n");
+        }
+        return explanation;
+    }
 }
 exports.NN = NN;
-_NN_layers = new WeakMap(), _NN_name = new WeakMap(), _NN_instances = new WeakSet(), _NN_backprop = function _NN_backprop({ x, y, alpha = 0.001, optimizer = new optimizers_1.GradientDescent(), }) {
+_NN_layers = new WeakMap(), _NN_name = new WeakMap(), _NN_trained = new WeakMap(), _NN_lastOptimizerUser = new WeakMap(), _NN_instances = new WeakSet(), _NN_backprop = function _NN_backprop({ x, y, alpha = 0.001, optimizer = new optimizers_1.GradientDescent(), }) {
     optimizer.alpha = alpha;
+    __classPrivateFieldSet(this, _NN_lastOptimizerUser, optimizer, "f");
     if (!(x instanceof narray_1.default) && x instanceof Array) {
         x = new narray_1.default(x);
     }
@@ -249,7 +284,7 @@ class Layer {
       While trying to compute result for Layer ${this.name} a number is returned rather than an NArray
       
       How can you fix it?
-      Try raising an issue if you see this error along with the code for neural network and your training dataset`);
+      Try raising an issue if you see this error along with the code for neural network and your training dataset on https://github.com/pratyushtiwary/toynn`);
         }
         z1 = z1.add(this.bias);
         let a1 = __classPrivateFieldGet(this, _Layer_activationFunction, "f").calculate(z1).reshape(1, this.outputSize);
