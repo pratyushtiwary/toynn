@@ -5,6 +5,7 @@
 <p align="center">
   <b>Note: You can use `ts` version by import "toynn/ts", by default JS version is exported</b>
 </p>
+
 ## Installation
 
 `npm install toynn` or `yarn add toynn`
