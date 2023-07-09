@@ -3,7 +3,10 @@
 </p>
 <p align="center">A toy NN library for JS to play and learn NN concepts.</p>
 <p align="center">
-  <b>Note: You can use `ts` version by import "toynn/ts", by default JS version is exported</b>
+  <b>Note: You can use `ts` version by importing from "toynn/ts", by default JS version is exported</b>
+</p>
+<p align="center">
+  <b>Contribution is much appreciated, if you feel like something is not right or you've found some bug feel free to raise an issue or create a PR</b>
 </p>
 
 ## Installation
