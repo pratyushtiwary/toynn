@@ -35,6 +35,9 @@ class StatError {
          * Can be chained
          */
         this.result = func(this.result);
+        if (func.name === "") {
+            throw Error("Anonymous functions are not supported");
+        }
         this.formula = `${func.name}(${this.formula})`;
         return {
             result: this.result,
@@ -60,6 +63,9 @@ class StatError {
         });
         this.formula = "yTrue - yPred";
         if (func) {
+            if (func.name === "") {
+                throw Error("Anonymous functions are not supported");
+            }
             this.formula = `${func.name}(${this.formula})`;
         }
         return {
@@ -96,6 +102,7 @@ function error(yTrue, yPred) {
     return new StatError(yTrue, yPred).use();
 }
 exports.default = {
+    StatError,
     error,
     MAE,
     MSE,
