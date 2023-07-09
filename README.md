@@ -1,9 +1,10 @@
 <p align="center">
-  <h1>toynn</h1>
-  <p>A toy NN library for JS to play and learn NN concepts.</p>
+  <img src="./logo.png" alt="toynn">
+</p>
+<p align="center">A toy NN library for JS to play and learn NN concepts.</p>
+<p align="center">
   <b>Note: You can use `ts` version by import "toynn/ts", by default JS version is exported</b>
 </p>
-
 ## Installation
 
 `npm install toynn` or `yarn add toynn`
