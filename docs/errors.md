@@ -41,3 +41,23 @@ Following are the extra functions implemented :
 - mean,
 - sum,
 - square
+
+## Creating Custom Error
+
+You can use `StatError` class's object to create a custom error.
+
+- use(func: Function): StatErrorReturn : Takes in a function and use it to transform loss value for each row. Can't be chanined,
+
+- apply(func: Function): StatErrorReturn : Takes in a function and use it to compute result value. Can be chained.
+
+### Example
+
+The RSS error function is implemented as follows:
+
+```js
+function RSS(yTrue: StatErrorInput, yPred: StatErrorInput): StatErrorReturn {
+  return new StatError(yTrue, yPred).use(square).apply(sum);
+}
+```
+
+**Note: You should always pass a named function inside `use` and `apply` or else they'll throw Error**
