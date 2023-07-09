@@ -46,20 +46,19 @@ class GradientDescent extends Optimizer {
             layersOp.push(recent);
         });
         weightErrors[layersOp.length - 1] = layersOp[layersOp.length - 1].sub(y);
-        weightGradients[layersOp.length - 1] = weightErrors[layersOp.length - 1];
         biasGradients[layersOp.length - 1] = layers[layersOp.length - 1].activationFunction.calcGradient(layersOp[layersOp.length - 1].sub(y));
         // calculate errors and gradient for weight and gradient for bias
         for (let i = layers.length - 2; i >= 0; i--) {
             weightErrors[i] = layers[i + 1].weights.dot(weightErrors[i + 1].T);
-            weightGradients[i] = weightErrors[i].T.mul(layers[i].activationFunction.calcGradient(layersOp[i]));
+            weightErrors[i] = weightErrors[i].T.mul(layers[i].activationFunction.calcGradient(layersOp[i]));
             biasGradients[i] = layers[i].activationFunction.calcGradient(layersOp[i]);
         }
         for (let i = 0; i < layers.length; i++) {
             if (i === 0) {
-                weightGradients[0] = x.T.dot(weightGradients[0]);
+                weightGradients[0] = x.T.dot(weightErrors[0]);
             }
             else {
-                weightGradients[i] = layersOp[i - 1].T.dot(weightGradients[i]);
+                weightGradients[i] = layersOp[i - 1].T.dot(weightErrors[i]);
             }
         }
         // calculate new adjusted weights and biases
