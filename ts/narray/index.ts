@@ -1,12 +1,13 @@
 import utils from "../utils";
 
+let printThreshold: number = 5;
+
 class NArray {
   #arr: Array<any> = [];
   #computedShape: undefined | Array<number> = undefined;
   #length: undefined | number = undefined;
   #computedStrides: undefined | Array<number> = undefined;
   #ndim: undefined | number = undefined;
-  printThreshold: number = 5;
 
   constructor(obj: Array<any> | NArray) {
     /**
@@ -707,7 +708,7 @@ class NArray {
   }
 
   toString(): String {
-    if (this.length > this.printThreshold) {
+    if (this.length > printThreshold) {
       let finalStr = "";
 
       for (let i = 0; i < this.shape.length; i++) {
@@ -794,6 +795,10 @@ class NArray {
     const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
 
     return z * stdev + mean;
+  }
+
+  static setPrintThreshold(n: number) {
+    printThreshold = n;
   }
 }
 

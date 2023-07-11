@@ -62,15 +62,15 @@ export class GradientDescent extends Optimizer {
       layersOp.push(recent);
     });
 
-    weightErrors[layersOp.length - 1] = layersOp[layersOp.length - 1].sub(y);
+    weightGradients[layersOp.length - 1] = layersOp[layersOp.length - 1].sub(y);
     biasGradients[layersOp.length - 1] = layers[
       layersOp.length - 1
     ].activationFunction.calcGradient(layersOp[layersOp.length - 1].sub(y));
 
     // calculate errors and gradient for weight and gradient for bias
     for (let i = layers.length - 2; i >= 0; i--) {
-      weightErrors[i] = layers[i + 1].weights.dot(weightErrors[i + 1].T);
-      weightErrors[i] = weightErrors[i].T.mul(
+      weightErrors[i] = layers[i + 1].weights.dot(weightGradients[i + 1].T);
+      weightGradients[i] = weightErrors[i].T.mul(
         layers[i].activationFunction.calcGradient(layersOp[i])
       );
 
@@ -79,17 +79,17 @@ export class GradientDescent extends Optimizer {
 
     for (let i = 0; i < layers.length; i++) {
       if (i === 0) {
-        weightGradients[0] = x.T.dot(weightErrors[0]);
+        weightGradients[0] = x.T.dot(weightGradients[0]);
       } else {
-        weightGradients[i] = layersOp[i - 1].T.dot(weightErrors[i]);
+        weightGradients[i] = layersOp[i - 1].T.dot(weightGradients[i]);
       }
-    }
 
-    // calculate new adjusted weights and biases
-    for (let i = 0; i < layers.length; i++) {
-      adjustedWeights[i] = layers[i].weights.sub(
-        weightGradients[i].mul(this.alpha)
-      );
+      if (weightGradients[i] instanceof NArray) {
+        adjustedWeights[i] = layers[i].weights.sub(
+          weightGradients[i].mul(this.alpha)
+        );
+      }
+
       adjustedBiases[i] = layers[i].bias.sub(biasGradients[i].mul(this.alpha));
     }
 
