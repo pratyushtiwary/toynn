@@ -16,7 +16,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _NArray_instances, _NArray_arr, _NArray_computedShape, _NArray_length, _NArray_computedStrides, _NArray_ndim, _NArray_computeShape, _NArray_computeStrides, _NArray_get, _NArray_flatten;
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = __importDefault(require("../utils"));
-let printThreshold = 5;
+globalThis.NArray_printThreshold = 5;
 class NArray {
     constructor(obj) {
         /**
@@ -495,7 +495,7 @@ class NArray {
         return JSON.stringify(this.real, null, 4);
     }
     toString() {
-        if (this.length > printThreshold) {
+        if (this.length > globalThis.NArray_printThreshold) {
             let finalStr = "";
             for (let i = 0; i < this.shape.length; i++) {
                 finalStr += "[";
@@ -564,7 +564,7 @@ class NArray {
         return z * stdev + mean;
     }
     static setPrintThreshold(n) {
-        printThreshold = n;
+        globalThis.NArray_printThreshold = n;
     }
 }
 _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_length = new WeakMap(), _NArray_computedStrides = new WeakMap(), _NArray_ndim = new WeakMap(), _NArray_instances = new WeakSet(), _NArray_computeShape = function _NArray_computeShape(x) {
