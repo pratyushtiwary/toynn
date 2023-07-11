@@ -224,7 +224,7 @@ class NArray {
 
   map(func: Function): NArray {
     let f = this.#arr.map((e, i) => func(e, i));
-    return new NArray(f);
+    return new NArray(f).reshape(...this.shape);
   }
 
   forEach(func: Function): void {

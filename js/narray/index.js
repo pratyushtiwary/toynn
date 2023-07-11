@@ -120,7 +120,7 @@ class NArray {
     }
     map(func) {
         let f = __classPrivateFieldGet(this, _NArray_arr, "f").map((e, i) => func(e, i));
-        return new NArray(f);
+        return new NArray(f).reshape(...this.shape);
     }
     forEach(func) {
         __classPrivateFieldGet(this, _NArray_arr, "f").forEach((e, i) => func(e, i));
