@@ -6,6 +6,8 @@ Numerical Array(NArray) is a small implementation of NumPY using JS. The whole t
 
 **This implementation is inspired from NumPY, it doesn't strictly follow its specs**
 
+**NArrays are immutable, only their strides and shape can be mutated not their elements.**
+
 ## Usage
 
 ```js
@@ -33,6 +35,10 @@ Generates an NArray with each element being 0 of specified shape.
 ### randn(mean:int=0, stdev:int=1)
 
 Returns random number as per normal distribution
+
+### setPrintThreshold(n: number)
+
+Sets the printThreshold for `toString()`
 
 ## Properties and Member Functions
 

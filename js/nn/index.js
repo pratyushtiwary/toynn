@@ -13,7 +13,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _NN_instances, _NN_layers, _NN_name, _NN_trained, _NN_lastOptimizerUser, _NN_backprop, _Layer_instances, _Layer_weights, _Layer_bias, _Layer_activationFunction, _Layer_generateWeights;
+var _NN_layers, _NN_name, _NN_trained, _NN_lastOptimizerUser, _Layer_instances, _Layer_weights, _Layer_bias, _Layer_activationFunction, _Layer_generateWeights;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Layer = exports.NN = void 0;
 const errors_1 = __importDefault(require("../errors"));
@@ -23,7 +23,6 @@ const narray_1 = __importDefault(require("../narray"));
 let nLayer = 0;
 class NN {
     constructor(name) {
-        _NN_instances.add(this);
         _NN_layers.set(this, []);
         _NN_name.set(this, undefined);
         _NN_trained.set(this, false);
@@ -105,11 +104,10 @@ class NN {
                     throw Error(`Make sure y's elements are of type NArray`);
                 }
                 l.push(loss(y[j].flatten(), out.flatten()).result);
-                __classPrivateFieldGet(this, _NN_instances, "m", _NN_backprop).call(this, {
+                optimizer.optimize({
                     x: x[j],
                     y: y[j],
-                    alpha,
-                    optimizer,
+                    layers: __classPrivateFieldGet(this, _NN_layers, "f"),
                 });
             }
             losses[i] = errors_1.default.mean(l);
@@ -153,33 +151,7 @@ class NN {
     }
 }
 exports.NN = NN;
-_NN_layers = new WeakMap(), _NN_name = new WeakMap(), _NN_trained = new WeakMap(), _NN_lastOptimizerUser = new WeakMap(), _NN_instances = new WeakSet(), _NN_backprop = function _NN_backprop({ x, y, alpha = 0.001, optimizer = new optimizers_1.GradientDescent(), }) {
-    optimizer.alpha = alpha;
-    __classPrivateFieldSet(this, _NN_lastOptimizerUser, optimizer, "f");
-    if (!(x instanceof narray_1.default) && x instanceof Array) {
-        x = new narray_1.default(x);
-    }
-    else if (!(x instanceof narray_1.default)) {
-        throw Error(`Invalid input for model ${this.name}
-      
-      How to fix this?
-      Convert your x to NArray`);
-    }
-    if (!(y instanceof narray_1.default) && y instanceof Array) {
-        y = new narray_1.default(y);
-    }
-    else if (!(y instanceof narray_1.default)) {
-        throw Error(`Invalid input for model ${this.name}
-      
-      How to fix this?
-      Convert your y to NArray`);
-    }
-    optimizer.optimize({
-        x,
-        y,
-        layers: __classPrivateFieldGet(this, _NN_layers, "f"),
-    });
-};
+_NN_layers = new WeakMap(), _NN_name = new WeakMap(), _NN_trained = new WeakMap(), _NN_lastOptimizerUser = new WeakMap();
 class Layer {
     constructor(inputSize, outputSize) {
         _Layer_instances.add(this);

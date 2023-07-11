@@ -6,18 +6,13 @@ import NArray from "../narray";
 
 let nLayer = 0;
 
-interface BackPropInput {
-  x: Array<NArray> | NArray;
-  y: Array<NArray> | NArray;
-  alpha?: number;
-  optimizer?: Optimizer;
-}
-
-interface TrainInput extends BackPropInput {
+interface TrainInput {
   x: Array<NArray>;
   y: Array<NArray>;
   epochs: number;
   verbose?: boolean;
+  alpha?: number;
+  optimizer?: Optimizer;
   loss?: (yTrue: StatErrorInput, yPred: StatErrorInput) => StatErrorReturn;
 }
 
@@ -97,37 +92,6 @@ export class NN {
     return recent;
   }
 
-  #backprop({
-    x,
-    y,
-    alpha = 0.001,
-    optimizer = new GradientDescent(),
-  }: BackPropInput) {
-    optimizer.alpha = alpha;
-    this.#lastOptimizerUser = optimizer;
-    if (!(x instanceof NArray) && x instanceof Array) {
-      x = new NArray(x);
-    } else if (!(x instanceof NArray)) {
-      throw Error(`Invalid input for model ${this.name}
-      
-      How to fix this?
-      Convert your x to NArray`);
-    }
-    if (!(y instanceof NArray) && y instanceof Array) {
-      y = new NArray(y);
-    } else if (!(y instanceof NArray)) {
-      throw Error(`Invalid input for model ${this.name}
-      
-      How to fix this?
-      Convert your y to NArray`);
-    }
-    optimizer.optimize({
-      x,
-      y,
-      layers: this.#layers,
-    });
-  }
-
   train({
     x,
     y,
@@ -154,11 +118,10 @@ export class NN {
           throw Error(`Make sure y's elements are of type NArray`);
         }
         l.push(loss(y[j].flatten(), out.flatten()).result);
-        this.#backprop({
+        optimizer.optimize({
           x: x[j],
           y: y[j],
-          alpha,
-          optimizer,
+          layers: this.#layers,
         });
       }
       losses[i] = errors.mean(l);
