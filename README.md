@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./logo.png" alt="toynn">
+  <img src="./logo.svg" alt="toynn">
 </p>
 <p align="center">A toy NN library for JS to play and learn NN concepts.</p>
 <p align="center">
