@@ -1,6 +1,6 @@
 import utils from "../utils";
 
-let printThreshold: number = 5;
+globalThis.NArray_printThreshold = 5;
 
 class NArray {
   #arr: Array<any> = [];
@@ -224,7 +224,7 @@ class NArray {
 
   map(func: Function): NArray {
     let f = this.#arr.map((e, i) => func(e, i));
-    return new NArray(f);
+    return new NArray(f).reshape(...this.shape);
   }
 
   forEach(func: Function): void {
@@ -708,7 +708,7 @@ class NArray {
   }
 
   toString(): String {
-    if (this.length > printThreshold) {
+    if (this.length > globalThis.NArray_printThreshold) {
       let finalStr = "";
 
       for (let i = 0; i < this.shape.length; i++) {
@@ -798,7 +798,7 @@ class NArray {
   }
 
   static setPrintThreshold(n: number) {
-    printThreshold = n;
+    globalThis.NArray_printThreshold = n;
   }
 }
 

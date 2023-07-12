@@ -16,8 +16,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _NN_layers, _NN_name, _NN_trained, _NN_lastOptimizerUser, _Layer_instances, _Layer_weights, _Layer_bias, _Layer_activationFunction, _Layer_generateWeights;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Layer = exports.NN = void 0;
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const errors_1 = __importDefault(require("../errors"));
-const functions_1 = require("../functions");
+const functions_1 = __importDefault(require("../functions"));
+const functions_2 = require("../functions");
 const optimizers_1 = require("../optimizers");
 const narray_1 = __importDefault(require("../narray"));
 let nLayer = 0;
@@ -36,6 +39,9 @@ class NN {
          * Reference: https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
          */
         __classPrivateFieldSet(this, _NN_name, name, "f");
+    }
+    get layers() {
+        return Array.from(__classPrivateFieldGet(this, _NN_layers, "f"));
     }
     get name() {
         return __classPrivateFieldGet(this, _NN_name, "f");
@@ -148,6 +154,38 @@ class NN {
                 .join("\n");
         }
         return explanation;
+    }
+    save(savePath = "./") {
+        const finalPath = path_1.default.join(savePath, this.name + ".json");
+        const contents = __classPrivateFieldGet(this, _NN_layers, "f").map((e) => ({
+            weights: e.weights.real,
+            bias: e.bias.real,
+            activationFunction: e.activationFunction.toString(),
+            shape: e.shape,
+        }));
+        fs_1.default.writeFileSync(finalPath, JSON.stringify(contents, null, 4), "utf-8");
+    }
+    load(filePath) {
+        try {
+            let data = JSON.parse(fs_1.default.readFileSync(filePath, "utf-8")), tempLayer, tempActivationFunction;
+            for (let i = 0; i < data.length; i++) {
+                tempLayer = data[i];
+                __classPrivateFieldGet(this, _NN_layers, "f")[i] = new Layer(tempLayer.shape[0], tempLayer.shape[1]);
+                __classPrivateFieldGet(this, _NN_layers, "f")[i].weights = new narray_1.default(tempLayer.weights);
+                __classPrivateFieldGet(this, _NN_layers, "f")[i].bias = new narray_1.default(tempLayer.bias);
+                // check if activation function exists
+                tempActivationFunction = functions_1.default[tempLayer.activationFunction];
+                if (!tempActivationFunction) {
+                    throw Error(`Failed to load activation function ${tempLayer.activationFunction} for layer ${i + 1}`);
+                }
+                __classPrivateFieldGet(this, _NN_layers, "f")[i].activationFunction = tempActivationFunction;
+            }
+        }
+        catch (e) {
+            throw Error(`Failed to load model.
+      
+      Error: ${e}`);
+        }
     }
 }
 exports.NN = NN;
@@ -266,7 +304,7 @@ class Layer {
         return [this.inputSize, this.outputSize];
     }
     set activationFunction(func) {
-        if (!(func instanceof functions_1.ActivationFunction)) {
+        if (!(func instanceof functions_2.ActivationFunction)) {
             throw Error(`Invalid activation function.
       
       How to fix this?
