@@ -80,7 +80,7 @@ class Sigmoid extends ActivationFunction {
   }
 
   toString() {
-    return "<Sigmoid(x)>";
+    return "sigmoid";
   }
 }
 
@@ -104,7 +104,7 @@ class ReLU extends ActivationFunction {
   }
 
   toString() {
-    return "<ReLU(x)>";
+    return "relu";
   }
 }
 
@@ -128,7 +128,7 @@ class LeakyReLU extends ActivationFunction {
   }
 
   toString() {
-    return "<ReLU(x)>";
+    return "leakyRelu";
   }
 }
 
@@ -171,7 +171,7 @@ class Softmax extends ActivationFunction {
   }
 
   toString() {
-    return "<Softmax(x)>";
+    return "softmax";
   }
 }
 
@@ -196,7 +196,7 @@ class Tanh extends ActivationFunction {
   }
 
   toString() {
-    return "<Tanh(x)>";
+    return "tanh";
   }
 }
 

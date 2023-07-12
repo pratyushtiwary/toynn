@@ -64,7 +64,7 @@ class Sigmoid extends ActivationFunction {
         return new narray_1.default(result);
     }
     toString() {
-        return "<Sigmoid(x)>";
+        return "sigmoid";
     }
 }
 class ReLU extends ActivationFunction {
@@ -82,7 +82,7 @@ class ReLU extends ActivationFunction {
         return new narray_1.default(result);
     }
     toString() {
-        return "<ReLU(x)>";
+        return "relu";
     }
 }
 class LeakyReLU extends ActivationFunction {
@@ -100,7 +100,7 @@ class LeakyReLU extends ActivationFunction {
         return new narray_1.default(result);
     }
     toString() {
-        return "<ReLU(x)>";
+        return "leakyRelu";
     }
 }
 class Softmax extends ActivationFunction {
@@ -135,7 +135,7 @@ class Softmax extends ActivationFunction {
         return new narray_1.default(result);
     }
     toString() {
-        return "<Softmax(x)>";
+        return "softmax";
     }
 }
 class Tanh extends ActivationFunction {
@@ -154,7 +154,7 @@ class Tanh extends ActivationFunction {
         return new narray_1.default(result);
     }
     toString() {
-        return "<Tanh(x)>";
+        return "tanh";
     }
 }
 const functions = {

@@ -1,4 +1,7 @@
+import fs from "fs";
+import path from "path";
 import errors from "../errors";
+import functions from "../functions";
 import { StatErrorReturn, StatErrorInput } from "../errors";
 import { ActivationFunction, ActivationFunctionType } from "../functions";
 import { Optimizer, GradientDescent } from "../optimizers";
@@ -14,6 +17,13 @@ interface TrainInput {
   alpha?: number;
   optimizer?: Optimizer;
   loss?: (yTrue: StatErrorInput, yPred: StatErrorInput) => StatErrorReturn;
+}
+
+interface ModelFileLayer {
+  weights: Array<any>;
+  bias: Array<any>;
+  shape: Array<number>;
+  activationFunction: string;
 }
 
 export class NN {
@@ -32,6 +42,10 @@ export class NN {
      * Reference: https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
      */
     this.#name = name;
+  }
+
+  get layers(): Array<Layer> {
+    return Array.from(this.#layers);
   }
 
   get name() {
@@ -171,6 +185,54 @@ export class NN {
     }
 
     return explanation;
+  }
+
+  save(savePath: string = "./") {
+    const finalPath = path.join(savePath, this.name + ".json");
+
+    const contents = this.#layers.map((e) => ({
+      weights: e.weights.real,
+      bias: e.bias.real,
+      activationFunction: e.activationFunction.toString(),
+      shape: e.shape,
+    }));
+
+    fs.writeFileSync(finalPath, JSON.stringify(contents, null, 4), "utf-8");
+  }
+
+  load(filePath: string) {
+    try {
+      let data: Array<ModelFileLayer> = JSON.parse(
+          fs.readFileSync(filePath, "utf-8")
+        ),
+        tempLayer: ModelFileLayer,
+        tempActivationFunction: ActivationFunction;
+
+      for (let i = 0; i < data.length; i++) {
+        tempLayer = data[i];
+        this.#layers[i] = new Layer(tempLayer.shape[0], tempLayer.shape[1]);
+
+        this.#layers[i].weights = new NArray(tempLayer.weights);
+        this.#layers[i].bias = new NArray(tempLayer.bias);
+
+        // check if activation function exists
+        tempActivationFunction = functions[tempLayer.activationFunction];
+
+        if (!tempActivationFunction) {
+          throw Error(
+            `Failed to load activation function ${
+              tempLayer.activationFunction
+            } for layer ${i + 1}`
+          );
+        }
+
+        this.#layers[i].activationFunction = tempActivationFunction;
+      }
+    } catch (e) {
+      throw Error(`Failed to load model.
+      
+      Error: ${e}`);
+    }
   }
 }
 
