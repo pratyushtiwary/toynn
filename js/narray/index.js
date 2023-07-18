@@ -573,7 +573,7 @@ _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_leng
      * @param x: Array
      */
     let size = [];
-    if (x === null || x === void 0 ? void 0 : x.length) {
+    if (x instanceof Array) {
         size.push(x.length);
         size = [...size, ...__classPrivateFieldGet(this, _NArray_instances, "m", _NArray_computeShape).call(this, x[0])];
         return size;
@@ -637,14 +637,13 @@ _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_leng
       Your NArray is of dimension ${this.ndim} put you are trying to access ${path.length} dimension data. Try changing the path passed to ${this.ndim} dimension.`);
     }
 }, _NArray_flatten = function _NArray_flatten(x = __classPrivateFieldGet(this, _NArray_arr, "f")) {
-    var _a;
     /**
      * Recursively flattens passed array
      * @param x: Array -> defaults to value by which object is initialized
      */
     let final = [];
     let temp;
-    if (!((_a = x[0]) === null || _a === void 0 ? void 0 : _a.length)) {
+    if (!(x[0] instanceof Array)) {
         return x;
     }
     else {

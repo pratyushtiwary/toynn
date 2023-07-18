@@ -84,7 +84,7 @@ class Sigmoid extends ActivationFunction {
   }
 }
 
-class ReLU extends ActivationFunction {
+class Relu extends ActivationFunction {
   get formula() {
     return `x, x>=0, 0, x<0`;
   }
@@ -108,7 +108,7 @@ class ReLU extends ActivationFunction {
   }
 }
 
-class LeakyReLU extends ActivationFunction {
+class LeakyRelu extends ActivationFunction {
   get formula() {
     return `x, x>=0, 0.01x, x<0`;
   }
@@ -200,12 +200,50 @@ class Tanh extends ActivationFunction {
   }
 }
 
+class Linear extends ActivationFunction {
+  #a = undefined;
+
+  constructor(a = 1) {
+    super();
+    this.#a = a;
+  }
+
+  get formula() {
+    return "a*x";
+  }
+
+  get gradient() {
+    return "a";
+  }
+
+  calcGradient(x: ActivationFunctionResult): ActivationFunctionResult {
+    return x.map(() => this.#a);
+  }
+
+  calculate(x: ActivationFunctionInput): ActivationFunctionResult {
+    let result = x.map((e: number) => e * this.#a);
+
+    return new NArray(result);
+  }
+
+  toString() {
+    return `linear(${this.#a})`;
+  }
+}
+
 const functions = {
   sigmoid: new Sigmoid(),
-  relu: new ReLU(),
-  leakyRelu: new LeakyReLU(),
+  relu: new Relu(),
+  leakyRelu: new LeakyRelu(),
   softmax: new Softmax(),
   tanh: new Tanh(),
+  linear: new Linear(),
+  Sigmoid,
+  Relu,
+  LeakyRelu,
+  Softmax,
+  Tanh,
+  Linear,
 };
 
 export default {

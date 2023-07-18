@@ -30,7 +30,8 @@ It should return the values of x for your activation function
 - ReLU,
 - LeakyReLU,
 - Softmax,
-- Tanh
+- Tanh,
+- Linear
 
 You can use formula and gradient getter to get the respective values.
 

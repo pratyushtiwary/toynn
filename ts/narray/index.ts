@@ -60,7 +60,7 @@ class NArray {
      */
     let size = [];
 
-    if (x?.length) {
+    if (x instanceof Array) {
       size.push(x.length);
 
       size = [...size, ...this.#computeShape(x[0])];
@@ -158,7 +158,7 @@ class NArray {
      */
     let final = [];
     let temp;
-    if (!x[0]?.length) {
+    if (!(x[0] instanceof Array)) {
       return x;
     } else {
       x.forEach((e) => {

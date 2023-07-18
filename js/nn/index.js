@@ -167,18 +167,30 @@ class NN {
     }
     load(filePath) {
         try {
-            let data = JSON.parse(fs_1.default.readFileSync(filePath, "utf-8")), tempLayer, tempActivationFunction;
+            let data = JSON.parse(fs_1.default.readFileSync(filePath, "utf-8")), tempLayer, tempActivationFunction, tempActivationFunctionName, activationFuntionParams;
             for (let i = 0; i < data.length; i++) {
                 tempLayer = data[i];
                 __classPrivateFieldGet(this, _NN_layers, "f")[i] = new Layer(tempLayer.shape[0], tempLayer.shape[1]);
                 __classPrivateFieldGet(this, _NN_layers, "f")[i].weights = new narray_1.default(tempLayer.weights);
                 __classPrivateFieldGet(this, _NN_layers, "f")[i].bias = new narray_1.default(tempLayer.bias);
+                tempActivationFunctionName = tempLayer.activationFunction.replace(/([\w\W]*)+\(+([\w\W]*)+\)/gi, "$1");
                 // check if activation function exists
-                tempActivationFunction = functions_1.default[tempLayer.activationFunction];
+                tempActivationFunction = functions_1.default[tempActivationFunctionName];
                 if (!tempActivationFunction) {
                     throw Error(`Failed to load activation function ${tempLayer.activationFunction} for layer ${i + 1}`);
                 }
-                __classPrivateFieldGet(this, _NN_layers, "f")[i].activationFunction = tempActivationFunction;
+                activationFuntionParams =
+                    "[" +
+                        tempLayer.activationFunction.replace(/([\w\W]*)+\(+([\w\W]*)+\)/gi, "$2") +
+                        "]";
+                activationFuntionParams = JSON.parse(activationFuntionParams.replace(/\'/g, '"'));
+                if (activationFuntionParams.length > 0) {
+                    tempActivationFunction = new functions_1.default[tempActivationFunctionName](...activationFuntionParams);
+                    __classPrivateFieldGet(this, _NN_layers, "f")[i].activationFunction = tempActivationFunction;
+                }
+                else {
+                    __classPrivateFieldGet(this, _NN_layers, "f")[i].activationFunction = tempActivationFunction;
+                }
             }
         }
         catch (e) {

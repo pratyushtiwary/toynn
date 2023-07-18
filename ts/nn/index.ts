@@ -206,7 +206,9 @@ export class NN {
           fs.readFileSync(filePath, "utf-8")
         ),
         tempLayer: ModelFileLayer,
-        tempActivationFunction: ActivationFunction;
+        tempActivationFunction: ActivationFunction,
+        tempActivationFunctionName: string,
+        activationFuntionParams: string | Array<any>;
 
       for (let i = 0; i < data.length; i++) {
         tempLayer = data[i];
@@ -215,8 +217,13 @@ export class NN {
         this.#layers[i].weights = new NArray(tempLayer.weights);
         this.#layers[i].bias = new NArray(tempLayer.bias);
 
+        tempActivationFunctionName = tempLayer.activationFunction.replace(
+          /([\w\W]*)+\(+([\w\W]*)+\)/gi,
+          "$1"
+        );
+
         // check if activation function exists
-        tempActivationFunction = functions[tempLayer.activationFunction];
+        tempActivationFunction = functions[tempActivationFunctionName];
 
         if (!tempActivationFunction) {
           throw Error(
@@ -226,7 +233,29 @@ export class NN {
           );
         }
 
-        this.#layers[i].activationFunction = tempActivationFunction;
+        if (tempLayer.activationFunction.match(/([\w\W]*)+\(+([\w\W]*)+\)/gi)) {
+          activationFuntionParams =
+            "[" +
+            tempLayer.activationFunction.replace(
+              /([\w\W]*)+\(+([\w\W]*)+\)/gi,
+              "$2"
+            ) +
+            "]";
+
+          activationFuntionParams = JSON.parse(
+            activationFuntionParams.replace(/\'/g, '"')
+          );
+
+          tempActivationFunctionName =
+            tempActivationFunctionName[0].toUpperCase() +
+            tempActivationFunctionName.slice(1);
+          tempActivationFunction = new functions[tempActivationFunctionName](
+            ...activationFuntionParams
+          );
+          this.#layers[i].activationFunction = tempActivationFunction;
+        } else {
+          this.#layers[i].activationFunction = tempActivationFunction;
+        }
       }
     } catch (e) {
       throw Error(`Failed to load model.

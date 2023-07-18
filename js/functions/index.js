@@ -1,7 +1,19 @@
 "use strict";
+var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
+    if (kind === "m") throw new TypeError("Private method is not writable");
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
+    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+};
+var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
+    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
+    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
+    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+var _Linear_a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ActivationFunction = void 0;
 const narray_1 = __importDefault(require("../narray"));
@@ -67,7 +79,7 @@ class Sigmoid extends ActivationFunction {
         return "sigmoid";
     }
 }
-class ReLU extends ActivationFunction {
+class Relu extends ActivationFunction {
     get formula() {
         return `x, x>=0, 0, x<0`;
     }
@@ -85,7 +97,7 @@ class ReLU extends ActivationFunction {
         return "relu";
     }
 }
-class LeakyReLU extends ActivationFunction {
+class LeakyRelu extends ActivationFunction {
     get formula() {
         return `x, x>=0, 0.01x, x<0`;
     }
@@ -157,12 +169,43 @@ class Tanh extends ActivationFunction {
         return "tanh";
     }
 }
+class Linear extends ActivationFunction {
+    constructor(a = 1) {
+        super();
+        _Linear_a.set(this, undefined);
+        __classPrivateFieldSet(this, _Linear_a, a, "f");
+    }
+    get formula() {
+        return "a*x";
+    }
+    get gradient() {
+        return "a";
+    }
+    calcGradient(x) {
+        return x.map(() => __classPrivateFieldGet(this, _Linear_a, "f"));
+    }
+    calculate(x) {
+        let result = x.map((e) => e * __classPrivateFieldGet(this, _Linear_a, "f"));
+        return new narray_1.default(result);
+    }
+    toString() {
+        return `linear(${__classPrivateFieldGet(this, _Linear_a, "f")})`;
+    }
+}
+_Linear_a = new WeakMap();
 const functions = {
     sigmoid: new Sigmoid(),
-    relu: new ReLU(),
-    leakyRelu: new LeakyReLU(),
+    relu: new Relu(),
+    leakyRelu: new LeakyRelu(),
     softmax: new Softmax(),
     tanh: new Tanh(),
+    linear: new Linear(),
+    Sigmoid,
+    Relu,
+    LeakyRelu,
+    Softmax,
+    Tanh,
+    Linear,
 };
 exports.default = Object.assign(Object.assign({}, functions), { ActivationFunction });
 //# sourceMappingURL=index.js.map
