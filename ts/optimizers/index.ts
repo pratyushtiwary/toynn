@@ -1,9 +1,11 @@
+import { Dataset, DatasetSlice } from "../dataset";
 import NArray from "../narray";
 import { Layer } from "../nn";
+import utils from "../utils";
 
 export interface OptimizerProcessReturn {
-  x: Array<NArray>;
-  y: Array<NArray>;
+  x: Array<any> | Dataset | DatasetSlice;
+  y: Array<any> | Dataset | DatasetSlice;
 }
 
 export interface OptimizerInput {
@@ -12,10 +14,24 @@ export interface OptimizerInput {
   layers: Array<Layer>;
 }
 
+export interface OptimizerOutput {
+  weightGradients: Array<NArray>;
+  biasGradients: Array<NArray>;
+  adjustedWeights: Array<NArray>;
+  adjustedBiases: Array<NArray>;
+}
+
+export interface GradientDescentInput {
+  momentum?: number;
+}
+
 export class Optimizer {
   alpha: number = undefined;
 
-  process(x: Array<any>, y: Array<any>): OptimizerProcessReturn {
+  process(
+    x: Array<any> | Dataset | DatasetSlice,
+    y: Array<any> | Dataset | DatasetSlice
+  ): OptimizerProcessReturn {
     return { x, y };
   }
 
@@ -44,7 +60,20 @@ export class GradientDescent extends Optimizer {
    *  - https://stackoverflow.com/a/13342725
    */
 
-  optimize({ x, y, layers }: OptimizerInput): void {
+  #firstRun: boolean = true;
+  #momentum: number;
+  #weightsHistory: Array<NArray> = [];
+  #biasHistory: Array<NArray> = [];
+
+  constructor({ momentum = 0.9 }: GradientDescentInput) {
+    super();
+    if (momentum > 1 || momentum < 0) {
+      throw Error(`Value for momentum should be between 0 and 1.`);
+    }
+    this.#momentum = momentum;
+  }
+
+  _optimize({ x, y, layers }: OptimizerInput): OptimizerOutput {
     let layersOp = [], // keeps track of each layer's output
       recent: NArray,
       weightGradients = [],
@@ -77,6 +106,13 @@ export class GradientDescent extends Optimizer {
       biasGradients[i] = layers[i].activationFunction.calcGradient(layersOp[i]);
     }
 
+    if (this.#firstRun) {
+      for (let i = 0; i < layers.length; i++) {
+        this.#weightsHistory.push(NArray.zeroes(...layers[i].shape));
+        this.#biasHistory.push(NArray.zeroes(1, layers[i].shape[1]));
+      }
+      this.#firstRun = false;
+    }
     for (let i = 0; i < layers.length; i++) {
       if (i === 0) {
         weightGradients[0] = x.T.dot(weightGradients[0]);
@@ -85,13 +121,40 @@ export class GradientDescent extends Optimizer {
       }
 
       if (weightGradients[i] instanceof NArray) {
+        // momentum logic for weights
+        this.#weightsHistory[i] = this.#weightsHistory[i]
+          .mul(this.#momentum)
+          .add(weightGradients[i].mul(1 - this.#momentum));
+
         adjustedWeights[i] = layers[i].weights.sub(
-          weightGradients[i].mul(this.alpha)
+          this.#weightsHistory[i].mul(this.alpha)
         );
       }
 
-      adjustedBiases[i] = layers[i].bias.sub(biasGradients[i].mul(this.alpha));
+      // momentum logic for bias
+      this.#biasHistory[i] = this.#biasHistory[i]
+        .mul(this.#momentum)
+        .add(biasGradients[i].mul(1 - this.#momentum));
+
+      adjustedBiases[i] = layers[i].bias.sub(
+        this.#biasHistory[i].mul(this.alpha)
+      );
     }
+
+    return {
+      weightGradients,
+      biasGradients,
+      adjustedWeights,
+      adjustedBiases,
+    };
+  }
+
+  optimize({ x, y, layers }: OptimizerInput): void {
+    const { adjustedWeights, adjustedBiases } = this._optimize({
+      x,
+      y,
+      layers,
+    });
 
     // update these new weights and biases
     for (let i = 0; i < layers.length; i++) {
@@ -117,31 +180,50 @@ export class GradientDescent extends Optimizer {
 }
 
 export class StochasticGradientDescent extends GradientDescent {
-  /**
-   * Reference: https://stackoverflow.com/a/11935263
-   */
-  process(x: Array<any>, y: Array<any>): OptimizerProcessReturn {
+  process(
+    x: any[] | Dataset | DatasetSlice,
+    y: any[] | Dataset | DatasetSlice
+  ): OptimizerProcessReturn {
     if (x.length !== y.length) {
       throw Error(`X and Y length mismatch
       
       How can you fix it?
       Make sure that the X and Y passed are of the same length.`);
     }
-    let shuffledX = x.slice(0),
-      shuffledY = y.slice(0),
-      i = x.length,
-      temp: NArray,
-      index: number;
-    while (i--) {
-      index = Math.floor((i + 1) * Math.random());
-      temp = shuffledX[index];
-      shuffledX[index] = shuffledX[i];
-      shuffledX[i] = temp;
+    let shuffledX: any[] | DatasetSlice, shuffledY: any[] | DatasetSlice;
 
-      temp = shuffledY[index];
-      shuffledY[index] = shuffledY[i];
-      shuffledY[i] = temp;
+    let xLen = x.length;
+
+    const arrangement = utils.shuffle(xLen);
+
+    if (!(arrangement instanceof Array)) {
+      throw Error(
+        `SGD: Failed to shuffle data. utils.shuffle returned unexpected value.`
+      );
     }
+
+    if (x instanceof Dataset || x instanceof DatasetSlice) {
+      shuffledX = new DatasetSlice(x, arrangement);
+    }
+
+    if (x instanceof Array) {
+      shuffledX = [];
+      for (let i = 0; i < xLen; i++) {
+        shuffledX[i] = arrangement[i];
+      }
+    }
+
+    if (y instanceof Dataset || y instanceof DatasetSlice) {
+      shuffledY = new DatasetSlice(y, arrangement);
+    }
+
+    if (y instanceof Array) {
+      shuffledY = [];
+      for (let i = 0; i < xLen; i++) {
+        shuffledY[i] = arrangement[i];
+      }
+    }
+
     return { x: shuffledX, y: shuffledY };
   }
 

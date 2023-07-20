@@ -1,9 +1,7 @@
 import fs from "fs";
 import NArray from "../narray";
 
-export interface DatasetInput {
-  path?: string;
-  array?: Array<NArray>;
+export interface DatasetOptions {
   delimiter?: string;
   headerRow?: number;
 }
@@ -14,19 +12,17 @@ export class Dataset {
   #delim: string;
   #usedArray: boolean = false;
 
-  constructor({
-    path = undefined,
-    array = undefined,
-    delimiter = ",",
-    headerRow = 1,
-  }: DatasetInput) {
-    if (!path && !array) {
+  constructor(
+    path: string | Array<NArray>,
+    { delimiter = ",", headerRow = 1 }: DatasetOptions = {}
+  ) {
+    if (!path) {
       throw Error(
-        `Failed to create dataset. Please provide either a path or an array of NArray`
+        `Failed to create dataset. Please provide a path or an array of NArray`
       );
     }
 
-    if (path) {
+    if (typeof path === "string") {
       this.#data = fs.readFileSync(path, "utf-8").split("\r\n");
       this.#data = [
         ...this.#data.slice(0, headerRow - 1),
@@ -37,23 +33,27 @@ export class Dataset {
         this.#data = this.#data.slice(0, -1);
       }
     }
-    if (array) {
-      this.#data = array;
+    if (path instanceof Array) {
+      this.#data = path;
       this.#usedArray = true;
     }
     this.#delim = delimiter;
     this.#length = this.#data.length;
   }
 
+  onGet(element: NArray): NArray {
+    return element;
+  }
+
   get(index: number): NArray {
     if (this.#usedArray) {
-      return this.#data[index];
+      return this.onGet(this.#data[index]);
     } else {
       let data = this.#data[index].split(this.#delim);
       data = "[" + data.join(",") + "]";
       data = data.replace(/\'/g, '"');
       data = JSON.parse(data);
-      return new NArray(data);
+      return this.onGet(new NArray(data));
     }
   }
 
@@ -70,7 +70,7 @@ export class Dataset {
       );
     }
 
-    return new Dataset({ array: final });
+    return new Dataset(final);
   }
 
   get length() {
@@ -96,8 +96,12 @@ export class DatasetSlice {
     this.#arrangement = arrangement;
   }
 
+  onGet(element: NArray): NArray {
+    return element;
+  }
+
   get(index: number): NArray {
-    return this.#dataset.get(this.#arrangement[index]);
+    return this.onGet(this.#dataset.get(this.#arrangement[index]));
   }
 
   slice(...selection: Array<number>): Dataset {
@@ -113,7 +117,7 @@ export class DatasetSlice {
       );
     }
 
-    return new Dataset({ array: final });
+    return new Dataset(final);
   }
 
   get length() {

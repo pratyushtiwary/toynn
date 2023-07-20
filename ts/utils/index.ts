@@ -6,19 +6,7 @@ export interface LoopInput {
   func: (i: number) => void;
 }
 
-export interface OnehotEncodeInput {
-  x: number | Array<number>;
-  classes: number;
-}
-
-export interface CreateBatchInput {
-  array: Array<any> | Dataset | DatasetSlice;
-  batchSize: number;
-}
-
 export interface TrainTestSplitInput {
-  X: Dataset;
-  y: Dataset;
   testSize: number;
   shuffle?: boolean;
 }
@@ -96,9 +84,13 @@ const utils = {
       i += 11;
     }
   },
+
+  /**
+   * Reference: https://stackoverflow.com/a/11935263
+   */
   shuffle: (
     arr: number | Array<any> | Dataset | DatasetSlice
-  ): Array<any> | DatasetSlice => {
+  ): Array<number> | DatasetSlice => {
     let shuffled: Array<any> | DatasetSlice,
       i: number,
       temp: any,
@@ -149,72 +141,71 @@ const utils = {
     }
     return shuffled;
   },
-  onehotEncode: ({
-    x,
-    classes,
-  }: OnehotEncodeInput): Array<number> | Array<Array<number>> => {
+  onehotEncode: (x: number, classes: number): Array<number> => {
     let result = [];
 
-    if (typeof x === "number") {
-      for (let i = 0; i < classes; i++) {
-        if (i === x) {
-          result.push(1);
-        } else {
-          result.push(0);
-        }
-      }
-    }
-
-    if (x instanceof Array) {
-      let temp: Array<number> = [];
-      for (let i = 0; i < x.length; i++) {
-        temp = [];
-        for (let j = 0; j < classes; j++) {
-          if (j === x[i]) {
-            temp.push(1);
-          } else {
-            temp.push(0);
-          }
-        }
-        result.push(temp);
+    for (let i = 0; i < classes; i++) {
+      if (i === x) {
+        result.push(1);
+      } else {
+        result.push(0);
       }
     }
 
     return result;
   },
-  createBatch: ({ array, batchSize }: CreateBatchInput): Array<Array<any>> => {
+  createBatch: (
+    array: Array<any> | Dataset | DatasetSlice,
+    batchSize: number
+  ): Array<Array<any>> => {
     if (batchSize <= 0) {
       throw Error(`Invalid batchSize. Make sure batchSize > 0`);
     }
     let batches = [],
-      temp: Array<any>;
+      temp: Array<any> | DatasetSlice,
+      n = Math.floor(array.length / batchSize),
+      i: number,
+      arrangement = [];
 
-    for (let i = 0; i < array.length; i += batchSize) {
-      temp = [];
-      for (let j = 0; j < batchSize; j++) {
-        if (i + j < array.length) {
-          if (array instanceof Dataset || array instanceof DatasetSlice) {
-            temp.push(array.get(i + j));
-          } else if (array instanceof Array) {
-            temp.push(array[i + j]);
-          } else {
-            throw Error(
-              `Failed to fetch element from array. Make sure passed array is of type Array | Dataset | DatasetSlice`
-            );
+    for (i = 0; i < n; i++) {
+      if (array instanceof Array) {
+        temp = array.slice(i * batchSize, (i + 1) * batchSize);
+      }
+
+      if (array instanceof Dataset || array instanceof DatasetSlice) {
+        arrangement = [];
+        for (let j = i * batchSize; j < (i + 1) * batchSize; j++) {
+          arrangement.push(j);
+        }
+        temp = new DatasetSlice(array, arrangement);
+      }
+      batches.push(temp);
+    }
+
+    if (array.length % batchSize !== 0) {
+      if (array instanceof Array) {
+        temp = array.slice(i * batchSize, (i + 1) * batchSize);
+      }
+
+      if (array instanceof Dataset || array instanceof DatasetSlice) {
+        arrangement = [];
+        for (let j = i * batchSize; j < (i + 1) * batchSize; j++) {
+          if (j < array.length) {
+            arrangement.push(j);
           }
         }
+        temp = new DatasetSlice(array, arrangement);
       }
       batches.push(temp);
     }
 
     return batches;
   },
-  trainTestSplit: ({
-    X,
-    y,
-    testSize,
-    shuffle = false,
-  }: TrainTestSplitInput): DatasetSlice[] => {
+  trainTestSplit: (
+    X: Dataset,
+    y: Dataset,
+    { testSize, shuffle = false }: TrainTestSplitInput
+  ): DatasetSlice[] => {
     if (X.length !== y.length) {
       throw Error(`Failed to split because X.length != y.length`);
     }

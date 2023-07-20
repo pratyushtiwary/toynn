@@ -19,15 +19,15 @@ exports.DatasetSlice = exports.Dataset = void 0;
 const fs_1 = __importDefault(require("fs"));
 const narray_1 = __importDefault(require("../narray"));
 class Dataset {
-    constructor({ path = undefined, array = undefined, delimiter = ",", headerRow = 1, }) {
+    constructor(path, { delimiter = ",", headerRow = 1 } = {}) {
         _Dataset_length.set(this, void 0);
         _Dataset_data.set(this, void 0);
         _Dataset_delim.set(this, void 0);
         _Dataset_usedArray.set(this, false);
-        if (!path && !array) {
-            throw Error(`Failed to create dataset. Please provide either a path or an array of NArray`);
+        if (!path) {
+            throw Error(`Failed to create dataset. Please provide a path or an array of NArray`);
         }
-        if (path) {
+        if (typeof path === "string") {
             __classPrivateFieldSet(this, _Dataset_data, fs_1.default.readFileSync(path, "utf-8").split("\r\n"), "f");
             __classPrivateFieldSet(this, _Dataset_data, [
                 ...__classPrivateFieldGet(this, _Dataset_data, "f").slice(0, headerRow - 1),
@@ -38,23 +38,26 @@ class Dataset {
                 __classPrivateFieldSet(this, _Dataset_data, __classPrivateFieldGet(this, _Dataset_data, "f").slice(0, -1), "f");
             }
         }
-        if (array) {
-            __classPrivateFieldSet(this, _Dataset_data, array, "f");
+        if (path instanceof Array) {
+            __classPrivateFieldSet(this, _Dataset_data, path, "f");
             __classPrivateFieldSet(this, _Dataset_usedArray, true, "f");
         }
         __classPrivateFieldSet(this, _Dataset_delim, delimiter, "f");
         __classPrivateFieldSet(this, _Dataset_length, __classPrivateFieldGet(this, _Dataset_data, "f").length, "f");
     }
+    onGet(element) {
+        return element;
+    }
     get(index) {
         if (__classPrivateFieldGet(this, _Dataset_usedArray, "f")) {
-            return __classPrivateFieldGet(this, _Dataset_data, "f")[index];
+            return this.onGet(__classPrivateFieldGet(this, _Dataset_data, "f")[index]);
         }
         else {
             let data = __classPrivateFieldGet(this, _Dataset_data, "f")[index].split(__classPrivateFieldGet(this, _Dataset_delim, "f"));
             data = "[" + data.join(",") + "]";
             data = data.replace(/\'/g, '"');
             data = JSON.parse(data);
-            return new narray_1.default(data);
+            return this.onGet(new narray_1.default(data));
         }
     }
     slice(...selection) {
@@ -64,7 +67,7 @@ class Dataset {
                 .flatten()
                 .slice(...selection)));
         }
-        return new Dataset({ array: final });
+        return new Dataset(final);
     }
     get length() {
         return __classPrivateFieldGet(this, _Dataset_length, "f");
@@ -86,8 +89,11 @@ class DatasetSlice {
         __classPrivateFieldSet(this, _DatasetSlice_dataset, dataset, "f");
         __classPrivateFieldSet(this, _DatasetSlice_arrangement, arrangement, "f");
     }
+    onGet(element) {
+        return element;
+    }
     get(index) {
-        return __classPrivateFieldGet(this, _DatasetSlice_dataset, "f").get(__classPrivateFieldGet(this, _DatasetSlice_arrangement, "f")[index]);
+        return this.onGet(__classPrivateFieldGet(this, _DatasetSlice_dataset, "f").get(__classPrivateFieldGet(this, _DatasetSlice_arrangement, "f")[index]));
     }
     slice(...selection) {
         let final = [];
@@ -96,7 +102,7 @@ class DatasetSlice {
                 .flatten()
                 .slice(...selection)));
         }
-        return new Dataset({ array: final });
+        return new Dataset(final);
     }
     get length() {
         return __classPrivateFieldGet(this, _DatasetSlice_arrangement, "f").length;

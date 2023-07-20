@@ -293,7 +293,7 @@ let k = NArray.arange(32).reshape(2, 2, 4, 2);
 console.log(k.max());
 ```
 
-### daig()
+### diag()
 
 Returns diagonal matrix, it only works on 1 and 2-d NArrays.
 

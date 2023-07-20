@@ -6,12 +6,13 @@ import { StatErrorReturn, StatErrorInput } from "../errors";
 import { ActivationFunction, ActivationFunctionType } from "../functions";
 import { Optimizer, GradientDescent } from "../optimizers";
 import NArray from "../narray";
+import { Dataset, DatasetSlice } from "../dataset";
 
 let nLayer = 0;
 
 interface TrainInput {
-  x: Array<NArray>;
-  y: Array<NArray>;
+  x: Array<NArray> | Dataset | DatasetSlice;
+  y: Array<NArray> | Dataset | DatasetSlice;
   epochs: number;
   verbose?: boolean;
   alpha?: number;
@@ -113,28 +114,47 @@ export class NN {
     alpha = 0.001,
     verbose = false,
     loss = errors.RSS,
-    optimizer = new GradientDescent(),
+    optimizer = new GradientDescent({}),
   }: TrainInput) {
     this.#trained = true;
     optimizer.alpha = alpha;
     let losses = [],
       accuracies = [],
       l: Array<any>;
+    let tempX: NArray, tempY: NArray;
     for (let i = 0; i < epochs; i++) {
       ({ x, y } = optimizer.process(x, y));
       l = [];
       for (let j = 0; j < x.length; j++) {
-        if (!(x[j] instanceof NArray)) {
+        if (x instanceof Array) {
+          tempX = x[j];
+        }
+
+        if (y instanceof Array) {
+          tempY = y[j];
+        }
+
+        if (x instanceof Dataset || x instanceof DatasetSlice) {
+          tempX = x.get(j);
+        }
+
+        if (y instanceof Dataset || y instanceof DatasetSlice) {
+          tempY = y.get(j);
+        }
+
+        if (!(tempX instanceof NArray)) {
           throw Error(`Make sure x's elements both are of type NArray`);
         }
-        let out = this.forward(x[j]);
-        if (!(y[j] instanceof NArray)) {
+
+        if (!(tempY instanceof NArray)) {
           throw Error(`Make sure y's elements are of type NArray`);
         }
-        l.push(loss(y[j].flatten(), out.flatten()).result);
+
+        let out = this.forward(tempX);
+        l.push(loss(tempY.flatten(), out.flatten()).result);
         optimizer.optimize({
-          x: x[j],
-          y: y[j],
+          x: tempX,
+          y: tempY,
           layers: this.#layers,
         });
       }

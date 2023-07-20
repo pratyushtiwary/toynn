@@ -74,6 +74,9 @@ const utils = {
             i += 11;
         }
     },
+    /**
+     * Reference: https://stackoverflow.com/a/11935263
+     */
     shuffle: (arr) => {
         let shuffled, i, temp, index;
         if (arr instanceof dataset_1.Dataset || arr instanceof dataset_1.DatasetSlice) {
@@ -123,60 +126,54 @@ const utils = {
         }
         return shuffled;
     },
-    onehotEncode: ({ x, classes, }) => {
+    onehotEncode: (x, classes) => {
         let result = [];
-        if (typeof x === "number") {
-            for (let i = 0; i < classes; i++) {
-                if (i === x) {
-                    result.push(1);
-                }
-                else {
-                    result.push(0);
-                }
+        for (let i = 0; i < classes; i++) {
+            if (i === x) {
+                result.push(1);
             }
-        }
-        if (x instanceof Array) {
-            let temp = [];
-            for (let i = 0; i < x.length; i++) {
-                temp = [];
-                for (let j = 0; j < classes; j++) {
-                    if (j === x[i]) {
-                        temp.push(1);
-                    }
-                    else {
-                        temp.push(0);
-                    }
-                }
-                result.push(temp);
+            else {
+                result.push(0);
             }
         }
         return result;
     },
-    createBatch: ({ array, batchSize }) => {
+    createBatch: (array, batchSize) => {
         if (batchSize <= 0) {
             throw Error(`Invalid batchSize. Make sure batchSize > 0`);
         }
-        let batches = [], temp;
-        for (let i = 0; i < array.length; i += batchSize) {
-            temp = [];
-            for (let j = 0; j < batchSize; j++) {
-                if (i + j < array.length) {
-                    if (array instanceof dataset_1.Dataset || array instanceof dataset_1.DatasetSlice) {
-                        temp.push(array.get(i + j));
-                    }
-                    else if (array instanceof Array) {
-                        temp.push(array[i + j]);
-                    }
-                    else {
-                        throw Error(`Failed to fetch element from array. Make sure passed array is of type Array | Dataset | DatasetSlice`);
+        let batches = [], temp, n = Math.floor(array.length / batchSize), i, arrangement = [];
+        for (i = 0; i < n; i++) {
+            if (array instanceof Array) {
+                temp = array.slice(i * batchSize, (i + 1) * batchSize);
+            }
+            if (array instanceof dataset_1.Dataset || array instanceof dataset_1.DatasetSlice) {
+                arrangement = [];
+                for (let j = i * batchSize; j < (i + 1) * batchSize; j++) {
+                    arrangement.push(j);
+                }
+                temp = new dataset_1.DatasetSlice(array, arrangement);
+            }
+            batches.push(temp);
+        }
+        if (array.length % batchSize !== 0) {
+            if (array instanceof Array) {
+                temp = array.slice(i * batchSize, (i + 1) * batchSize);
+            }
+            if (array instanceof dataset_1.Dataset || array instanceof dataset_1.DatasetSlice) {
+                arrangement = [];
+                for (let j = i * batchSize; j < (i + 1) * batchSize; j++) {
+                    if (j < array.length) {
+                        arrangement.push(j);
                     }
                 }
+                temp = new dataset_1.DatasetSlice(array, arrangement);
             }
             batches.push(temp);
         }
         return batches;
     },
-    trainTestSplit: ({ X, y, testSize, shuffle = false, }) => {
+    trainTestSplit: (X, y, { testSize, shuffle = false }) => {
         if (X.length !== y.length) {
             throw Error(`Failed to split because X.length != y.length`);
         }

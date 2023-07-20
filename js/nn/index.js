@@ -23,6 +23,7 @@ const functions_1 = __importDefault(require("../functions"));
 const functions_2 = require("../functions");
 const optimizers_1 = require("../optimizers");
 const narray_1 = __importDefault(require("../narray"));
+const dataset_1 = require("../dataset");
 let nLayer = 0;
 class NN {
     constructor(name) {
@@ -94,25 +95,38 @@ class NN {
         });
         return recent;
     }
-    train({ x, y, epochs, alpha = 0.001, verbose = false, loss = errors_1.default.RSS, optimizer = new optimizers_1.GradientDescent(), }) {
+    train({ x, y, epochs, alpha = 0.001, verbose = false, loss = errors_1.default.RSS, optimizer = new optimizers_1.GradientDescent({}), }) {
         __classPrivateFieldSet(this, _NN_trained, true, "f");
         optimizer.alpha = alpha;
         let losses = [], accuracies = [], l;
+        let tempX, tempY;
         for (let i = 0; i < epochs; i++) {
             ({ x, y } = optimizer.process(x, y));
             l = [];
             for (let j = 0; j < x.length; j++) {
-                if (!(x[j] instanceof narray_1.default)) {
+                if (x instanceof Array) {
+                    tempX = x[j];
+                }
+                if (y instanceof Array) {
+                    tempY = y[j];
+                }
+                if (x instanceof dataset_1.Dataset || x instanceof dataset_1.DatasetSlice) {
+                    tempX = x.get(j);
+                }
+                if (y instanceof dataset_1.Dataset || y instanceof dataset_1.DatasetSlice) {
+                    tempY = y.get(j);
+                }
+                if (!(tempX instanceof narray_1.default)) {
                     throw Error(`Make sure x's elements both are of type NArray`);
                 }
-                let out = this.forward(x[j]);
-                if (!(y[j] instanceof narray_1.default)) {
+                if (!(tempY instanceof narray_1.default)) {
                     throw Error(`Make sure y's elements are of type NArray`);
                 }
-                l.push(loss(y[j].flatten(), out.flatten()).result);
+                let out = this.forward(tempX);
+                l.push(loss(tempY.flatten(), out.flatten()).result);
                 optimizer.optimize({
-                    x: x[j],
-                    y: y[j],
+                    x: tempX,
+                    y: tempY,
                     layers: __classPrivateFieldGet(this, _NN_layers, "f"),
                 });
             }
@@ -179,12 +193,15 @@ class NN {
                 if (!tempActivationFunction) {
                     throw Error(`Failed to load activation function ${tempLayer.activationFunction} for layer ${i + 1}`);
                 }
-                activationFuntionParams =
-                    "[" +
-                        tempLayer.activationFunction.replace(/([\w\W]*)+\(+([\w\W]*)+\)/gi, "$2") +
-                        "]";
-                activationFuntionParams = JSON.parse(activationFuntionParams.replace(/\'/g, '"'));
-                if (activationFuntionParams.length > 0) {
+                if (tempLayer.activationFunction.match(/([\w\W]*)+\(+([\w\W]*)+\)/gi)) {
+                    activationFuntionParams =
+                        "[" +
+                            tempLayer.activationFunction.replace(/([\w\W]*)+\(+([\w\W]*)+\)/gi, "$2") +
+                            "]";
+                    activationFuntionParams = JSON.parse(activationFuntionParams.replace(/\'/g, '"'));
+                    tempActivationFunctionName =
+                        tempActivationFunctionName[0].toUpperCase() +
+                            tempActivationFunctionName.slice(1);
                     tempActivationFunction = new functions_1.default[tempActivationFunctionName](...activationFuntionParams);
                     __classPrivateFieldGet(this, _NN_layers, "f")[i].activationFunction = tempActivationFunction;
                 }

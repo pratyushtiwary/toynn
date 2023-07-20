@@ -5,8 +5,7 @@
     "target": "es6",
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "js",
-    "skipLibCheck": true,
+    "outDir": "js"
   },
   "lib": ["es2015"]
 }
