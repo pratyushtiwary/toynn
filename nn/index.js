@@ -117,7 +117,7 @@ class NN {
                     tempY = y.get(j);
                 }
                 if (!(tempX instanceof narray_1.default)) {
-                    throw Error(`Make sure x's elements both are of type NArray`);
+                    throw Error(`Make sure x's elements are of type NArray`);
                 }
                 if (!(tempY instanceof narray_1.default)) {
                     throw Error(`Make sure y's elements are of type NArray`);

@@ -7,6 +7,7 @@ import { ActivationFunction, ActivationFunctionType } from "../functions";
 import { Optimizer, GradientDescent } from "../optimizers";
 import NArray from "../narray";
 import { Dataset, DatasetSlice } from "../dataset";
+import { deflate } from "zlib";
 
 let nLayer = 0;
 
@@ -143,7 +144,7 @@ export class NN {
         }
 
         if (!(tempX instanceof NArray)) {
-          throw Error(`Make sure x's elements both are of type NArray`);
+          throw Error(`Make sure x's elements are of type NArray`);
         }
 
         if (!(tempY instanceof NArray)) {

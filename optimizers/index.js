@@ -1,19 +1,7 @@
 "use strict";
-var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
-    if (kind === "m") throw new TypeError("Private method is not writable");
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot write private member to an object whose class did not declare it");
-    return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
-};
-var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (receiver, state, kind, f) {
-    if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a getter");
-    if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
-    return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _GradientDescent_firstRun, _GradientDescent_momentum, _GradientDescent_weightsHistory, _GradientDescent_biasHistory;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StochasticGradientDescent = exports.GradientDescent = exports.Optimizer = void 0;
 const dataset_1 = require("../dataset");
@@ -51,14 +39,13 @@ class GradientDescent extends Optimizer {
          *  - https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
          *  - https://stackoverflow.com/a/13342725
          */
-        _GradientDescent_firstRun.set(this, true);
-        _GradientDescent_momentum.set(this, void 0);
-        _GradientDescent_weightsHistory.set(this, []);
-        _GradientDescent_biasHistory.set(this, []);
+        this.firstRun = true;
+        this.weightsHistory = [];
+        this.biasHistory = [];
         if (momentum > 1 || momentum < 0) {
             throw Error(`Value for momentum should be between 0 and 1.`);
         }
-        __classPrivateFieldSet(this, _GradientDescent_momentum, momentum, "f");
+        this.momentum = momentum;
     }
     _optimize({ x, y, layers }) {
         let layersOp = [], // keeps track of each layer's output
@@ -82,12 +69,12 @@ class GradientDescent extends Optimizer {
             weightGradients[i] = weightErrors[i].T.mul(layers[i].activationFunction.calcGradient(layersOp[i]));
             biasGradients[i] = layers[i].activationFunction.calcGradient(layersOp[i]);
         }
-        if (__classPrivateFieldGet(this, _GradientDescent_firstRun, "f")) {
+        if (this.weightsHistory.length === 0 && this.biasHistory.length === 0) {
             for (let i = 0; i < layers.length; i++) {
-                __classPrivateFieldGet(this, _GradientDescent_weightsHistory, "f").push(narray_1.default.zeroes(...layers[i].shape));
-                __classPrivateFieldGet(this, _GradientDescent_biasHistory, "f").push(narray_1.default.zeroes(1, layers[i].shape[1]));
+                this.weightsHistory.push(narray_1.default.zeroes(...layers[i].shape));
+                this.biasHistory.push(narray_1.default.zeroes(1, layers[i].shape[1]));
             }
-            __classPrivateFieldSet(this, _GradientDescent_firstRun, false, "f");
+            this.firstRun = false;
         }
         for (let i = 0; i < layers.length; i++) {
             if (i === 0) {
@@ -98,16 +85,16 @@ class GradientDescent extends Optimizer {
             }
             if (weightGradients[i] instanceof narray_1.default) {
                 // momentum logic for weights
-                __classPrivateFieldGet(this, _GradientDescent_weightsHistory, "f")[i] = __classPrivateFieldGet(this, _GradientDescent_weightsHistory, "f")[i]
-                    .mul(__classPrivateFieldGet(this, _GradientDescent_momentum, "f"))
-                    .add(weightGradients[i].mul(1 - __classPrivateFieldGet(this, _GradientDescent_momentum, "f")));
-                adjustedWeights[i] = layers[i].weights.sub(__classPrivateFieldGet(this, _GradientDescent_weightsHistory, "f")[i].mul(this.alpha));
+                this.weightsHistory[i] = this.weightsHistory[i]
+                    .mul(this.momentum)
+                    .sub(weightGradients[i].mul(this.alpha));
+                adjustedWeights[i] = layers[i].weights.add(this.weightsHistory[i]);
             }
             // momentum logic for bias
-            __classPrivateFieldGet(this, _GradientDescent_biasHistory, "f")[i] = __classPrivateFieldGet(this, _GradientDescent_biasHistory, "f")[i]
-                .mul(__classPrivateFieldGet(this, _GradientDescent_momentum, "f"))
-                .add(biasGradients[i].mul(1 - __classPrivateFieldGet(this, _GradientDescent_momentum, "f")));
-            adjustedBiases[i] = layers[i].bias.sub(__classPrivateFieldGet(this, _GradientDescent_biasHistory, "f")[i].mul(this.alpha));
+            this.biasHistory[i] = this.biasHistory[i]
+                .mul(this.momentum)
+                .sub(biasGradients[i].mul(this.alpha));
+            adjustedBiases[i] = layers[i].bias.add(this.biasHistory[i]);
         }
         return {
             weightGradients,
@@ -144,7 +131,6 @@ class GradientDescent extends Optimizer {
     }
 }
 exports.GradientDescent = GradientDescent;
-_GradientDescent_firstRun = new WeakMap(), _GradientDescent_momentum = new WeakMap(), _GradientDescent_weightsHistory = new WeakMap(), _GradientDescent_biasHistory = new WeakMap();
 class StochasticGradientDescent extends GradientDescent {
     process(x, y) {
         if (x.length !== y.length) {
@@ -165,7 +151,7 @@ class StochasticGradientDescent extends GradientDescent {
         if (x instanceof Array) {
             shuffledX = [];
             for (let i = 0; i < xLen; i++) {
-                shuffledX[i] = arrangement[i];
+                shuffledX[i] = x[arrangement[i]];
             }
         }
         if (y instanceof dataset_1.Dataset || y instanceof dataset_1.DatasetSlice) {
@@ -174,7 +160,7 @@ class StochasticGradientDescent extends GradientDescent {
         if (y instanceof Array) {
             shuffledY = [];
             for (let i = 0; i < xLen; i++) {
-                shuffledY[i] = arrangement[i];
+                shuffledY[i] = y[arrangement[i]];
             }
         }
         return { x: shuffledX, y: shuffledY };

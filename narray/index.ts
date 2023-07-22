@@ -2,7 +2,7 @@ import utils from "../utils";
 
 globalThis.NArray_printThreshold = 5;
 
-class NArray {
+export class NArray {
   #arr: Array<any> = [];
   #computedShape: undefined | Array<number> = undefined;
   #length: undefined | number = undefined;

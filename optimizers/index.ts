@@ -28,21 +28,21 @@ export interface GradientDescentInput {
 export class Optimizer {
   alpha: number = undefined;
 
-  process(
+  public process(
     x: Array<any> | Dataset | DatasetSlice,
     y: Array<any> | Dataset | DatasetSlice
   ): OptimizerProcessReturn {
     return { x, y };
   }
 
-  optimize({ x, y, layers }: OptimizerInput): void {
+  public optimize({ x, y, layers }: OptimizerInput): void {
     throw Error(`Method not implemented!
     
     How can you fix this?
     Try overloading the optimize method.`);
   }
 
-  get steps(): Array<String> {
+  public get steps(): Array<String> {
     throw Error(`Steps not implemented.
     
     How to fix this?
@@ -60,17 +60,17 @@ export class GradientDescent extends Optimizer {
    *  - https://stackoverflow.com/a/13342725
    */
 
-  #firstRun: boolean = true;
-  #momentum: number;
-  #weightsHistory: Array<NArray> = [];
-  #biasHistory: Array<NArray> = [];
+  protected firstRun: boolean = true;
+  protected momentum: number;
+  protected weightsHistory: Array<NArray> = [];
+  protected biasHistory: Array<NArray> = [];
 
   constructor({ momentum = 0.9 }: GradientDescentInput) {
     super();
     if (momentum > 1 || momentum < 0) {
       throw Error(`Value for momentum should be between 0 and 1.`);
     }
-    this.#momentum = momentum;
+    this.momentum = momentum;
   }
 
   _optimize({ x, y, layers }: OptimizerInput): OptimizerOutput {
@@ -106,12 +106,12 @@ export class GradientDescent extends Optimizer {
       biasGradients[i] = layers[i].activationFunction.calcGradient(layersOp[i]);
     }
 
-    if (this.#firstRun) {
+    if (this.weightsHistory.length === 0 && this.biasHistory.length === 0) {
       for (let i = 0; i < layers.length; i++) {
-        this.#weightsHistory.push(NArray.zeroes(...layers[i].shape));
-        this.#biasHistory.push(NArray.zeroes(1, layers[i].shape[1]));
+        this.weightsHistory.push(NArray.zeroes(...layers[i].shape));
+        this.biasHistory.push(NArray.zeroes(1, layers[i].shape[1]));
       }
-      this.#firstRun = false;
+      this.firstRun = false;
     }
     for (let i = 0; i < layers.length; i++) {
       if (i === 0) {
@@ -122,23 +122,19 @@ export class GradientDescent extends Optimizer {
 
       if (weightGradients[i] instanceof NArray) {
         // momentum logic for weights
-        this.#weightsHistory[i] = this.#weightsHistory[i]
-          .mul(this.#momentum)
-          .add(weightGradients[i].mul(1 - this.#momentum));
+        this.weightsHistory[i] = this.weightsHistory[i]
+          .mul(this.momentum)
+          .sub(weightGradients[i].mul(this.alpha));
 
-        adjustedWeights[i] = layers[i].weights.sub(
-          this.#weightsHistory[i].mul(this.alpha)
-        );
+        adjustedWeights[i] = layers[i].weights.add(this.weightsHistory[i]);
       }
 
       // momentum logic for bias
-      this.#biasHistory[i] = this.#biasHistory[i]
-        .mul(this.#momentum)
-        .add(biasGradients[i].mul(1 - this.#momentum));
+      this.biasHistory[i] = this.biasHistory[i]
+        .mul(this.momentum)
+        .sub(biasGradients[i].mul(this.alpha));
 
-      adjustedBiases[i] = layers[i].bias.sub(
-        this.#biasHistory[i].mul(this.alpha)
-      );
+      adjustedBiases[i] = layers[i].bias.add(this.biasHistory[i]);
     }
 
     return {
@@ -163,7 +159,7 @@ export class GradientDescent extends Optimizer {
     }
   }
 
-  get steps() {
+  public get steps() {
     return [
       "Find the error, using y^ - y",
       "Start from last layer's weights dot product by the transpose of the error, this will provide error for second last layer",
@@ -209,7 +205,7 @@ export class StochasticGradientDescent extends GradientDescent {
     if (x instanceof Array) {
       shuffledX = [];
       for (let i = 0; i < xLen; i++) {
-        shuffledX[i] = arrangement[i];
+        shuffledX[i] = x[arrangement[i]];
       }
     }
 
@@ -220,14 +216,14 @@ export class StochasticGradientDescent extends GradientDescent {
     if (y instanceof Array) {
       shuffledY = [];
       for (let i = 0; i < xLen; i++) {
-        shuffledY[i] = arrangement[i];
+        shuffledY[i] = y[arrangement[i]];
       }
     }
 
     return { x: shuffledX, y: shuffledY };
   }
 
-  get steps() {
+  public get steps() {
     return [
       "Shuffle x and y passed before each epochs, then for each epoch follow the below steps",
       ...super.steps,
