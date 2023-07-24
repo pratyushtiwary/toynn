@@ -223,6 +223,16 @@ export class NArray {
   }
 
   map(func: Function): NArray {
+    // let f = [],
+    //   j: number;
+    // for (let i = 0; i <= this.length / 2; i++) {
+    //   f[i] = func(this.#arr[i], i);
+
+    //   if (i > 0 && i < this.length) {
+    //     j = this.length - i;
+    //     f[j] = func(this.#arr[j], j);
+    //   }
+    // }
     let f = this.#arr.map((e, i) => func(e, i));
     return new NArray(f).reshape(...this.shape);
   }
@@ -354,7 +364,15 @@ export class NArray {
     let final: Array<any> | NArray = [],
       r: Array<any>;
     if (typeof y === "number") {
-      final = this.map((e) => e + y);
+      let temp: number = y;
+      final = this.map((e) => e + temp);
+    } else if (y.length === 1) {
+      let temp: number = y.flatten()[0];
+      final = this.map((e) => e + temp);
+    } else if (this.length === 1) {
+      let temp: number = this.#arr[0];
+      final = y.map((e) => temp + e);
+      return final.reshape(...y.shape);
     } else {
       if (!(y instanceof NArray)) {
         throw Error(`Failed to add because the passed object is not NArray
@@ -364,9 +382,16 @@ export class NArray {
         `);
       }
 
+      if (this.length !== y.length) {
+        throw Error(`Shape mismatch, failed to add.
+        
+        How to fix this?
+        Make sure y.shape = ${this.shape}`);
+      }
+
       r = y.flatten();
 
-      final = this.map((e, i) => e + r[i % y.length]);
+      final = this.map((e, i: number) => e + r[i]);
     }
 
     final.reshape(...this.#computedShape);
@@ -378,7 +403,15 @@ export class NArray {
     let final: Array<any> | NArray = [],
       r: Array<any>;
     if (typeof y === "number") {
-      final = this.map((e) => e - y);
+      let temp: number = y;
+      final = this.map((e: number) => e - temp);
+    } else if (y.length === 1) {
+      let temp: number = y.flatten()[0];
+      final = this.map((e) => e - temp);
+    } else if (this.length === 1) {
+      let temp: number = this.#arr[0];
+      final = y.map((e) => temp - e);
+      return final.reshape(...y.shape);
     } else {
       if (!(y instanceof NArray)) {
         throw Error(
@@ -389,9 +422,16 @@ export class NArray {
         );
       }
 
+      if (this.length !== y.length) {
+        throw Error(`Shape mismatch, failed to subtract.
+        
+        How to fix this?
+        Make sure y.shape = ${this.shape}`);
+      }
+
       r = y.flatten();
 
-      final = this.map((e, i) => e - r[i % y.length]);
+      final = this.map((e, i: number) => e - r[i]);
     }
 
     final.reshape(...this.#computedShape);
@@ -404,6 +444,13 @@ export class NArray {
       r: Array<any>;
     if (typeof y === "number") {
       return this.map((e) => e / y);
+    } else if (y.length === 1) {
+      let temp: number = y.flatten()[0];
+      final = this.map((e) => e / temp);
+    } else if (this.length === 1) {
+      let temp: number = this.#arr[0];
+      final = y.map((e) => temp / e);
+      return final.reshape(...y.shape);
     } else {
       if (!(y instanceof NArray)) {
         throw Error(`Failed to divide because the passed object is not NArray
@@ -412,9 +459,16 @@ export class NArray {
         Try converting the passed object to NArray.`);
       }
 
+      if (this.length !== y.length) {
+        throw Error(`Shape mismatch, failed to divide.
+        
+        How to fix this?
+        Make sure y.shape = ${this.shape}`);
+      }
+
       r = y.flatten();
 
-      final = this.map((e, i) => e / r[i % y.length]);
+      final = this.map((e, i: number) => e / r[i]);
     }
 
     final = new NArray(final);
@@ -456,9 +510,16 @@ export class NArray {
           this.ndim - 1
         } dimension is equals to ${this.shape[this.shape.length - 1]}`);
       }
+
+      if (this.length !== y.length) {
+        throw Error(`Shape mismatch, failed to multiply.
+        
+        How to fix this?
+        Make sure y.shape = ${this.shape}`);
+      }
       r = y.flatten();
 
-      final = this.map((e, i) => e * r[i % y.length]);
+      final = this.map((e, i: number) => e * r[i]);
     }
 
     final = new NArray(final);
@@ -473,17 +534,30 @@ export class NArray {
       r: Array<any>;
     if (typeof y === "number") {
       final = this.map((e: number) => Math.pow(e, y));
+    } else if (y.length === 1) {
+      let temp: number = y.flatten()[0];
+      final = this.map((e) => Math.pow(e, temp));
+    } else if (this.length === 1) {
+      let temp: number = this.#arr[0];
+      final = y.map((e) => Math.pow(temp, e));
+      return final.reshape(...y.shape);
     } else {
       if (!(y instanceof NArray)) {
-        throw Error(`Failed to pow because the passed object is not NArray
+        throw Error(`Failed to X^Y because the passed object is not NArray
         
         How to fix this?
         Try converting the passed object to NArray.`);
       }
 
+      if (this.length !== y.length) {
+        throw Error(`Shape mismatch, failed to X^Y.
+        
+        How to fix this?
+        Make sure y.shape = ${this.shape}`);
+      }
       r = y.flatten();
 
-      final = this.map((e: number, i: number) => Math.pow(e, r[i % y.length]));
+      final = this.map((e, i: number) => Math.pow(e, r[i]));
     }
 
     final = new NArray(final);

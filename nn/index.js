@@ -169,24 +169,41 @@ class NN {
         }
         return explanation;
     }
-    save(savePath = "./") {
+    save(savePath = "./", force = false) {
         const finalPath = path_1.default.join(savePath, this.name + ".json");
-        const contents = __classPrivateFieldGet(this, _NN_layers, "f").map((e) => ({
-            weights: e.weights.real,
-            bias: e.bias.real,
-            activationFunction: e.activationFunction.toString(),
-            shape: e.shape,
-        }));
+        const contents = {
+            weights: [],
+            biases: [],
+            activationFunctions: [],
+            shape: [],
+        };
+        __classPrivateFieldGet(this, _NN_layers, "f").forEach((e, i) => {
+            contents["weights"][i] = e.weights.flatten();
+            contents["biases"][i] = e.bias.flatten();
+            contents["activationFunctions"][i] = e.activationFunction.toString();
+            contents["shape"][i] = e.shape;
+        });
+        if (fs_1.default.existsSync(finalPath) && !force) {
+            throw Error(`File already exists at path ${finalPath}.
+      
+      How to fix this?
+      Try renaming the file at path ${finalPath}.`);
+        }
         fs_1.default.writeFileSync(finalPath, JSON.stringify(contents, null, 4), "utf-8");
     }
     load(filePath) {
         try {
             let data = JSON.parse(fs_1.default.readFileSync(filePath, "utf-8")), tempLayer, tempActivationFunction, tempActivationFunctionName, activationFuntionParams;
-            for (let i = 0; i < data.length; i++) {
-                tempLayer = data[i];
+            for (let i = 0; i < data.weights.length; i++) {
+                tempLayer = {
+                    weights: data.weights[i],
+                    bias: data.biases[i],
+                    shape: data.shape[i],
+                    activationFunction: data.activationFunctions[i],
+                };
                 __classPrivateFieldGet(this, _NN_layers, "f")[i] = new Layer(tempLayer.shape[0], tempLayer.shape[1]);
-                __classPrivateFieldGet(this, _NN_layers, "f")[i].weights = new narray_1.default(tempLayer.weights);
-                __classPrivateFieldGet(this, _NN_layers, "f")[i].bias = new narray_1.default(tempLayer.bias);
+                __classPrivateFieldGet(this, _NN_layers, "f")[i].weights = new narray_1.default(tempLayer.weights).reshape(tempLayer.shape[0], tempLayer.shape[1]);
+                __classPrivateFieldGet(this, _NN_layers, "f")[i].bias = new narray_1.default(tempLayer.bias).reshape(1, tempLayer.shape[1]);
                 tempActivationFunctionName = tempLayer.activationFunction.replace(/([\w\W]*)+\(+([\w\W]*)+\)/gi, "$1");
                 // check if activation function exists
                 tempActivationFunction = functions_1.default[tempActivationFunctionName];

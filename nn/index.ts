@@ -21,9 +21,16 @@ interface TrainInput {
   loss?: (yTrue: StatErrorInput, yPred: StatErrorInput) => StatErrorReturn;
 }
 
+interface ModelFile {
+  weights: Array<Array<number>>;
+  biases: Array<Array<number>>;
+  shape: Array<Array<number>>;
+  activationFunctions: string[];
+}
+
 interface ModelFileLayer {
-  weights: Array<any>;
-  bias: Array<any>;
+  weights: Array<number>;
+  bias: Array<number>;
   shape: Array<number>;
   activationFunction: string;
 }
@@ -208,35 +215,57 @@ export class NN {
     return explanation;
   }
 
-  save(savePath: string = "./") {
+  save(savePath: string = "./", force = false) {
     const finalPath = path.join(savePath, this.name + ".json");
+    const contents = {
+      weights: [],
+      biases: [],
+      activationFunctions: [],
+      shape: [],
+    };
 
-    const contents = this.#layers.map((e) => ({
-      weights: e.weights.real,
-      bias: e.bias.real,
-      activationFunction: e.activationFunction.toString(),
-      shape: e.shape,
-    }));
+    this.#layers.forEach((e, i) => {
+      contents["weights"][i] = e.weights.flatten();
+      contents["biases"][i] = e.bias.flatten();
+      contents["activationFunctions"][i] = e.activationFunction.toString();
+      contents["shape"][i] = e.shape;
+    });
+
+    if (fs.existsSync(finalPath) && !force) {
+      throw Error(`File already exists at path ${finalPath}.
+      
+      How to fix this?
+      Try renaming the file at path ${finalPath}.`);
+    }
 
     fs.writeFileSync(finalPath, JSON.stringify(contents, null, 4), "utf-8");
   }
 
   load(filePath: string) {
     try {
-      let data: Array<ModelFileLayer> = JSON.parse(
-          fs.readFileSync(filePath, "utf-8")
-        ),
+      let data: ModelFile = JSON.parse(fs.readFileSync(filePath, "utf-8")),
         tempLayer: ModelFileLayer,
         tempActivationFunction: ActivationFunction,
         tempActivationFunctionName: string,
         activationFuntionParams: string | Array<any>;
 
-      for (let i = 0; i < data.length; i++) {
-        tempLayer = data[i];
+      for (let i = 0; i < data.weights.length; i++) {
+        tempLayer = {
+          weights: data.weights[i],
+          bias: data.biases[i],
+          shape: data.shape[i],
+          activationFunction: data.activationFunctions[i],
+        };
         this.#layers[i] = new Layer(tempLayer.shape[0], tempLayer.shape[1]);
 
-        this.#layers[i].weights = new NArray(tempLayer.weights);
-        this.#layers[i].bias = new NArray(tempLayer.bias);
+        this.#layers[i].weights = new NArray(tempLayer.weights).reshape(
+          tempLayer.shape[0],
+          tempLayer.shape[1]
+        );
+        this.#layers[i].bias = new NArray(tempLayer.bias).reshape(
+          1,
+          tempLayer.shape[1]
+        );
 
         tempActivationFunctionName = tempLayer.activationFunction.replace(
           /([\w\W]*)+\(+([\w\W]*)+\)/gi,
