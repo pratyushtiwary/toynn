@@ -163,13 +163,17 @@ export class GradientDescent extends Optimizer {
     return [
       "Find the error, using y^ - y",
       "Start from last layer's weights dot product by the transpose of the error, this will provide error for second last layer",
-      "Perform the above step iteratively for each layer, replace last layer by n layer and second last layer by n - 1 layer",
-      "Now that we have each layer's error, iteratively multiply the error's transpose with gradient of that layer's output",
-      "Now once we have the gradient, multiply the gradient with the x's transpose provided by you for the 1st layer",
+      "Perform the above step iteratively for each layer",
+      "Now that we have each layer's error, iteratively multiply the error's transpose with gradient of that layer's output, this will provide us with layer's gradient",
+      "Now once we have the layer's gradient, multiply the gradient with the x's transpose provided by you for the 1st layer",
       "For 2nd layer till n layer multiply previous layer output's transpose by that layer's gradient",
-      "Now again iterate through layers and subtract the previous step's output by the weights of the respective layer after multiplying by alpha",
+      "For the first time set weights and bias history to 0",
+      "For each layer calculate the weigths history by multiplying the history with momentum and subtract layer's gradient * alpha",
+      "Update the histroy for weights with the output from previous step",
+      "Now again iterate through layers and add the weights histroy to that layer's weight",
       "For bias, simply find the gradient of each layer's output",
-      "Then subtract that result from that layer's bias after multiplying by alpha",
+      "Calculate histroy using the same method for bias",
+      "Then add the histroy to that layer's bias",
       "Note: You can get gradient for activation functions by using `activationFunction.gradient`",
     ];
   }

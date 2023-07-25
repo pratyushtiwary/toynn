@@ -1,12 +1,8 @@
 import fs from "fs";
 import { URL } from "url";
 import readline from "readline";
-import os from "os";
 import NArray from "../narray";
-import path from "path";
-import { randomUUID } from "crypto";
-
-const DAYS = 86400000;
+import cache from "../utils/cache";
 
 export interface DatasetOptions {
   delimiter?: string;
@@ -26,7 +22,7 @@ export class Dataset {
   }
 
   get(index: number): NArray {
-    let data = this.#data[index];
+    let data = this.#data.at(index);
     return this.onGet(new NArray(data));
   }
 
@@ -97,55 +93,18 @@ export class Dataset {
       isURL = false;
     }
     if (isURL) {
-      // check if the protocol is supported
-      const supportedProtocols = ["http", "https"];
+      // check if contents are cached
+      let temp = cache.load(loc);
+      if (temp) {
+        loc = temp;
+        isURL = false;
+      } else {
+        // check if the protocol is supported
+        const supportedProtocols = ["http", "https"];
 
-      const urlProtocol = url.protocol.slice(0, -1);
+        const urlProtocol = url.protocol.slice(0, -1);
 
-      if (supportedProtocols.includes(urlProtocol)) {
-        // create cache registry
-        let cachePath = path.join(os.tmpdir(), "toynn-cache");
-        let registryPath = path.join(cachePath, "registry.json");
-        let registry = {};
-        let filename = randomUUID().split("-").join("");
-        let cachedFile = undefined;
-        filename += "." + loc.split(".").at(-1);
-
-        if (!fs.existsSync(cachePath)) {
-          fs.mkdirSync(cachePath);
-        }
-
-        // sync registry
-        try {
-          if (fs.existsSync(registryPath)) {
-            registry = JSON.parse(fs.readFileSync(registryPath, "utf-8"));
-          } else {
-            fs.writeFileSync(registryPath, JSON.stringify(registry), "utf-8");
-          }
-        } catch (err) {
-          fs.rmSync(registryPath);
-        }
-
-        // check if file is cached
-        if (registry[loc]) {
-          cachedFile = registry[loc];
-        }
-
-        if (cachedFile) {
-          let cachedAt = new Date(cachedFile.cachedAt).getTime();
-
-          if (cachedAt + DAYS * 7 > Date.now()) {
-            loc = path.join(cachePath, cachedFile.name);
-            isURL = false;
-          } else {
-            // expire cache
-            delete registry[loc];
-            fs.rmSync(path.join(cachePath, cachedFile.name));
-
-            cachedFile = undefined;
-          }
-        }
-        if (!cachedFile) {
+        if (supportedProtocols.includes(urlProtocol)) {
           data = await fetch(loc);
 
           if (!data.ok) {
@@ -154,26 +113,16 @@ export class Dataset {
 
           data = await data.text();
 
+          // cache contents
+          cache.save(loc, data);
+
           final = data
             .split(/[\r\n]/)
             .filter((e) => e)
             .map(parseLine);
-
-          // cache file
-          let contents = {
-            name: filename,
-            cachedAt: new Date().toISOString(),
-          };
-
-          fs.writeFileSync(path.join(cachePath, filename), data, "utf-8");
-
-          registry[loc] = contents;
-
-          // save registry
-          fs.writeFileSync(registryPath, JSON.stringify(registry), "utf-8");
+        } else {
+          isURL = false;
         }
-      } else {
-        isURL = false;
       }
     }
     if (!isURL) {
@@ -186,10 +135,9 @@ export class Dataset {
       const file = readline.createInterface({
         input: fileStream,
       });
-      let lineNo = 1;
+      let lineNo = 0;
       for await (const line of file) {
-        if (lineNo <= options.headerCol) {
-          lineNo++;
+        if (++lineNo <= options.headerCol) {
           continue;
         }
         final.push(parseLine(line));
@@ -197,17 +145,6 @@ export class Dataset {
     }
 
     return new Dataset(final);
-  }
-
-  static flush() {
-    let cachePath = path.join(os.tmpdir(), "toynn-cache");
-
-    if (fs.existsSync(cachePath)) {
-      fs.rmSync(cachePath, {
-        recursive: true,
-        force: true,
-      });
-    }
   }
 }
 

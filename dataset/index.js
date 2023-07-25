@@ -35,11 +35,8 @@ exports.DatasetSlice = exports.Dataset = void 0;
 const fs_1 = __importDefault(require("fs"));
 const url_1 = require("url");
 const readline_1 = __importDefault(require("readline"));
-const os_1 = __importDefault(require("os"));
 const narray_1 = __importDefault(require("../narray"));
-const path_1 = __importDefault(require("path"));
-const crypto_1 = require("crypto");
-const DAYS = 86400000;
+const cache_1 = __importDefault(require("../utils/cache"));
 class Dataset {
     constructor(array) {
         _Dataset_length.set(this, void 0);
@@ -51,7 +48,7 @@ class Dataset {
         return element;
     }
     get(index) {
-        let data = __classPrivateFieldGet(this, _Dataset_data, "f")[index];
+        let data = __classPrivateFieldGet(this, _Dataset_data, "f").at(index);
         return this.onGet(new narray_1.default(data));
     }
     slice(...selection) {
@@ -106,72 +103,32 @@ class Dataset {
                 isURL = false;
             }
             if (isURL) {
-                // check if the protocol is supported
-                const supportedProtocols = ["http", "https"];
-                const urlProtocol = url.protocol.slice(0, -1);
-                if (supportedProtocols.includes(urlProtocol)) {
-                    // create cache registry
-                    let cachePath = path_1.default.join(os_1.default.tmpdir(), "toynn-cache");
-                    let registryPath = path_1.default.join(cachePath, "registry.json");
-                    let registry = {};
-                    let filename = (0, crypto_1.randomUUID)().split("-").join("");
-                    let cachedFile = undefined;
-                    filename += "." + loc.split(".").at(-1);
-                    if (!fs_1.default.existsSync(cachePath)) {
-                        fs_1.default.mkdirSync(cachePath);
-                    }
-                    // sync registry
-                    try {
-                        if (fs_1.default.existsSync(registryPath)) {
-                            registry = JSON.parse(fs_1.default.readFileSync(registryPath, "utf-8"));
-                        }
-                        else {
-                            fs_1.default.writeFileSync(registryPath, JSON.stringify(registry), "utf-8");
-                        }
-                    }
-                    catch (err) {
-                        fs_1.default.rmSync(registryPath);
-                    }
-                    // check if file is cached
-                    if (registry[loc]) {
-                        cachedFile = registry[loc];
-                    }
-                    if (cachedFile) {
-                        let cachedAt = new Date(cachedFile.cachedAt).getTime();
-                        if (cachedAt + DAYS * 7 > Date.now()) {
-                            loc = path_1.default.join(cachePath, cachedFile.name);
-                            isURL = false;
-                        }
-                        else {
-                            // expire cache
-                            delete registry[loc];
-                            fs_1.default.rmSync(path_1.default.join(cachePath, cachedFile.name));
-                            cachedFile = undefined;
-                        }
-                    }
-                    if (!cachedFile) {
+                // check if contents are cached
+                let temp = cache_1.default.load(loc);
+                if (temp) {
+                    loc = temp;
+                    isURL = false;
+                }
+                else {
+                    // check if the protocol is supported
+                    const supportedProtocols = ["http", "https"];
+                    const urlProtocol = url.protocol.slice(0, -1);
+                    if (supportedProtocols.includes(urlProtocol)) {
                         data = yield fetch(loc);
                         if (!data.ok) {
                             throw Error(`HTTP Request Failed: ${data.status}`);
                         }
                         data = yield data.text();
+                        // cache contents
+                        cache_1.default.save(loc, data);
                         final = data
                             .split(/[\r\n]/)
                             .filter((e) => e)
                             .map(parseLine);
-                        // cache file
-                        let contents = {
-                            name: filename,
-                            cachedAt: new Date().toISOString(),
-                        };
-                        fs_1.default.writeFileSync(path_1.default.join(cachePath, filename), data, "utf-8");
-                        registry[loc] = contents;
-                        // save registry
-                        fs_1.default.writeFileSync(registryPath, JSON.stringify(registry), "utf-8");
                     }
-                }
-                else {
-                    isURL = false;
+                    else {
+                        isURL = false;
+                    }
                 }
             }
             if (!isURL) {
@@ -183,14 +140,13 @@ class Dataset {
                 const file = readline_1.default.createInterface({
                     input: fileStream,
                 });
-                let lineNo = 1;
+                let lineNo = 0;
                 try {
                     for (var _d = true, file_1 = __asyncValues(file), file_1_1; file_1_1 = yield file_1.next(), _a = file_1_1.done, !_a; _d = true) {
                         _c = file_1_1.value;
                         _d = false;
                         const line = _c;
-                        if (lineNo <= options.headerCol) {
-                            lineNo++;
+                        if (++lineNo <= options.headerCol) {
                             continue;
                         }
                         final.push(parseLine(line));
@@ -206,15 +162,6 @@ class Dataset {
             }
             return new Dataset(final);
         });
-    }
-    static flush() {
-        let cachePath = path_1.default.join(os_1.default.tmpdir(), "toynn-cache");
-        if (fs_1.default.existsSync(cachePath)) {
-            fs_1.default.rmSync(cachePath, {
-                recursive: true,
-                force: true,
-            });
-        }
     }
 }
 exports.Dataset = Dataset;

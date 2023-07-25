@@ -193,7 +193,7 @@ export class NN {
 
     explanation += `No. of layers: ${this.#layers.length}\n`;
 
-    explanation += `Each layers uses the formula: x*weigths + bias\n`;
+    explanation += `Each layers uses the formula: activationFunction(x*weigths + bias)\n`;
 
     this.#layers.forEach((e, i) => {
       if (i === 0) {
@@ -203,6 +203,8 @@ export class NN {
         recent = e.forward(recent);
         explanation += `Layer ${i + 1} output: ${recent.toString()}\n`;
       }
+      explanation += `Activation Function Formula: ${e.activationFunction.formula}\n`;
+      explanation += `Activation Function Gradient Formula: ${e.activationFunction.gradient}\n\n`;
     });
 
     if (this.#trained) {
