@@ -13,7 +13,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _NN_layers, _NN_name, _NN_trained, _NN_lastOptimizerUser, _Layer_instances, _Layer_weights, _Layer_bias, _Layer_activationFunction, _Layer_generateWeights;
+var _NN_layers, _NN_name, _NN_trained, _NN_lastOptimizerUsed, _Layer_instances, _Layer_weights, _Layer_bias, _Layer_activationFunction, _Layer_generateWeights;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Layer = exports.NN = void 0;
 const fs_1 = __importDefault(require("fs"));
@@ -30,7 +30,7 @@ class NN {
         _NN_layers.set(this, []);
         _NN_name.set(this, undefined);
         _NN_trained.set(this, false);
-        _NN_lastOptimizerUser.set(this, void 0);
+        _NN_lastOptimizerUsed.set(this, void 0);
         /**
          * Takes in a name and allows users to create a skeleton which holds layer and activation function
          * Object of this class also allows user to backpropogate and predict
@@ -95,7 +95,7 @@ class NN {
         });
         return recent;
     }
-    train({ x, y, epochs, alpha = 0.001, verbose = false, loss = errors_1.default.RSS, optimizer = new optimizers_1.GradientDescent({}), }) {
+    train({ x, y, epochs, alpha = 0.001, verbose = false, loss = errors_1.default.RSS, optimizer = new optimizers_1.GradientDescent(), }) {
         __classPrivateFieldSet(this, _NN_trained, true, "f");
         optimizer.alpha = alpha;
         let losses = [], accuracies = [], l;
@@ -136,6 +136,7 @@ class NN {
                 console.log(`Epoch: ${i + 1}, accuracy: ${accuracies[i] * 100}`);
             }
         }
+        __classPrivateFieldSet(this, _NN_lastOptimizerUsed, optimizer, "f");
         return [losses, accuracies];
     }
     get structure() {
@@ -165,7 +166,7 @@ class NN {
         });
         if (__classPrivateFieldGet(this, _NN_trained, "f")) {
             explanation += `\n\n----------------- Optimization Steps --------------------\n\n`;
-            explanation += __classPrivateFieldGet(this, _NN_lastOptimizerUser, "f").steps
+            explanation += __classPrivateFieldGet(this, _NN_lastOptimizerUsed, "f").steps
                 .map((e) => (e.toLowerCase().startsWith("note") ? e : "- " + e))
                 .join("\n");
         }
@@ -237,7 +238,7 @@ class NN {
     }
 }
 exports.NN = NN;
-_NN_layers = new WeakMap(), _NN_name = new WeakMap(), _NN_trained = new WeakMap(), _NN_lastOptimizerUser = new WeakMap();
+_NN_layers = new WeakMap(), _NN_name = new WeakMap(), _NN_trained = new WeakMap(), _NN_lastOptimizerUsed = new WeakMap();
 class Layer {
     constructor(inputSize, outputSize) {
         _Layer_instances.add(this);

@@ -8,13 +8,13 @@ const fs_1 = __importDefault(require("fs"));
 const os_1 = __importDefault(require("os"));
 const path_1 = __importDefault(require("path"));
 const crypto_1 = require("crypto");
-globalThis.__dataset_cache_path = path_1.default.join(os_1.default.tmpdir(), "toynn-cache");
-const DAYS = 86400000; // in ms
+globalThis.__cache_path = path_1.default.join(os_1.default.tmpdir(), "toynn-cache");
+globalThis.__cache_expiry_days = 1; // expire cache in 1 day
 exports.cache = {
-    registry: path_1.default.join(globalThis.__dataset_cache_path, "registry.json"),
+    registry: path_1.default.join(globalThis.__cache_path, "registry.json"),
     loadRegistry: () => {
         let registry = {};
-        const cachePath = globalThis.__dataset_cache_path;
+        const cachePath = globalThis.__cache_path;
         // check if cache dir exists
         if (!fs_1.default.existsSync(cachePath)) {
             fs_1.default.mkdirSync(cachePath);
@@ -42,7 +42,7 @@ exports.cache = {
         if (!registry[name]) {
             return true;
         }
-        const cachedAt = registry[name].cachedAt + DAYS * 7;
+        const cachedAt = registry[name].cachedAt + globalThis.__cache_expiry_days * 86400000;
         const now = Date.now();
         if (cachedAt < now) {
             return true;
@@ -61,7 +61,7 @@ exports.cache = {
         exports.cache.saveRegistry(registry);
     },
     delete: (registry, name) => {
-        const cachePath = globalThis.__dataset_cache_path;
+        const cachePath = globalThis.__cache_path;
         fs_1.default.rmSync(path_1.default.join(cachePath, registry[name].name));
         delete registry[name];
         exports.cache.saveRegistry(registry);
@@ -70,7 +70,7 @@ exports.cache = {
     save: (name, content) => {
         // create a new entry in registry or update the entry
         let registry = exports.cache.loadRegistry();
-        const cachePath = globalThis.__dataset_cache_path;
+        const cachePath = globalThis.__cache_path;
         let entry = registry[name];
         if (entry) {
             // update entry
@@ -107,7 +107,7 @@ exports.cache = {
         // before loading perform garbage collection
         exports.cache.clean();
         let registry = exports.cache.loadRegistry();
-        const cachePath = globalThis.__dataset_cache_path;
+        const cachePath = globalThis.__cache_path;
         // check if name exists in registry
         if (registry[name]) {
             loc = registry[name].name;
@@ -116,7 +116,7 @@ exports.cache = {
         return undefined;
     },
     flush: () => {
-        const cachePath = globalThis.__dataset_cache_path;
+        const cachePath = globalThis.__cache_path;
         if (fs_1.default.existsSync(cachePath)) {
             fs_1.default.rmSync(cachePath, {
                 recursive: true,

@@ -39,7 +39,7 @@ export class NN {
   #layers: Array<Layer> = [];
   #name: String = undefined;
   #trained: boolean = false;
-  #lastOptimizerUser: Optimizer;
+  #lastOptimizerUsed: Optimizer;
 
   constructor(name: String) {
     /**
@@ -122,7 +122,7 @@ export class NN {
     alpha = 0.001,
     verbose = false,
     loss = errors.RSS,
-    optimizer = new GradientDescent({}),
+    optimizer = new GradientDescent(),
   }: TrainInput) {
     this.#trained = true;
     optimizer.alpha = alpha;
@@ -172,6 +172,7 @@ export class NN {
         console.log(`Epoch: ${i + 1}, accuracy: ${accuracies[i] * 100}`);
       }
     }
+    this.#lastOptimizerUsed = optimizer;
     return [losses, accuracies];
   }
 
@@ -209,7 +210,7 @@ export class NN {
 
     if (this.#trained) {
       explanation += `\n\n----------------- Optimization Steps --------------------\n\n`;
-      explanation += this.#lastOptimizerUser.steps
+      explanation += this.#lastOptimizerUsed.steps
         .map((e) => (e.toLowerCase().startsWith("note") ? e : "- " + e))
         .join("\n");
     }

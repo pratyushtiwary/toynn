@@ -30,59 +30,19 @@ class Optimizer {
 }
 exports.Optimizer = Optimizer;
 class GradientDescent extends Optimizer {
-    constructor({ momentum = 0.9 }) {
+    constructor(options = { momentum: 0.9 }) {
         super();
-        /**
-         *
-         * References:
-         *  - https://www.geeksforgeeks.org/how-to-implement-a-gradient-descent-in-python-to-find-a-local-minimum/,
-         *  - https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
-         *  - https://stackoverflow.com/a/13342725
-         */
-        this.firstRun = true;
         this.weightsHistory = [];
         this.biasHistory = [];
-        if (momentum > 1 || momentum < 0) {
+        this.EPSILON = Number.EPSILON;
+        if (options.momentum > 1 || options.momentum < 0) {
             throw Error(`Value for momentum should be between 0 and 1.`);
         }
-        this.momentum = momentum;
+        this.momentum = options.momentum;
     }
-    _optimize({ x, y, layers }) {
-        let layersOp = [], // keeps track of each layer's output
-        recent, weightGradients = [], biasGradients = [], weightErrors = [], // keeps track of weights errors
-        adjustedWeights = [], // keeps track of new weights
-        adjustedBiases = [];
-        layers.forEach((e, i) => {
-            if (i === 0) {
-                recent = e.forward(x);
-            }
-            else {
-                recent = e.forward(recent);
-            }
-            layersOp.push(recent);
-        });
-        weightGradients[layersOp.length - 1] = layersOp[layersOp.length - 1].sub(y);
-        biasGradients[layersOp.length - 1] = layers[layersOp.length - 1].activationFunction.calcGradient(layersOp[layersOp.length - 1].sub(y));
-        // calculate errors and gradient for weight and gradient for bias
-        for (let i = layers.length - 2; i >= 0; i--) {
-            weightErrors[i] = layers[i + 1].weights.dot(weightGradients[i + 1].T);
-            weightGradients[i] = weightErrors[i].T.mul(layers[i].activationFunction.calcGradient(layersOp[i]));
-            biasGradients[i] = layers[i].activationFunction.calcGradient(layersOp[i]);
-        }
-        if (this.weightsHistory.length === 0 && this.biasHistory.length === 0) {
-            for (let i = 0; i < layers.length; i++) {
-                this.weightsHistory.push(narray_1.default.zeroes(...layers[i].shape));
-                this.biasHistory.push(narray_1.default.zeroes(1, layers[i].shape[1]));
-            }
-            this.firstRun = false;
-        }
+    calcUpdates(layers, weightGradients, biasGradients) {
+        let adjustedWeights = [], adjustedBiases = [];
         for (let i = 0; i < layers.length; i++) {
-            if (i === 0) {
-                weightGradients[0] = x.T.dot(weightGradients[0]);
-            }
-            else {
-                weightGradients[i] = layersOp[i - 1].T.dot(weightGradients[i]);
-            }
             if (weightGradients[i] instanceof narray_1.default) {
                 // momentum logic for weights
                 this.weightsHistory[i] = this.weightsHistory[i]
@@ -96,6 +56,44 @@ class GradientDescent extends Optimizer {
                 .sub(biasGradients[i].mul(this.alpha));
             adjustedBiases[i] = layers[i].bias.add(this.biasHistory[i]);
         }
+        return [adjustedBiases, adjustedWeights];
+    }
+    _optimize({ x, y, layers }) {
+        let layersOp = [], // keeps track of each layer's output
+        recent, weightGradients = [], biasGradients = [], weightErrors = []; // keeps track of weights errors
+        layers.forEach((e, i) => {
+            if (i === 0) {
+                recent = e.forward(x);
+            }
+            else {
+                recent = e.forward(recent);
+            }
+            layersOp.push(recent);
+        });
+        weightGradients[layersOp.length - 1] = layersOp[layersOp.length - 1].sub(y);
+        biasGradients[layersOp.length - 1] = layers[layersOp.length - 1].activationFunction.calcGradient(layersOp[layersOp.length - 1].sub(y));
+        let j = 0;
+        if (this.weightsHistory.length === 0 && this.biasHistory.length === 0) {
+            for (let i = 0; i < layers.length; i++) {
+                this.weightsHistory.push(narray_1.default.zeroes(...layers[i].shape));
+                this.biasHistory.push(narray_1.default.zeroes(1, layers[i].shape[1]));
+            }
+        }
+        // calculate errors and gradient for weight and gradient for bias
+        for (let i = layers.length - 2; i >= 0; i--) {
+            weightErrors[i] = layers[i + 1].weights.dot(weightGradients[i + 1].T);
+            weightGradients[i] = weightErrors[i].T.mul(layers[i].activationFunction.calcGradient(layersOp[i]));
+            biasGradients[i] = layers[i].activationFunction.calcGradient(layersOp[i]);
+            if (j === 0) {
+                weightGradients[0] = x.T.dot(weightGradients[0]);
+            }
+            else {
+                weightGradients[j] = layersOp[j - 1].T.dot(weightGradients[j]);
+            }
+            j++;
+        }
+        weightGradients[j] = layersOp[j - 1].T.dot(weightGradients[j]);
+        const [adjustedBiases, adjustedWeights] = this.calcUpdates(layers, weightGradients, biasGradients);
         return {
             weightGradients,
             biasGradients,
@@ -125,11 +123,11 @@ class GradientDescent extends Optimizer {
             "For 2nd layer till n layer multiply previous layer output's transpose by that layer's gradient",
             "For the first time set weights and bias history to 0",
             "For each layer calculate the weigths history by multiplying the history with momentum and subtract layer's gradient * alpha",
-            "Update the histroy for weights with the output from previous step",
-            "Now again iterate through layers and add the weights histroy to that layer's weight",
+            "Update the history for weights with the output from previous step",
+            "Now again iterate through layers and add the weights history from that layer's weight",
             "For bias, simply find the gradient of each layer's output",
-            "Calculate histroy using the same method for bias",
-            "Then add the histroy to that layer's bias",
+            "Calculate history using the same method for bias",
+            "Then add the history to that layer's bias",
             "Note: You can get gradient for activation functions by using `activationFunction.gradient`",
         ];
     }
@@ -177,11 +175,45 @@ class StochasticGradientDescent extends GradientDescent {
     }
 }
 exports.StochasticGradientDescent = StochasticGradientDescent;
+class RMSProp extends StochasticGradientDescent {
+    calcUpdates(layers, weightGradients, biasGradients) {
+        let adjustedBiases = [], adjustedWeights = [];
+        for (let i = 0; i < layers.length; i++) {
+            if (weightGradients[i] instanceof narray_1.default) {
+                // momentum logic for weights
+                this.weightsHistory[i] = this.weightsHistory[i]
+                    .mul(this.momentum)
+                    .add(weightGradients[i].pow(2).mul(1 - this.momentum));
+                adjustedWeights[i] = layers[i].weights.sub(weightGradients[i]
+                    .div(this.weightsHistory[i].add(this.EPSILON).map(Math.sqrt))
+                    .mul(this.alpha));
+            }
+            // momentum logic for bias
+            this.biasHistory[i] = this.biasHistory[i]
+                .mul(this.momentum)
+                .add(biasGradients[i].pow(2).mul(1 - this.momentum));
+            adjustedBiases[i] = layers[i].bias.sub(biasGradients[i]
+                .div(this.biasHistory[i].add(this.EPSILON).map(Math.sqrt))
+                .mul(this.alpha));
+        }
+        return [adjustedBiases, adjustedWeights];
+    }
+    get steps() {
+        return [
+            ...super.steps.slice(0, 8),
+            "For each layer calculate the weigths history by multiplying the history with momentum and add layer's gradient^2 * (1-momentum)",
+            super.steps[10],
+            "Now again iterate through layers and subtract the weights gradient divided by square root of (weight history + EPSILON) from that layer's weight",
+            ...super.steps.slice(12),
+        ];
+    }
+}
 exports.default = {
     Optimizer,
     GradientDescent,
     StochasticGradientDescent,
     GD: GradientDescent,
     SGD: StochasticGradientDescent,
+    RMSProp,
 };
 //# sourceMappingURL=index.js.map
