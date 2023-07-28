@@ -17,9 +17,6 @@
   "devDependencies": {
     "typescript": "^5.1.6"
   },
-  "directories": {
-    "doc": "docs"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pratyushtiwary/toynn.git"
@@ -27,7 +24,7 @@
   "bugs": {
     "url": "https://github.com/pratyushtiwary/toynn/issues"
   },
-  "homepage": "https://github.com/pratyushtiwary/toynn#readme",
+  "homepage": "https://github.com/pratyushtiwary/toynn/wiki",
   "dependencies": {
     "@types/node": "^20.4.1"
   }
