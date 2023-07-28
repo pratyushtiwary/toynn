@@ -9,6 +9,10 @@
   <b>Contribution is much appreciated, if you feel like something is not right or you've found some bug feel free to raise an issue or create a PR</b>
 </p>
 
+## Requirements
+
+[NodeJS](https://nodejs.org/) v18.0.0 or higher must be installed to use `toynn`.
+
 ## Installation
 
 | **Source** | **Info**            |
