@@ -92,7 +92,9 @@ class GradientDescent extends Optimizer {
             }
             j++;
         }
-        weightGradients[j] = layersOp[j - 1].T.dot(weightGradients[j]);
+        if (layers.length > 1) {
+            weightGradients[j] = layersOp[j - 1].T.dot(weightGradients[j]);
+        }
         const [adjustedBiases, adjustedWeights] = this.calcUpdates(layers, weightGradients, biasGradients);
         return {
             weightGradients,
