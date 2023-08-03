@@ -6,5 +6,6 @@
     "moduleResolution": "node",
     "sourceMap": true
   },
+  "exclude": ["./docs"],
   "lib": ["es2015"]
 }

@@ -1,0 +1,93 @@
+---
+title: Installation Guide
+description: A guide to installation for ToyNN
+---
+
+import { Tabs, TabItem } from "@astrojs/starlight/components";
+
+ToyNN comes with multiple modules that are packged together.
+
+## Requirements
+
+ToyNN requires [NodeJS](https://nodejs.org) v18.0.0 or higher to work.
+
+## Installation
+
+To install/add ToyNN in your project you can use the following command:
+
+<Tabs>
+<TabItem label="npm">
+
+```sh
+# add toynn to your project with npm
+npm install toynn
+```
+
+</TabItem>
+<TabItem label="Yarn">
+
+```sh
+# add toynn to your project with yarn
+yarn add toynn
+```
+
+</TabItem>
+</Tabs>
+
+## Creating Models with ToyNN
+
+ToyNN can be used to create complex neural networks. Let's try to create a simple AND truth gate neural network.
+
+### AND Truth Table
+
+| **X** | **Y** | **Output** |
+| ----- | ----- | ---------- |
+| 0     | 0     | 0          |
+| 0     | 1     | 0          |
+| 1     | 0     | 0          |
+| 1     | 1     | 1          |
+
+### Implementation
+
+```js
+import toynn from "toynn";
+
+const X = [
+  new toynn.NArray([0, 0]).reshape(1, 2),
+  new toynn.NArray([0, 1]).reshape(1, 2),
+  new toynn.NArray([1, 0]).reshape(1, 2),
+  new toynn.NArray([1, 1]).reshape(1, 2),
+];
+
+const y = [
+  new toynn.NArray([0]),
+  new toynn.NArray([0]),
+  new toynn.NArray([0]),
+  new toynn.NArray([1]),
+];
+
+const model = new toynn.NN("and");
+
+const layer1 = new toynn.Layer(2, 3);
+layer1.use(toynn.functions.linear);
+const layer2 = new toynn.Layer(3, 1);
+layer2.use(toynn.functions.sigmoid);
+
+model.add(layer1);
+model.add(layer2);
+
+model.train({
+  x: X,
+  y,
+  epochs: 500,
+  alpha: 0.001,
+  loss: toynn.errors.MSE,
+  verbose: true,
+});
+
+let newData = new toynn.NArray([1, 0]).reshape(1, 2);
+// make prediction
+console.log(model.forward(newData).flatten());
+```
+
+**Note: You can use ToyNN with typescript as well.**
