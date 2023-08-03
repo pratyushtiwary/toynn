@@ -188,7 +188,7 @@ class NArray {
         });
         let newShape;
         if (axis < this.ndim - 1) {
-            newShape = this.shape.slice(1);
+            newShape = [...this.shape.slice(0, axis), ...this.shape.slice(axis + 1)];
         }
         else {
             newShape = this.shape.slice(0, -1);
@@ -521,6 +521,18 @@ class NArray {
          * Broadcast array into provided shape
          * @param dims: Array -> shape to broadcast array into
          */
+        // check if there is any imaginary dimension(-1) given
+        const imaginaryDimFound = shape.filter((e) => e === -1).length;
+        const tempShape = shape.filter((e) => e !== -1);
+        const newLen = NArray.calcNoOfElems(...tempShape);
+        if (imaginaryDimFound === 1) {
+            let imaginaryDim = 0;
+            imaginaryDim = this.length / newLen;
+            shape = shape.map((e) => (e === -1 ? imaginaryDim : e));
+        }
+        else if (imaginaryDimFound > 1) {
+            throw Error(`Failed to reshape, only single imaginary dimension is supported`);
+        }
         if (NArray.calcNoOfElems(...shape) !== this.length) {
             throw Error(`Array of dimension ${this.shape} can't be broadcasted into ${shape} dimension
         
