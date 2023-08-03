@@ -66,4 +66,4 @@ console.log(model.forward(newData).flatten());
 
 ## Docs
 
-Checkout [`wiki`](https://github.com/pratyushtiwary/toynn/wiki) for documentation regarding different classes.
+Docs can be found [here](https://toynn.vercel.app/).
