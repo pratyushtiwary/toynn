@@ -28,7 +28,7 @@ Forward your layer single step. You can use this function to make predictions
 ### use
 
 ```
-Signature: use(obj:[ActivationFunction](/functions/))
+Signature: use(obj:ActivationFunction)
 ```
 
 You can use it to set which [activation function](/functions/) should be used by the Layer while forwarding.
