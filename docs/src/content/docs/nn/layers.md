@@ -31,7 +31,7 @@ Forward your layer single step. You can use this function to make predictions
 Signature: use(obj:ActivationFunction)
 ```
 
-You can use it to set which [activation function](/functions/intro) should be used by the Layer while forwarding.
+You can use it to set which [activation function](/functions/) should be used by the Layer while forwarding.
 
 ## Properties
 
@@ -71,7 +71,7 @@ myLayer.bias = myBiasArray; // ❌
 
 ### activationFunction
 
-Use it to set [activation function](/functions/intro) for your layer.
+Use it to set [activation function](/functions/) for your layer.
 
 [use()](#use) can be used to perform the same functionality as well.
 

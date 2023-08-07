@@ -32,4 +32,4 @@ Using this method of your NArray object you can change its shape.
 
 Shape should always be able to contain the elements in the NArray. For example if you have 4 elements inside your NArray then the new shape should always be something whose product is equal to 4.
 
-You can use [NArray.calcNoOfElems()](/narray/intro#static-functions) to calculate number of elements that can be present in your new shape.
+You can use [NArray.calcNoOfElems()](/narray/#static-functions) to calculate number of elements that can be present in your new shape.
