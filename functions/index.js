@@ -208,4 +208,3 @@ const functions = {
     Linear,
 };
 exports.default = Object.assign(Object.assign({}, functions), { ActivationFunction });
-//# sourceMappingURL=index.js.map

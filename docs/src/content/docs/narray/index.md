@@ -58,10 +58,10 @@ Signature: calcNoOfElems(...shape: number[])
 
 Returns the number of elements a NArray can have with the provided shape.
 
-#### zeroes
+#### zeros
 
 ```
-Signature: zeroes(...shape: number[])
+Signature: zeros(...shape: number[])
 ```
 
 Generates an NArray with each element being 0 of specified shape.

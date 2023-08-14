@@ -112,4 +112,3 @@ exports.default = {
     sum,
     square,
 };
-//# sourceMappingURL=index.js.map

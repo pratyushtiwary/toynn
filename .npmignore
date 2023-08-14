@@ -1,3 +1,8 @@
 logo.svg
 examples/
 docs/
+.github/
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+test/
+jest.config.ts

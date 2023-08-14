@@ -36,4 +36,3 @@ exports.default = Object.assign(Object.assign(Object.assign({ errors: errors_1.d
     NArray: narray_1.default,
     utils: utils_1.default }, nn_1.default), dataset_1.default), { functions: functions_1.default,
     optimizers: optimizers_1.default });
-//# sourceMappingURL=index.js.map

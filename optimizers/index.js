@@ -75,8 +75,8 @@ class GradientDescent extends Optimizer {
         let j = 0;
         if (this.weightsHistory.length === 0 && this.biasHistory.length === 0) {
             for (let i = 0; i < layers.length; i++) {
-                this.weightsHistory.push(narray_1.default.zeroes(...layers[i].shape));
-                this.biasHistory.push(narray_1.default.zeroes(1, layers[i].shape[1]));
+                this.weightsHistory.push(narray_1.default.zeros(...layers[i].shape));
+                this.biasHistory.push(narray_1.default.zeros(1, layers[i].shape[1]));
             }
         }
         // calculate errors and gradient for weight and gradient for bias
@@ -218,4 +218,3 @@ exports.default = {
     SGD: StochasticGradientDescent,
     RMSProp,
 };
-//# sourceMappingURL=index.js.map
