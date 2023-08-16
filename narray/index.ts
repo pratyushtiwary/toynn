@@ -1,5 +1,3 @@
-import utils from "../utils";
-
 globalThis.NArray_printThreshold = 5;
 
 export class NArray {
@@ -78,19 +76,14 @@ export class NArray {
      */
     let final = [],
       temp;
-
-    utils.loop({
-      start: 1,
-      end: shape.length + 1,
-      func: (i) => {
-        if (i === shape.length) {
-          final.push(1);
-        } else {
-          temp = shape.slice(i);
-          final.push(temp.reduce((a, b) => a * b));
-        }
-      },
-    });
+    for (let i = 1; i <= shape.length; i++) {
+      if (i === shape.length) {
+        final.push(1);
+      } else {
+        temp = shape.slice(i);
+        final.push(temp.reduce((a, b) => a * b));
+      }
+    }
     return final;
   }
 
@@ -114,15 +107,9 @@ export class NArray {
         if (path.length + 1 === this.strides.length) {
           currShape = this.shape[path.length];
         }
-
-        utils.loop({
-          start: 0,
-          end: currShape,
-          func: (i) => {
-            final[i] = this.#get(...path, i);
-          },
-        });
-
+        for (let i = 0; i < currShape; i++) {
+          final[i] = this.#get(...path, i);
+        }
         return final;
       }
     } else {
@@ -140,13 +127,9 @@ export class NArray {
      */
     let noOfElems = 1;
 
-    utils.loop({
-      start: 0,
-      end: shape.length,
-      func: (i) => {
-        noOfElems *= shape[i];
-      },
-    });
+    for (let i = 0; i < shape.length; i++) {
+      noOfElems *= shape[i];
+    }
 
     return noOfElems;
   }
@@ -223,16 +206,6 @@ export class NArray {
   }
 
   map(func: Function): NArray {
-    // let f = [],
-    //   j: number;
-    // for (let i = 0; i <= this.length / 2; i++) {
-    //   f[i] = func(this.#arr[i], i);
-
-    //   if (i > 0 && i < this.length) {
-    //     j = this.length - i;
-    //     f[j] = func(this.#arr[j], j);
-    //   }
-    // }
     let f = this.#arr.map((e, i) => func(e, i));
     return new NArray(f).reshape(...this.shape);
   }
@@ -245,15 +218,12 @@ export class NArray {
     let maxIndex = 0,
       maxElem = this.#arr[0];
 
-    utils.loop({
-      end: this.length,
-      func: (i: number) => {
-        if (this.#arr[i] > maxElem) {
-          maxIndex = i;
-          maxElem = this.#arr[i];
-        }
-      },
-    });
+    for (let i = 0; i < this.length; i++) {
+      if (this.#arr[i] > maxElem) {
+        maxIndex = i;
+        maxElem = this.#arr[i];
+      }
+    }
 
     return { index: maxIndex, element: maxElem };
   }
@@ -279,30 +249,27 @@ export class NArray {
       i = 0,
       j = 0;
 
-    utils.loop({
-      end: this.length,
-      func: (o: number) => {
-        temp += this.#arr[j];
-        j += inc;
+    for (let o = 0; o < this.length; o++) {
+      temp += this.#arr[j];
+      j += inc;
 
-        if ((o + 1) % breakage === 0) {
-          final.push(temp);
-          temp = 0;
-          if (axis === 0) {
-            i++;
-          } else if (axis > 0 && axis < this.ndim - 1) {
-            if ((o + 1) % prevBreakage === 0) {
-              i = o + breakage - 1;
-            } else {
-              i++;
-            }
+      if ((o + 1) % breakage === 0) {
+        final.push(temp);
+        temp = 0;
+        if (axis === 0) {
+          i++;
+        } else if (axis > 0 && axis < this.ndim - 1) {
+          if ((o + 1) % prevBreakage === 0) {
+            i = o + breakage - 1;
           } else {
-            i += breakage;
+            i++;
           }
-          j = i;
+        } else {
+          i += breakage;
         }
-      },
-    });
+        j = i;
+      }
+    }
 
     let newShape;
     if (axis < this.ndim - 1) {
@@ -327,20 +294,16 @@ export class NArray {
 
       final[0] = this.#arr[0];
 
-      utils.loop({
-        start: 1,
-        end: this.length * this.length,
-        func: (i: number) => {
-          if (i % (this.length * j + j) === 0) {
-            final.push(this.#arr[j]);
-          } else {
-            final.push(0);
-          }
-          if ((i + 1) % this.length === 0) {
-            j++;
-          }
-        },
-      });
+      for (let i = 1; i < this.length * this.length; i++) {
+        if (i % (this.length * j + j) === 0) {
+          final.push(this.#arr[j]);
+        } else {
+          final.push(0);
+        }
+        if ((i + 1) % this.length === 0) {
+          j++;
+        }
+      }
 
       return new NArray(final).reshape(this.length, this.length);
     } else if (this.ndim === 2) {
@@ -348,13 +311,9 @@ export class NArray {
         this.shape[0] < this.shape[1] ? this.shape[0] : this.shape[1];
       let final = [];
       final[0] = this.#arr[0];
-      utils.loop({
-        start: 1,
-        end: smaller,
-        func: (i: number) => {
-          final[i] = this.#arr[this.shape[1] * i + i];
-        },
-      });
+      for (let i = 1; i < smaller; i++) {
+        final[i] = this.#arr[this.shape[1] * i + i];
+      }
 
       return new NArray(final);
     }
@@ -567,7 +526,7 @@ export class NArray {
     return final;
   }
 
-  dot(y: number | NArray): NArray | number {
+  dot(y: number | NArray): NArray {
     if (!(y instanceof NArray)) {
       throw Error(`Failed to dot because the passed object is not NArray
       
@@ -670,37 +629,34 @@ export class NArray {
       shape2Last = tempShape2[tempShape2.length - 1],
       newLen = NArray.calcNoOfElems(...newShape),
       iterCond = newLen * shape1Last;
-    utils.loop({
-      start: 0,
-      end: iterCond,
-      func: (o: number) => {
-        temp += this.#arr[i] * arr2[l + k];
-        i++;
-        k += shape2Last;
 
-        if ((j + 1) % shape2Last === 0 && (o + 1) % shape1Last === 0) {
-          if (l === 0) {
-            l = breakage;
-          } else {
-            l += breakage;
-          }
-        }
+    for (let o = 0; o < iterCond; o++) {
+      temp += this.#arr[i] * arr2[l + k];
+      i++;
+      k += shape2Last;
 
-        if ((o + 1) % length === 0) {
-          n++;
-          m = shape1Last * n;
-          l = 0;
-          k = 0;
+      if ((j + 1) % shape2Last === 0 && (o + 1) % shape1Last === 0) {
+        if (l === 0) {
+          l = breakage;
+        } else {
+          l += breakage;
         }
-        if ((o + 1) % shape1Last === 0) {
-          j++;
-          k = j % shape2Last;
-          i = m;
-          final.push(temp);
-          temp = 0;
-        }
-      },
-    });
+      }
+
+      if ((o + 1) % length === 0) {
+        n++;
+        m = shape1Last * n;
+        l = 0;
+        k = 0;
+      }
+      if ((o + 1) % shape1Last === 0) {
+        j++;
+        k = j % shape2Last;
+        i = m;
+        final.push(temp);
+        temp = 0;
+      }
+    }
 
     return new NArray(final).reshape(...newShape);
   }
@@ -771,12 +727,9 @@ export class NArray {
      */
     let final = [];
     if (path.length === 0) {
-      utils.loop({
-        end: this.shape[0],
-        func: (i: number) => {
-          final.push(this.#get(i));
-        },
-      });
+      for (let i = 0; i < this.shape[0]; i++) {
+        final.push(this.#get(i));
+      }
     } else {
       final = this.#get(...path);
     }
@@ -823,7 +776,7 @@ export class NArray {
     return this.real;
   }
 
-  static zeroes(...shape: Array<number>): NArray {
+  static zeros(...shape: Array<number>): NArray {
     /**
      * Returns a provided dimension NArray with all of its values as 0
      * @param dims: Array -> shape of the new NArray
@@ -831,18 +784,15 @@ export class NArray {
     const temp = [];
     const elems = NArray.calcNoOfElems(...shape);
 
-    utils.loop({
-      end: elems,
-      func: () => {
-        temp.push(0);
-      },
-    });
+    for (let i = 0; i < elems; i++) {
+      temp.push(0);
+    }
 
     return new NArray(temp).reshape(...shape);
   }
 
   static arange(
-    start: number = 1,
+    start: number = 0,
     end: undefined | number = undefined,
     step: number = 1
   ): NArray {
@@ -863,13 +813,9 @@ export class NArray {
     }
     const values = [];
 
-    utils.loop({
-      end: end,
-      start: start,
-      func: (i: number) => {
-        values.push(i);
-      },
-    });
+    for (let i = start; i < end; i += step) {
+      values.push(i);
+    }
 
     return new NArray(values);
   }

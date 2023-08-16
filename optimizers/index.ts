@@ -127,8 +127,8 @@ export class GradientDescent extends Optimizer {
 
     if (this.weightsHistory.length === 0 && this.biasHistory.length === 0) {
       for (let i = 0; i < layers.length; i++) {
-        this.weightsHistory.push(NArray.zeroes(...layers[i].shape));
-        this.biasHistory.push(NArray.zeroes(1, layers[i].shape[1]));
+        this.weightsHistory.push(NArray.zeros(...layers[i].shape));
+        this.biasHistory.push(NArray.zeros(1, layers[i].shape[1]));
       }
     }
 

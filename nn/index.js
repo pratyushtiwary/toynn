@@ -377,4 +377,3 @@ _Layer_weights = new WeakMap(), _Layer_bias = new WeakMap(), _Layer_activationFu
     return new narray_1.default(tempWeights).reshape(x, y);
 };
 exports.default = { NN, Layer };
-//# sourceMappingURL=index.js.map

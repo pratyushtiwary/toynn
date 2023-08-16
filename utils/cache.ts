@@ -1,17 +1,22 @@
+import { randomUUID } from "crypto";
 import fs from "fs";
-import { URL } from "url";
-import readline from "readline";
 import os from "os";
 import path from "path";
-import { randomUUID } from "crypto";
 
 globalThis.__cache_path = path.join(os.tmpdir(), "toynn-cache");
 globalThis.__cache_expiry_days = 1; // expire cache in 1 day
 
+export interface Registry {
+  [key: string]: {
+    name: string;
+    cachedAt: number;
+  };
+}
+
 export const cache = {
   registry: path.join(globalThis.__cache_path, "registry.json"),
-  loadRegistry: (): Object => {
-    let registry = {};
+  loadRegistry: (): Registry => {
+    let registry: Registry = {};
     const cachePath = globalThis.__cache_path;
     // check if cache dir exists
     if (!fs.existsSync(cachePath)) {
@@ -29,13 +34,13 @@ export const cache = {
     }
     return registry;
   },
-  saveRegistry: (registry: Object) => {
+  saveRegistry: (registry: Registry) => {
     // update or create registry
     cache.loadRegistry(); // this will make sure that registry exists
 
     fs.writeFileSync(cache.registry, JSON.stringify(registry), "utf-8");
   },
-  entryExpired: (registry: Object, name: string) => {
+  entryExpired: (registry: Registry, name: string) => {
     if (!registry[name]) {
       return true;
     }
@@ -62,7 +67,7 @@ export const cache = {
 
     cache.saveRegistry(registry);
   },
-  delete: (registry: Object, name: string) => {
+  delete: (registry: Registry, name: string) => {
     const cachePath = globalThis.__cache_path;
 
     fs.rmSync(path.join(cachePath, registry[name].name));

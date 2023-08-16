@@ -10,13 +10,9 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 var _NArray_instances, _NArray_arr, _NArray_computedShape, _NArray_length, _NArray_computedStrides, _NArray_ndim, _NArray_computeShape, _NArray_computeStrides, _NArray_get, _NArray_flatten;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NArray = void 0;
-const utils_1 = __importDefault(require("../utils"));
 globalThis.NArray_printThreshold = 5;
 class NArray {
     constructor(obj) {
@@ -70,13 +66,9 @@ class NArray {
          * @param shape: Array -> shape of the array
          */
         let noOfElems = 1;
-        utils_1.default.loop({
-            start: 0,
-            end: shape.length,
-            func: (i) => {
-                noOfElems *= shape[i];
-            },
-        });
+        for (let i = 0; i < shape.length; i++) {
+            noOfElems *= shape[i];
+        }
         return noOfElems;
     }
     get shape() {
@@ -120,15 +112,6 @@ class NArray {
         return f;
     }
     map(func) {
-        // let f = [],
-        //   j: number;
-        // for (let i = 0; i <= this.length / 2; i++) {
-        //   f[i] = func(this.#arr[i], i);
-        //   if (i > 0 && i < this.length) {
-        //     j = this.length - i;
-        //     f[j] = func(this.#arr[j], j);
-        //   }
-        // }
         let f = __classPrivateFieldGet(this, _NArray_arr, "f").map((e, i) => func(e, i));
         return new NArray(f).reshape(...this.shape);
     }
@@ -137,15 +120,12 @@ class NArray {
     }
     max() {
         let maxIndex = 0, maxElem = __classPrivateFieldGet(this, _NArray_arr, "f")[0];
-        utils_1.default.loop({
-            end: this.length,
-            func: (i) => {
-                if (__classPrivateFieldGet(this, _NArray_arr, "f")[i] > maxElem) {
-                    maxIndex = i;
-                    maxElem = __classPrivateFieldGet(this, _NArray_arr, "f")[i];
-                }
-            },
-        });
+        for (let i = 0; i < this.length; i++) {
+            if (__classPrivateFieldGet(this, _NArray_arr, "f")[i] > maxElem) {
+                maxIndex = i;
+                maxElem = __classPrivateFieldGet(this, _NArray_arr, "f")[i];
+            }
+        }
         return { index: maxIndex, element: maxElem };
     }
     sum(axis = undefined) {
@@ -160,32 +140,29 @@ class NArray {
         }
         const inc = this.strides[axis], breakage = this.shape[axis], prevBreakage = this.strides[axis - 1];
         let final = [], temp = 0, i = 0, j = 0;
-        utils_1.default.loop({
-            end: this.length,
-            func: (o) => {
-                temp += __classPrivateFieldGet(this, _NArray_arr, "f")[j];
-                j += inc;
-                if ((o + 1) % breakage === 0) {
-                    final.push(temp);
-                    temp = 0;
-                    if (axis === 0) {
-                        i++;
-                    }
-                    else if (axis > 0 && axis < this.ndim - 1) {
-                        if ((o + 1) % prevBreakage === 0) {
-                            i = o + breakage - 1;
-                        }
-                        else {
-                            i++;
-                        }
+        for (let o = 0; o < this.length; o++) {
+            temp += __classPrivateFieldGet(this, _NArray_arr, "f")[j];
+            j += inc;
+            if ((o + 1) % breakage === 0) {
+                final.push(temp);
+                temp = 0;
+                if (axis === 0) {
+                    i++;
+                }
+                else if (axis > 0 && axis < this.ndim - 1) {
+                    if ((o + 1) % prevBreakage === 0) {
+                        i = o + breakage - 1;
                     }
                     else {
-                        i += breakage;
+                        i++;
                     }
-                    j = i;
                 }
-            },
-        });
+                else {
+                    i += breakage;
+                }
+                j = i;
+            }
+        }
         let newShape;
         if (axis < this.ndim - 1) {
             newShape = [...this.shape.slice(0, axis), ...this.shape.slice(axis + 1)];
@@ -205,34 +182,26 @@ class NArray {
         if (this.ndim === 1) {
             let final = [], j = 0, k = 0;
             final[0] = __classPrivateFieldGet(this, _NArray_arr, "f")[0];
-            utils_1.default.loop({
-                start: 1,
-                end: this.length * this.length,
-                func: (i) => {
-                    if (i % (this.length * j + j) === 0) {
-                        final.push(__classPrivateFieldGet(this, _NArray_arr, "f")[j]);
-                    }
-                    else {
-                        final.push(0);
-                    }
-                    if ((i + 1) % this.length === 0) {
-                        j++;
-                    }
-                },
-            });
+            for (let i = 1; i < this.length * this.length; i++) {
+                if (i % (this.length * j + j) === 0) {
+                    final.push(__classPrivateFieldGet(this, _NArray_arr, "f")[j]);
+                }
+                else {
+                    final.push(0);
+                }
+                if ((i + 1) % this.length === 0) {
+                    j++;
+                }
+            }
             return new NArray(final).reshape(this.length, this.length);
         }
         else if (this.ndim === 2) {
             let smaller = this.shape[0] < this.shape[1] ? this.shape[0] : this.shape[1];
             let final = [];
             final[0] = __classPrivateFieldGet(this, _NArray_arr, "f")[0];
-            utils_1.default.loop({
-                start: 1,
-                end: smaller,
-                func: (i) => {
-                    final[i] = __classPrivateFieldGet(this, _NArray_arr, "f")[this.shape[1] * i + i];
-                },
-            });
+            for (let i = 1; i < smaller; i++) {
+                final[i] = __classPrivateFieldGet(this, _NArray_arr, "f")[this.shape[1] * i + i];
+            }
             return new NArray(final);
         }
     }
@@ -473,36 +442,32 @@ class NArray {
             tempShape2 = shape2;
         }
         const shape1Last = tempShape1[tempShape1.length - 1], shape2Last = tempShape2[tempShape2.length - 1], newLen = NArray.calcNoOfElems(...newShape), iterCond = newLen * shape1Last;
-        utils_1.default.loop({
-            start: 0,
-            end: iterCond,
-            func: (o) => {
-                temp += __classPrivateFieldGet(this, _NArray_arr, "f")[i] * arr2[l + k];
-                i++;
-                k += shape2Last;
-                if ((j + 1) % shape2Last === 0 && (o + 1) % shape1Last === 0) {
-                    if (l === 0) {
-                        l = breakage;
-                    }
-                    else {
-                        l += breakage;
-                    }
+        for (let o = 0; o < iterCond; o++) {
+            temp += __classPrivateFieldGet(this, _NArray_arr, "f")[i] * arr2[l + k];
+            i++;
+            k += shape2Last;
+            if ((j + 1) % shape2Last === 0 && (o + 1) % shape1Last === 0) {
+                if (l === 0) {
+                    l = breakage;
                 }
-                if ((o + 1) % length === 0) {
-                    n++;
-                    m = shape1Last * n;
-                    l = 0;
-                    k = 0;
+                else {
+                    l += breakage;
                 }
-                if ((o + 1) % shape1Last === 0) {
-                    j++;
-                    k = j % shape2Last;
-                    i = m;
-                    final.push(temp);
-                    temp = 0;
-                }
-            },
-        });
+            }
+            if ((o + 1) % length === 0) {
+                n++;
+                m = shape1Last * n;
+                l = 0;
+                k = 0;
+            }
+            if ((o + 1) % shape1Last === 0) {
+                j++;
+                k = j % shape2Last;
+                i = m;
+                final.push(temp);
+                temp = 0;
+            }
+        }
         return new NArray(final).reshape(...newShape);
     }
     transpose() {
@@ -561,12 +526,9 @@ class NArray {
          */
         let final = [];
         if (path.length === 0) {
-            utils_1.default.loop({
-                end: this.shape[0],
-                func: (i) => {
-                    final.push(__classPrivateFieldGet(this, _NArray_instances, "m", _NArray_get).call(this, i));
-                },
-            });
+            for (let i = 0; i < this.shape[0]; i++) {
+                final.push(__classPrivateFieldGet(this, _NArray_instances, "m", _NArray_get).call(this, i));
+            }
         }
         else {
             final = __classPrivateFieldGet(this, _NArray_instances, "m", _NArray_get).call(this, ...path);
@@ -603,22 +565,19 @@ class NArray {
     valueOf() {
         return this.real;
     }
-    static zeroes(...shape) {
+    static zeros(...shape) {
         /**
          * Returns a provided dimension NArray with all of its values as 0
          * @param dims: Array -> shape of the new NArray
          */
         const temp = [];
         const elems = NArray.calcNoOfElems(...shape);
-        utils_1.default.loop({
-            end: elems,
-            func: () => {
-                temp.push(0);
-            },
-        });
+        for (let i = 0; i < elems; i++) {
+            temp.push(0);
+        }
         return new NArray(temp).reshape(...shape);
     }
-    static arange(start = 1, end = undefined, step = 1) {
+    static arange(start = 0, end = undefined, step = 1) {
         /**
          * Returns a flat NArray with elements ranging from start -> end with specified step increment
          * @param start: int -> start of the range
@@ -635,13 +594,9 @@ class NArray {
             start = temp;
         }
         const values = [];
-        utils_1.default.loop({
-            end: end,
-            start: start,
-            func: (i) => {
-                values.push(i);
-            },
-        });
+        for (let i = start; i < end; i += step) {
+            values.push(i);
+        }
         return new NArray(values);
     }
     static randn(mean = 0, stdev = 1) {
@@ -678,19 +633,15 @@ _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_leng
      * @param shape: Array
      */
     let final = [], temp;
-    utils_1.default.loop({
-        start: 1,
-        end: shape.length + 1,
-        func: (i) => {
-            if (i === shape.length) {
-                final.push(1);
-            }
-            else {
-                temp = shape.slice(i);
-                final.push(temp.reduce((a, b) => a * b));
-            }
-        },
-    });
+    for (let i = 1; i <= shape.length; i++) {
+        if (i === shape.length) {
+            final.push(1);
+        }
+        else {
+            temp = shape.slice(i);
+            final.push(temp.reduce((a, b) => a * b));
+        }
+    }
     return final;
 }, _NArray_get = function _NArray_get(...path) {
     /**
@@ -711,13 +662,9 @@ _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_leng
             if (path.length + 1 === this.strides.length) {
                 currShape = this.shape[path.length];
             }
-            utils_1.default.loop({
-                start: 0,
-                end: currShape,
-                func: (i) => {
-                    final[i] = __classPrivateFieldGet(this, _NArray_instances, "m", _NArray_get).call(this, ...path, i);
-                },
-            });
+            for (let i = 0; i < currShape; i++) {
+                final[i] = __classPrivateFieldGet(this, _NArray_instances, "m", _NArray_get).call(this, ...path, i);
+            }
             return final;
         }
     }
@@ -751,4 +698,3 @@ _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_leng
     }
 };
 exports.default = NArray;
-//# sourceMappingURL=index.js.map

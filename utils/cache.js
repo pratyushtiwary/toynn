@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.cache = void 0;
+const crypto_1 = require("crypto");
 const fs_1 = __importDefault(require("fs"));
 const os_1 = __importDefault(require("os"));
 const path_1 = __importDefault(require("path"));
-const crypto_1 = require("crypto");
 globalThis.__cache_path = path_1.default.join(os_1.default.tmpdir(), "toynn-cache");
 globalThis.__cache_expiry_days = 1; // expire cache in 1 day
 exports.cache = {
@@ -126,4 +126,3 @@ exports.cache = {
     },
 };
 exports.default = exports.cache;
-//# sourceMappingURL=cache.js.map
