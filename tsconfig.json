@@ -6,6 +6,6 @@
     "moduleResolution": "node",
     "sourceMap": false
   },
-  "exclude": ["./docs", "./test", "jest.config.ts"],
+  "exclude": ["./docs", "tests", "jest.config.ts"],
   "lib": ["es2015"]
 }

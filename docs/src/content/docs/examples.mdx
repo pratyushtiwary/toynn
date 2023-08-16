@@ -96,27 +96,15 @@ console.log(`Prediction: ${prediction}`);
 import toynn from "toynn";
 
 const classes = {
-  setosa: 0,
-  versicolor: 1,
-  virginica: 2,
+  "Iris-setosa": 0,
+  "Iris-versicolor": 1,
+  "Iris-virginica": 2,
 };
 
 const datasetURL =
-  "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/iris.csv";
+  "https://ocw.mit.edu/courses/15-097-prediction-machine-learning-and-statistics-spring-2012/89d88c5528513adc4002a1618ce2efb0_iris.csv";
 
 const irisDataset = await toynn.Dataset.from(datasetURL);
-
-irisDataset.onGet = (element) => {
-  let temp = element.flatten();
-
-  let temp2 = temp.slice(0, -1); // ignore last element
-
-  temp2 = temp2.map(parseFloat); // convert to float
-
-  temp = [...temp2, temp[4]]; // put everything back together
-
-  return new toynn.NArray(temp);
-};
 
 const X = irisDataset.slice(0, -1); // every column except for the last one
 const y = irisDataset.slice(-1); // last column

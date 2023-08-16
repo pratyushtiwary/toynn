@@ -1,6 +1,6 @@
 import fs from "fs";
-import { URL } from "url";
 import readline from "readline";
+import { URL } from "url";
 import NArray from "../narray";
 import cache from "../utils/cache";
 
@@ -72,12 +72,15 @@ export class Dataset {
 
     function parseLine(line: string): NArray {
       try {
-        let parsedLine = line.split(options.delimiter).join(",");
-        parsedLine = "[" + parsedLine + "]";
+        let parsedLine = line.split(options.delimiter);
+        let finalParsedLine = parsedLine.map((e) => {
+          const temp = parseFloat(e);
 
-        let finalParsedLine = JSON.parse(parsedLine);
+          if (!Number.isNaN(temp)) return temp;
+          return e;
+        });
 
-        return finalParsedLine;
+        return new NArray(finalParsedLine);
       } catch (_) {
         return new NArray(line.split(options.delimiter));
       }
@@ -119,6 +122,7 @@ export class Dataset {
           final = data
             .split(/[\r\n]/)
             .filter((e) => e)
+            .slice(options.headerCol)
             .map(parseLine);
         } else {
           isURL = false;

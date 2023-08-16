@@ -33,8 +33,8 @@ var _Dataset_length, _Dataset_data, _DatasetSlice_arrangement, _DatasetSlice_dat
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DatasetSlice = exports.Dataset = void 0;
 const fs_1 = __importDefault(require("fs"));
-const url_1 = require("url");
 const readline_1 = __importDefault(require("readline"));
+const url_1 = require("url");
 const narray_1 = __importDefault(require("../narray"));
 const cache_1 = __importDefault(require("../utils/cache"));
 class Dataset {
@@ -84,10 +84,14 @@ class Dataset {
             let isURL = false;
             function parseLine(line) {
                 try {
-                    let parsedLine = line.split(options.delimiter).join(",");
-                    parsedLine = "[" + parsedLine + "]";
-                    let finalParsedLine = JSON.parse(parsedLine);
-                    return finalParsedLine;
+                    let parsedLine = line.split(options.delimiter);
+                    let finalParsedLine = parsedLine.map((e) => {
+                        const temp = parseFloat(e);
+                        if (!Number.isNaN(temp))
+                            return temp;
+                        return e;
+                    });
+                    return new narray_1.default(finalParsedLine);
                 }
                 catch (_) {
                     return new narray_1.default(line.split(options.delimiter));
@@ -124,6 +128,7 @@ class Dataset {
                         final = data
                             .split(/[\r\n]/)
                             .filter((e) => e)
+                            .slice(options.headerCol)
                             .map(parseLine);
                     }
                     else {

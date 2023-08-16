@@ -4,6 +4,6 @@ docs/
 .github/
 CODE_OF_CONDUCT.md
 CONTRIBUTING.md
-test/
+tests/
 jest.config.ts
 coverage/
