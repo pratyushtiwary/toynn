@@ -1,13 +1,13 @@
 import fs from "fs";
 import path from "path";
-import errors from "../errors";
-import functions from "../functions";
-import { StatErrorReturn, StatErrorInput } from "../errors";
-import { ActivationFunction, ActivationFunctionType } from "../functions";
-import { Optimizer, GradientDescent } from "../optimizers";
-import NArray from "../narray";
 import { Dataset, DatasetSlice } from "../dataset";
-import { deflate } from "zlib";
+import errors, { StatErrorInput, StatErrorReturn } from "../errors";
+import functions, {
+  ActivationFunction,
+  ActivationFunctionType,
+} from "../functions";
+import NArray from "../narray";
+import { GradientDescent, Optimizer } from "../optimizers";
 
 let nLayer = 0;
 
@@ -158,6 +158,10 @@ export class NN {
           throw Error(`Make sure y's elements are of type NArray`);
         }
 
+        if (tempX.length !== tempY.length) {
+          throw Error(`Length of x's element != length of y's element`);
+        }
+
         let out = this.forward(tempX);
         l.push(loss(tempY.flatten(), out.flatten()).result);
         optimizer.optimize({
@@ -188,7 +192,7 @@ export class NN {
     return structure;
   }
 
-  explain(x: NArray): String {
+  explain(x: NArray): string {
     let explanation = `\n`;
     let recent: NArray;
 
@@ -436,8 +440,16 @@ export class Layer {
       How to fix this?
       Make sure the length of x(${x.length}) = ${this.inputSize}`);
     }
-
     let z1 = x.dot(this.weights);
+    z1 = z1.add(this.bias);
+    if (this.#activationFunction instanceof ActivationFunction) {
+      z1 = this.#activationFunction.calculate(z1);
+    } else {
+      throw Error(`Failed to compute output from ActivationFunction.
+      
+      How to fix this?
+      Make sure you are setting the activation function for layer ${this.name}`);
+    }
     if (!(z1 instanceof NArray)) {
       throw Error(`Invalid result for layer ${this.name}.
       
@@ -447,9 +459,8 @@ export class Layer {
       How can you fix it?
       Try raising an issue if you see this error along with the code for neural network and your training dataset on https://github.com/pratyushtiwary/toynn`);
     }
-    z1 = z1.add(this.bias);
-    let a1 = this.#activationFunction.calculate(z1).reshape(1, this.outputSize);
-    return a1;
+    z1 = z1.reshape(1, this.outputSize);
+    return z1;
   }
 
   get shape() {
