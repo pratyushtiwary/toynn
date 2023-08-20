@@ -6,7 +6,7 @@
 <img src="https://img.shields.io/npm/dt/toynn" alt="NPM Downloads"/>
 <img src="https://img.shields.io/github/license/pratyushtiwary/toynn" alt="License"/>
 <a href="https://github.com/pratyushtiwary/toynn/actions/workflows/publish.yml">
-<img src="https://github.com/pratyushtiwary/toynn/actions/workflows/publish.yml/badge.svg?branch=main" alt="Publish to NPM Status Badge"/>
+<img src="https://github.com/pratyushtiwary/toynn/actions/workflows/publish.yml/badge.svg" alt="Publish to NPM Status Badge"/>
 </a>
 <a href="https://codecov.io/gh/pratyushtiwary/toynn" >
 <img src="https://codecov.io/gh/pratyushtiwary/toynn/branch/main/graph/badge.svg?token=J67V3JHQPG"/>
