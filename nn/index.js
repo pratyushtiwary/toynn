@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __classPrivateFieldSet = (this && this.__classPrivateFieldSet) || function (receiver, state, value, kind, f) {
     if (kind === "m") throw new TypeError("Private method is not writable");
     if (kind === "a" && !f) throw new TypeError("Private accessor was defined without a setter");
@@ -18,12 +41,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Layer = exports.NN = void 0;
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const errors_1 = __importDefault(require("../errors"));
-const functions_1 = __importDefault(require("../functions"));
-const functions_2 = require("../functions");
-const optimizers_1 = require("../optimizers");
-const narray_1 = __importDefault(require("../narray"));
 const dataset_1 = require("../dataset");
+const errors_1 = __importDefault(require("../errors"));
+const functions_1 = __importStar(require("../functions"));
+const narray_1 = __importDefault(require("../narray"));
+const optimizers_1 = require("../optimizers");
 let nLayer = 0;
 class NN {
     constructor(name) {
@@ -121,6 +143,9 @@ class NN {
                 }
                 if (!(tempY instanceof narray_1.default)) {
                     throw Error(`Make sure y's elements are of type NArray`);
+                }
+                if (tempX.length !== tempY.length) {
+                    throw Error(`Length of x's element != length of y's element`);
                 }
                 let out = this.forward(tempX);
                 l.push(loss(tempY.flatten(), out.flatten()).result);
@@ -336,6 +361,16 @@ class Layer {
       Make sure the length of x(${x.length}) = ${this.inputSize}`);
         }
         let z1 = x.dot(this.weights);
+        z1 = z1.add(this.bias);
+        if (__classPrivateFieldGet(this, _Layer_activationFunction, "f") instanceof functions_1.ActivationFunction) {
+            z1 = __classPrivateFieldGet(this, _Layer_activationFunction, "f").calculate(z1);
+        }
+        else {
+            throw Error(`Failed to compute output from ActivationFunction.
+      
+      How to fix this?
+      Make sure you are setting the activation function for layer ${this.name}`);
+        }
         if (!(z1 instanceof narray_1.default)) {
             throw Error(`Invalid result for layer ${this.name}.
       
@@ -345,15 +380,14 @@ class Layer {
       How can you fix it?
       Try raising an issue if you see this error along with the code for neural network and your training dataset on https://github.com/pratyushtiwary/toynn`);
         }
-        z1 = z1.add(this.bias);
-        let a1 = __classPrivateFieldGet(this, _Layer_activationFunction, "f").calculate(z1).reshape(1, this.outputSize);
-        return a1;
+        z1 = z1.reshape(1, this.outputSize);
+        return z1;
     }
     get shape() {
         return [this.inputSize, this.outputSize];
     }
     set activationFunction(func) {
-        if (!(func instanceof functions_2.ActivationFunction)) {
+        if (!(func instanceof functions_1.ActivationFunction)) {
             throw Error(`Invalid activation function.
       
       How to fix this?

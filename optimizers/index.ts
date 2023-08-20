@@ -105,9 +105,9 @@ export class GradientDescent extends Optimizer {
   _optimize({ x, y, layers }: OptimizerInput): OptimizerOutput {
     let layersOp = [], // keeps track of each layer's output
       recent: NArray,
-      weightGradients = [],
-      biasGradients = [],
-      weightErrors = []; // keeps track of weights errors
+      weightGradients: NArray[] = [],
+      biasGradients: NArray[] = [],
+      weightErrors: NArray[] = []; // keeps track of weights errors
 
     layers.forEach((e, i) => {
       if (i === 0) {
@@ -152,6 +152,11 @@ export class GradientDescent extends Optimizer {
     if (layers.length > 1) {
       weightGradients[j] = layersOp[j - 1].T.dot(weightGradients[j]);
     }
+
+    if (layers.length === 1) {
+      weightGradients[0] = x.T.dot(weightGradients[0]);
+    }
+
     const [adjustedBiases, adjustedWeights] = this.calcUpdates(
       layers,
       weightGradients,
