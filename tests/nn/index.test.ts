@@ -85,24 +85,6 @@ test("NN Test", () => {
   expect(optimizer.process).toHaveBeenCalled();
   expect(optimizer.optimize).toHaveBeenCalled();
 
-  try {
-    model.train({
-      x: [inputs[0]],
-      // @ts-ignore
-      y: [[1, 2, 3, 4, 5, 6]],
-      epochs: 1,
-      alpha: 0.01,
-      optimizer: optimizer,
-      loss: errors.MSE,
-      verbose: true,
-    });
-
-    expect(false).toBe(true);
-  } catch (_) {
-    expect(true).toBe(true);
-  }
-  expect(optimizer.alpha).toBe(0.01);
-
   optimizer = new GradientDescent();
 
   console.log = jest.fn() as jest.Mock;

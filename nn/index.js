@@ -144,9 +144,6 @@ class NN {
                 if (!(tempY instanceof narray_1.default)) {
                     throw Error(`Make sure y's elements are of type NArray`);
                 }
-                if (tempX.length !== tempY.length) {
-                    throw Error(`Length of x's element != length of y's element`);
-                }
                 let out = this.forward(tempX);
                 l.push(loss(tempY.flatten(), out.flatten()).result);
                 optimizer.optimize({
