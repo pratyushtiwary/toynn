@@ -51,14 +51,14 @@ export class Optimizer {
   }
 }
 
+/**
+ *
+ * References:
+ *  - https://www.geeksforgeeks.org/how-to-implement-a-gradient-descent-in-python-to-find-a-local-minimum/,
+ *  - https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
+ *  - https://stackoverflow.com/a/13342725
+ */
 export class GradientDescent extends Optimizer {
-  /**
-   *
-   * References:
-   *  - https://www.geeksforgeeks.org/how-to-implement-a-gradient-descent-in-python-to-find-a-local-minimum/,
-   *  - https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
-   *  - https://stackoverflow.com/a/13342725
-   */
 
   protected momentum: number;
   protected weightsHistory: Array<NArray> = [];

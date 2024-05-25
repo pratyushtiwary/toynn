@@ -7,11 +7,11 @@ export class NArray {
   #computedStrides: undefined | Array<number> = undefined;
   #ndim: undefined | number = undefined;
 
+  /**
+   * Numerical Array implementation which allows user to perform advance computational stuff
+   * @param obj {Array<any> | NArray} 
+   */
   constructor(obj: Array<any> | NArray) {
-    /**
-     * Numerical Array implementation which allows user to perform advance computational stuff
-     * @param obj:<Array, NArray>
-     */
 
     if (obj instanceof Array) {
       this.#arr = obj;
@@ -51,11 +51,11 @@ export class NArray {
     }
   }
 
+  /**
+   * Recursively compute shape for provided array
+   * @param x: Array
+   */
   #computeShape(x: Array<any>): Array<number> {
-    /**
-     * Recursively compute shape for provided array
-     * @param x: Array
-     */
     let size = [];
 
     if (x instanceof Array) {
@@ -69,11 +69,11 @@ export class NArray {
     }
   }
 
+  /**
+   * Provided a shape it calculates number of strides
+   * @param shape: Array
+   */
   #computeStrides(...shape: Array<number>): Array<number> {
-    /**
-     * Provided a shape it calculates number of strides
-     * @param shape: Array
-     */
     let final = [],
       temp;
     for (let i = 1; i <= shape.length; i++) {
@@ -87,16 +87,19 @@ export class NArray {
     return final;
   }
 
+  /**
+   * Recusively gets value for the specified path
+   *
+   * Used by the get function
+   */
   #get(...path: Array<number>): Array<any> {
-    /**
-     * Recusively gets value for the specified path
-     *
-     * Used by the get function
-     */
     if (path.length <= this.strides.length) {
       if (path.length === this.strides.length) {
         let finalIndex = 0;
         path.forEach((e, i) => {
+          if(e < 0){
+            e = this.shape[i] + e;
+          }
           finalIndex += e * this.strides[i];
         });
         return this.#arr[finalIndex];
@@ -120,11 +123,11 @@ export class NArray {
     }
   }
 
+  /**
+   * Calculate number of elements in an array by summing up the shape
+   * @param shape: Array -> shape of the array
+   */
   static calcNoOfElems(...shape: Array<number>): number {
-    /**
-     * Calculate number of elements in an array by summing up the shape
-     * @param shape: Array -> shape of the array
-     */
     let noOfElems = 1;
 
     for (let i = 0; i < shape.length; i++) {
@@ -134,11 +137,11 @@ export class NArray {
     return noOfElems;
   }
 
+  /**
+   * Recursively flattens passed array
+   * @param x: Array -> defaults to value by which object is initialized
+   */
   #flatten(x: Array<any> = this.#arr): Array<any> {
-    /**
-     * Recursively flattens passed array
-     * @param x: Array -> defaults to value by which object is initialized
-     */
     let final = [];
     let temp;
     if (!(x[0] instanceof Array)) {
@@ -193,10 +196,10 @@ export class NArray {
     this.#computedStrides = newStrides;
   }
 
+  /**
+   * Returns flat Array
+   */
   flatten(): Array<any> {
-    /**
-     * Returns flat Array
-     */
     return this.#arr;
   }
 
@@ -661,12 +664,12 @@ export class NArray {
     return new NArray(final).reshape(...newShape);
   }
 
+  /**
+   * Returns transpose of the NArray
+   *
+   * Reference: https://stackoverflow.com/a/32034565
+   */
   transpose(): NArray {
-    /**
-     * Returns transpose of the NArray
-     *
-     * Reference: https://stackoverflow.com/a/32034565
-     */
 
     const final = new NArray(this.#arr);
     final.reshape(...Array.from(this.shape).reverse());
@@ -674,11 +677,11 @@ export class NArray {
     return final;
   }
 
+  /**
+   * Broadcast array into provided shape
+   * @param dims: Array -> shape to broadcast array into
+   */
   reshape(...shape: Array<number>): this {
-    /**
-     * Broadcast array into provided shape
-     * @param dims: Array -> shape to broadcast array into
-     */
     // check if there is any imaginary dimension(-1) given
     const imaginaryDimFound = shape.filter((e) => e === -1).length;
     const tempShape = shape.filter((e) => e !== -1);
@@ -709,22 +712,22 @@ export class NArray {
     return this;
   }
 
+  /**
+   * Returns transpose of the NArray
+   */
   get T(): NArray {
-    /**
-     * Returns transpose of the NArray
-     */
     return this.transpose();
   }
 
+  /**
+   * Allows to fetch values from specified index
+   * @param path: Array -> index path
+   *
+   * Usage:
+   *  k = NArray.arange(1,33).reshape(2,2,2,4);
+   *  console.log(k.get(0,0));
+   */
   get(...path: Array<number>): Array<any> {
-    /**
-     * Allows to fetch values from specified index
-     * @param path: Array -> index path
-     *
-     * Usage:
-     *  k = NArray.arange(1,33).reshape(2,2,2,4);
-     *  console.log(k.get(0,0));
-     */
     let final = [];
     if (path.length === 0) {
       for (let i = 0; i < this.shape[0]; i++) {
@@ -740,12 +743,12 @@ export class NArray {
     return this.get();
   }
 
+  /**
+   * Returns jsonified string of the array
+   *
+   * Used for printing purposes
+   */
   jsonify(): String {
-    /**
-     * Returns jsonified string of the array
-     *
-     * Used for printing purposes
-     */
     return JSON.stringify(this.real, null, 4);
   }
 
@@ -776,11 +779,11 @@ export class NArray {
     return this.real;
   }
 
+  /**
+   * Returns a provided dimension NArray with all of its values as 0
+   * @param dims: Array -> shape of the new NArray
+   */
   static zeros(...shape: Array<number>): NArray {
-    /**
-     * Returns a provided dimension NArray with all of its values as 0
-     * @param dims: Array -> shape of the new NArray
-     */
     const temp = [];
     const elems = NArray.calcNoOfElems(...shape);
 
@@ -791,17 +794,17 @@ export class NArray {
     return new NArray(temp).reshape(...shape);
   }
 
+  /**
+   * Returns a flat NArray with elements ranging from start -> end with specified step increment
+   * @param start: int -> start of the range
+   * @param end: int -> end of the range
+   * @param step: int -> stride
+   */
   static arange(
     start: number = 0,
     end: undefined | number = undefined,
     step: number = 1
   ): NArray {
-    /**
-     * Returns a flat NArray with elements ranging from start -> end with specified step increment
-     * @param start: int -> start of the range
-     * @param end: int -> end of the range
-     * @param step: int -> stride
-     */
     if (!end) {
       end = start;
       start = 0;
@@ -820,10 +823,10 @@ export class NArray {
     return new NArray(values);
   }
 
+  /**
+   * Returns random number as per normal distribution
+   */
   static randn(mean: number = 0, stdev: number = 1): number {
-    /**
-     * Returns random number as per normal distribution
-     */
     const u1 = Math.random();
     const u2 = Math.random();
 

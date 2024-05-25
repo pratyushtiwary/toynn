@@ -41,15 +41,15 @@ export class NN {
   #trained: boolean = false;
   #lastOptimizerUsed: Optimizer;
 
+  /**
+   * Takes in a name and allows users to create a skeleton which holds layer and activation function
+   * Object of this class also allows user to backpropogate and predict
+   *
+   * @param name: str -> Name of the model. This name will later be used to load and save model
+   *
+   * Reference: https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
+   */
   constructor(name: String) {
-    /**
-     * Takes in a name and allows users to create a skeleton which holds layer and activation function
-     * Object of this class also allows user to backpropogate and predict
-     *
-     * @param name: str -> Name of the model. This name will later be used to load and save model
-     *
-     * Reference: https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
-     */
     this.#name = name;
   }
 
@@ -194,7 +194,7 @@ export class NN {
 
     explanation += `No. of layers: ${this.#layers.length}\n`;
 
-    explanation += `Each layers uses the formula: activationFunction(x*weigths + bias)\n`;
+    explanation += `Each layers uses the formula: activationFunction(x*weights + bias)\n`;
 
     this.#layers.forEach((e, i) => {
       if (i === 0) {
@@ -326,13 +326,13 @@ export class Layer {
   #activationFunction: ActivationFunction = undefined;
   name: String = undefined;
 
+  /**
+   * Single layer in the neural network
+   *
+   * @param inputSize: int
+   * @param outputSize: int
+   */
   constructor(inputSize: number, outputSize: number) {
-    /**
-     * Single layer in the neural network
-     *
-     * @param inputSize: int
-     * @param outputSize: int
-     */
     this.inputSize = inputSize;
     this.outputSize = outputSize;
     nLayer++;

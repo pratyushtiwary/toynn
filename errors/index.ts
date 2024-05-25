@@ -26,11 +26,12 @@ export class StatError {
     this.#yPred = yPred;
   }
 
+  /**
+   * Takes in a function and use it to compute result value
+   * 
+   * Can be chained
+   */
   apply(func: Function): StatErrorReturn {
-    /**
-     * Takes in a function and use it to compute result value
-     * Can be chained
-     */
     this.result = func(this.result);
     if (func.name === "") {
       throw Error("Anonymous functions are not supported");
@@ -44,11 +45,12 @@ export class StatError {
     };
   }
 
+  /**
+   * Takes in a function and use it to transform loss value for each row
+   * 
+   * Can't be chanined
+   */
   use(func: Function = undefined): StatErrorReturn {
-    /**
-     * Takes in a function and use it to transform loss value for each row
-     * Can't be chanined
-     */
     this.result = [];
     let temp: number;
     this.#yTrue.forEach((e, i) => {

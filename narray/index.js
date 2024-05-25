@@ -10,16 +10,16 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
     if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver)) throw new TypeError("Cannot read private member from an object whose class did not declare it");
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
-var _NArray_instances, _NArray_arr, _NArray_computedShape, _NArray_length, _NArray_computedStrides, _NArray_ndim, _NArray_computeShape, _NArray_computeStrides, _NArray_get, _NArray_flatten;
+var _NArray_instances, _a, _NArray_arr, _NArray_computedShape, _NArray_length, _NArray_computedStrides, _NArray_ndim, _NArray_computeShape, _NArray_computeStrides, _NArray_get, _NArray_flatten;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NArray = void 0;
 globalThis.NArray_printThreshold = 5;
 class NArray {
+    /**
+     * Numerical Array implementation which allows user to perform advance computational stuff
+     * @param obj {Array<any> | NArray}
+     */
     constructor(obj) {
-        /**
-         * Numerical Array implementation which allows user to perform advance computational stuff
-         * @param obj:<Array, NArray>
-         */
         _NArray_instances.add(this);
         _NArray_arr.set(this, []);
         _NArray_computedShape.set(this, undefined);
@@ -34,7 +34,7 @@ class NArray {
             __classPrivateFieldSet(this, _NArray_ndim, __classPrivateFieldGet(this, _NArray_computedShape, "f").length, "f");
             // flatten the array after computing shape
             __classPrivateFieldSet(this, _NArray_arr, __classPrivateFieldGet(this, _NArray_instances, "m", _NArray_flatten).call(this, __classPrivateFieldGet(this, _NArray_arr, "f")), "f");
-            if (this.length !== NArray.calcNoOfElems(...__classPrivateFieldGet(this, _NArray_computedShape, "f"))) {
+            if (this.length !== _a.calcNoOfElems(...__classPrivateFieldGet(this, _NArray_computedShape, "f"))) {
                 throw Error(`The passed array doesn't seems to follow a fixed shape. NArray's need to have a fixed shape.
           
           How to fix this?
@@ -43,7 +43,7 @@ class NArray {
           `);
             }
         }
-        else if (obj instanceof NArray) {
+        else if (obj instanceof _a) {
             __classPrivateFieldSet(this, _NArray_arr, obj.flatten(), "f");
             __classPrivateFieldSet(this, _NArray_computedShape, obj.shape, "f");
             __classPrivateFieldSet(this, _NArray_computedStrides, obj.strides, "f");
@@ -60,11 +60,11 @@ class NArray {
       `);
         }
     }
+    /**
+     * Calculate number of elements in an array by summing up the shape
+     * @param shape: Array -> shape of the array
+     */
     static calcNoOfElems(...shape) {
-        /**
-         * Calculate number of elements in an array by summing up the shape
-         * @param shape: Array -> shape of the array
-         */
         let noOfElems = 1;
         for (let i = 0; i < shape.length; i++) {
             noOfElems *= shape[i];
@@ -101,10 +101,10 @@ class NArray {
         }
         __classPrivateFieldSet(this, _NArray_computedStrides, newStrides, "f");
     }
+    /**
+     * Returns flat Array
+     */
     flatten() {
-        /**
-         * Returns flat Array
-         */
         return __classPrivateFieldGet(this, _NArray_arr, "f");
     }
     reduce(func) {
@@ -113,7 +113,7 @@ class NArray {
     }
     map(func) {
         let f = __classPrivateFieldGet(this, _NArray_arr, "f").map((e, i) => func(e, i));
-        return new NArray(f).reshape(...this.shape);
+        return new _a(f).reshape(...this.shape);
     }
     forEach(func) {
         __classPrivateFieldGet(this, _NArray_arr, "f").forEach((e, i) => func(e, i));
@@ -136,7 +136,7 @@ class NArray {
       Try changing axis to a number between 0 and ${this.ndim - 1}.`);
         }
         if (axis === undefined) {
-            return new NArray([this.reduce((a, b) => a + b)]);
+            return new _a([this.reduce((a, b) => a + b)]);
         }
         const inc = this.strides[axis], breakage = this.shape[axis], prevBreakage = this.strides[axis - 1];
         let final = [], temp = 0, i = 0, j = 0;
@@ -170,7 +170,7 @@ class NArray {
         else {
             newShape = this.shape.slice(0, -1);
         }
-        return new NArray(final).reshape(...newShape);
+        return new _a(final).reshape(...newShape);
     }
     diag() {
         if (this.ndim > 2) {
@@ -193,7 +193,7 @@ class NArray {
                     j++;
                 }
             }
-            return new NArray(final).reshape(this.length, this.length);
+            return new _a(final).reshape(this.length, this.length);
         }
         else if (this.ndim === 2) {
             let smaller = this.shape[0] < this.shape[1] ? this.shape[0] : this.shape[1];
@@ -202,7 +202,7 @@ class NArray {
             for (let i = 1; i < smaller; i++) {
                 final[i] = __classPrivateFieldGet(this, _NArray_arr, "f")[this.shape[1] * i + i];
             }
-            return new NArray(final);
+            return new _a(final);
         }
     }
     add(y) {
@@ -221,7 +221,7 @@ class NArray {
             return final.reshape(...y.shape);
         }
         else {
-            if (!(y instanceof NArray)) {
+            if (!(y instanceof _a)) {
                 throw Error(`Failed to add because the passed object is not NArray
 
         How to fix this?
@@ -256,7 +256,7 @@ class NArray {
             return final.reshape(...y.shape);
         }
         else {
-            if (!(y instanceof NArray)) {
+            if (!(y instanceof _a)) {
                 throw Error(`Failed to subtract because the passed object is not NArray
           
           How to fix this?
@@ -289,7 +289,7 @@ class NArray {
             return final.reshape(...y.shape);
         }
         else {
-            if (!(y instanceof NArray)) {
+            if (!(y instanceof _a)) {
                 throw Error(`Failed to divide because the passed object is not NArray
         
         How to fix this?
@@ -304,7 +304,7 @@ class NArray {
             r = y.flatten();
             final = this.map((e, i) => e / r[i]);
         }
-        final = new NArray(final);
+        final = new _a(final);
         final.reshape(...__classPrivateFieldGet(this, _NArray_computedShape, "f"));
         return final;
     }
@@ -314,7 +314,7 @@ class NArray {
             temp = y;
             final = this.map((e) => e * temp);
         }
-        else if (y instanceof NArray && y.length === 1) {
+        else if (y instanceof _a && y.length === 1) {
             temp = y.flatten()[0];
             final = this.map((e) => e * temp);
         }
@@ -324,7 +324,7 @@ class NArray {
             return final.reshape(...y.shape);
         }
         else {
-            if (!(y instanceof NArray)) {
+            if (!(y instanceof _a)) {
                 throw Error(`Failed to multiply because the passed object is not NArray
           
           How to fix this?
@@ -345,7 +345,7 @@ class NArray {
             r = y.flatten();
             final = this.map((e, i) => e * r[i]);
         }
-        final = new NArray(final);
+        final = new _a(final);
         final.reshape(...__classPrivateFieldGet(this, _NArray_computedShape, "f"));
         return final;
     }
@@ -364,7 +364,7 @@ class NArray {
             return final.reshape(...y.shape);
         }
         else {
-            if (!(y instanceof NArray)) {
+            if (!(y instanceof _a)) {
                 throw Error(`Failed to X^Y because the passed object is not NArray
         
         How to fix this?
@@ -379,12 +379,12 @@ class NArray {
             r = y.flatten();
             final = this.map((e, i) => Math.pow(e, r[i]));
         }
-        final = new NArray(final);
+        final = new _a(final);
         final.reshape(...__classPrivateFieldGet(this, _NArray_computedShape, "f"));
         return final;
     }
     dot(y) {
-        if (!(y instanceof NArray)) {
+        if (!(y instanceof _a)) {
             throw Error(`Failed to dot because the passed object is not NArray
       
       How to fix this?
@@ -441,7 +441,7 @@ class NArray {
             tempShape1 = shape1;
             tempShape2 = shape2;
         }
-        const shape1Last = tempShape1[tempShape1.length - 1], shape2Last = tempShape2[tempShape2.length - 1], newLen = NArray.calcNoOfElems(...newShape), iterCond = newLen * shape1Last;
+        const shape1Last = tempShape1[tempShape1.length - 1], shape2Last = tempShape2[tempShape2.length - 1], newLen = _a.calcNoOfElems(...newShape), iterCond = newLen * shape1Last;
         for (let o = 0; o < iterCond; o++) {
             temp += __classPrivateFieldGet(this, _NArray_arr, "f")[i] * arr2[l + k];
             i++;
@@ -468,28 +468,28 @@ class NArray {
                 temp = 0;
             }
         }
-        return new NArray(final).reshape(...newShape);
+        return new _a(final).reshape(...newShape);
     }
+    /**
+     * Returns transpose of the NArray
+     *
+     * Reference: https://stackoverflow.com/a/32034565
+     */
     transpose() {
-        /**
-         * Returns transpose of the NArray
-         *
-         * Reference: https://stackoverflow.com/a/32034565
-         */
-        const final = new NArray(__classPrivateFieldGet(this, _NArray_arr, "f"));
+        const final = new _a(__classPrivateFieldGet(this, _NArray_arr, "f"));
         final.reshape(...Array.from(this.shape).reverse());
         final.strides = Array.from(this.strides).reverse();
         return final;
     }
+    /**
+     * Broadcast array into provided shape
+     * @param dims: Array -> shape to broadcast array into
+     */
     reshape(...shape) {
-        /**
-         * Broadcast array into provided shape
-         * @param dims: Array -> shape to broadcast array into
-         */
         // check if there is any imaginary dimension(-1) given
         const imaginaryDimFound = shape.filter((e) => e === -1).length;
         const tempShape = shape.filter((e) => e !== -1);
-        const newLen = NArray.calcNoOfElems(...tempShape);
+        const newLen = _a.calcNoOfElems(...tempShape);
         if (imaginaryDimFound === 1) {
             let imaginaryDim = 0;
             imaginaryDim = this.length / newLen;
@@ -498,7 +498,7 @@ class NArray {
         else if (imaginaryDimFound > 1) {
             throw Error(`Failed to reshape, only single imaginary dimension is supported`);
         }
-        if (NArray.calcNoOfElems(...shape) !== this.length) {
+        if (_a.calcNoOfElems(...shape) !== this.length) {
             throw Error(`Array of dimension ${this.shape} can't be broadcasted into ${shape} dimension
         
         How to fix this?
@@ -509,21 +509,21 @@ class NArray {
         __classPrivateFieldSet(this, _NArray_ndim, shape.length, "f");
         return this;
     }
+    /**
+     * Returns transpose of the NArray
+     */
     get T() {
-        /**
-         * Returns transpose of the NArray
-         */
         return this.transpose();
     }
+    /**
+     * Allows to fetch values from specified index
+     * @param path: Array -> index path
+     *
+     * Usage:
+     *  k = NArray.arange(1,33).reshape(2,2,2,4);
+     *  console.log(k.get(0,0));
+     */
     get(...path) {
-        /**
-         * Allows to fetch values from specified index
-         * @param path: Array -> index path
-         *
-         * Usage:
-         *  k = NArray.arange(1,33).reshape(2,2,2,4);
-         *  console.log(k.get(0,0));
-         */
         let final = [];
         if (path.length === 0) {
             for (let i = 0; i < this.shape[0]; i++) {
@@ -538,12 +538,12 @@ class NArray {
     get real() {
         return this.get();
     }
+    /**
+     * Returns jsonified string of the array
+     *
+     * Used for printing purposes
+     */
     jsonify() {
-        /**
-         * Returns jsonified string of the array
-         *
-         * Used for printing purposes
-         */
         return JSON.stringify(this.real, null, 4);
     }
     toString() {
@@ -565,25 +565,25 @@ class NArray {
     valueOf() {
         return this.real;
     }
+    /**
+     * Returns a provided dimension NArray with all of its values as 0
+     * @param dims: Array -> shape of the new NArray
+     */
     static zeros(...shape) {
-        /**
-         * Returns a provided dimension NArray with all of its values as 0
-         * @param dims: Array -> shape of the new NArray
-         */
         const temp = [];
-        const elems = NArray.calcNoOfElems(...shape);
+        const elems = _a.calcNoOfElems(...shape);
         for (let i = 0; i < elems; i++) {
             temp.push(0);
         }
-        return new NArray(temp).reshape(...shape);
+        return new _a(temp).reshape(...shape);
     }
+    /**
+     * Returns a flat NArray with elements ranging from start -> end with specified step increment
+     * @param start: int -> start of the range
+     * @param end: int -> end of the range
+     * @param step: int -> stride
+     */
     static arange(start = 0, end = undefined, step = 1) {
-        /**
-         * Returns a flat NArray with elements ranging from start -> end with specified step increment
-         * @param start: int -> start of the range
-         * @param end: int -> end of the range
-         * @param step: int -> stride
-         */
         if (!end) {
             end = start;
             start = 0;
@@ -597,12 +597,12 @@ class NArray {
         for (let i = start; i < end; i += step) {
             values.push(i);
         }
-        return new NArray(values);
+        return new _a(values);
     }
+    /**
+     * Returns random number as per normal distribution
+     */
     static randn(mean = 0, stdev = 1) {
-        /**
-         * Returns random number as per normal distribution
-         */
         const u1 = Math.random();
         const u2 = Math.random();
         const z = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
@@ -613,11 +613,7 @@ class NArray {
     }
 }
 exports.NArray = NArray;
-_NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_length = new WeakMap(), _NArray_computedStrides = new WeakMap(), _NArray_ndim = new WeakMap(), _NArray_instances = new WeakSet(), _NArray_computeShape = function _NArray_computeShape(x) {
-    /**
-     * Recursively compute shape for provided array
-     * @param x: Array
-     */
+_a = NArray, _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_length = new WeakMap(), _NArray_computedStrides = new WeakMap(), _NArray_ndim = new WeakMap(), _NArray_instances = new WeakSet(), _NArray_computeShape = function _NArray_computeShape(x) {
     let size = [];
     if (x instanceof Array) {
         size.push(x.length);
@@ -628,10 +624,6 @@ _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_leng
         return size;
     }
 }, _NArray_computeStrides = function _NArray_computeStrides(...shape) {
-    /**
-     * Provided a shape it calculates number of strides
-     * @param shape: Array
-     */
     let final = [], temp;
     for (let i = 1; i <= shape.length; i++) {
         if (i === shape.length) {
@@ -644,15 +636,13 @@ _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_leng
     }
     return final;
 }, _NArray_get = function _NArray_get(...path) {
-    /**
-     * Recusively gets value for the specified path
-     *
-     * Used by the get function
-     */
     if (path.length <= this.strides.length) {
         if (path.length === this.strides.length) {
             let finalIndex = 0;
             path.forEach((e, i) => {
+                if (e < 0) {
+                    e = this.shape[i] + e;
+                }
                 finalIndex += e * this.strides[i];
             });
             return __classPrivateFieldGet(this, _NArray_arr, "f")[finalIndex];
@@ -675,10 +665,6 @@ _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_leng
       Your NArray is of dimension ${this.ndim} put you are trying to access ${path.length} dimension data. Try changing the path passed to ${this.ndim} dimension.`);
     }
 }, _NArray_flatten = function _NArray_flatten(x = __classPrivateFieldGet(this, _NArray_arr, "f")) {
-    /**
-     * Recursively flattens passed array
-     * @param x: Array -> defaults to value by which object is initialized
-     */
     let final = [];
     let temp;
     if (!(x[0] instanceof Array)) {
@@ -686,7 +672,7 @@ _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(), _NArray_leng
     }
     else {
         x.forEach((e) => {
-            if (e instanceof NArray) {
+            if (e instanceof _a) {
                 temp = e.flatten();
             }
             else {

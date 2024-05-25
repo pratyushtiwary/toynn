@@ -48,19 +48,19 @@ const narray_1 = __importDefault(require("../narray"));
 const optimizers_1 = require("../optimizers");
 let nLayer = 0;
 class NN {
+    /**
+     * Takes in a name and allows users to create a skeleton which holds layer and activation function
+     * Object of this class also allows user to backpropogate and predict
+     *
+     * @param name: str -> Name of the model. This name will later be used to load and save model
+     *
+     * Reference: https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
+     */
     constructor(name) {
         _NN_layers.set(this, []);
         _NN_name.set(this, undefined);
         _NN_trained.set(this, false);
         _NN_lastOptimizerUsed.set(this, void 0);
-        /**
-         * Takes in a name and allows users to create a skeleton which holds layer and activation function
-         * Object of this class also allows user to backpropogate and predict
-         *
-         * @param name: str -> Name of the model. This name will later be used to load and save model
-         *
-         * Reference: https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
-         */
         __classPrivateFieldSet(this, _NN_name, name, "f");
     }
     get layers() {
@@ -173,7 +173,7 @@ class NN {
         let explanation = `\n`;
         let recent;
         explanation += `No. of layers: ${__classPrivateFieldGet(this, _NN_layers, "f").length}\n`;
-        explanation += `Each layers uses the formula: activationFunction(x*weigths + bias)\n`;
+        explanation += `Each layers uses the formula: activationFunction(x*weights + bias)\n`;
         __classPrivateFieldGet(this, _NN_layers, "f").forEach((e, i) => {
             if (i === 0) {
                 recent = e.forward(x);
@@ -262,6 +262,12 @@ class NN {
 exports.NN = NN;
 _NN_layers = new WeakMap(), _NN_name = new WeakMap(), _NN_trained = new WeakMap(), _NN_lastOptimizerUsed = new WeakMap();
 class Layer {
+    /**
+     * Single layer in the neural network
+     *
+     * @param inputSize: int
+     * @param outputSize: int
+     */
     constructor(inputSize, outputSize) {
         _Layer_instances.add(this);
         _Layer_weights.set(this, undefined);
@@ -270,12 +276,6 @@ class Layer {
         this.outputSize = 0;
         _Layer_activationFunction.set(this, undefined);
         this.name = undefined;
-        /**
-         * Single layer in the neural network
-         *
-         * @param inputSize: int
-         * @param outputSize: int
-         */
         this.inputSize = inputSize;
         this.outputSize = outputSize;
         nLayer++;

@@ -29,11 +29,12 @@ class StatError {
         __classPrivateFieldSet(this, _StatError_yTrue, yTrue, "f");
         __classPrivateFieldSet(this, _StatError_yPred, yPred, "f");
     }
+    /**
+     * Takes in a function and use it to compute result value
+     *
+     * Can be chained
+     */
     apply(func) {
-        /**
-         * Takes in a function and use it to compute result value
-         * Can be chained
-         */
         this.result = func(this.result);
         if (func.name === "") {
             throw Error("Anonymous functions are not supported");
@@ -45,11 +46,12 @@ class StatError {
             formula: this.formula,
         };
     }
+    /**
+     * Takes in a function and use it to transform loss value for each row
+     *
+     * Can't be chanined
+     */
     use(func = undefined) {
-        /**
-         * Takes in a function and use it to transform loss value for each row
-         * Can't be chanined
-         */
         this.result = [];
         let temp;
         __classPrivateFieldGet(this, _StatError_yTrue, "f").forEach((e, i) => {

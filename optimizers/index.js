@@ -29,6 +29,13 @@ class Optimizer {
     }
 }
 exports.Optimizer = Optimizer;
+/**
+ *
+ * References:
+ *  - https://www.geeksforgeeks.org/how-to-implement-a-gradient-descent-in-python-to-find-a-local-minimum/,
+ *  - https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
+ *  - https://stackoverflow.com/a/13342725
+ */
 class GradientDescent extends Optimizer {
     constructor(options = { momentum: 0.9 }) {
         super();

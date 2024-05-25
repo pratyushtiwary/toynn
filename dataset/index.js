@@ -70,12 +70,12 @@ class Dataset {
         }
         return final;
     }
-    static from(loc, options = {
-        delimiter: ",",
-        headerCol: 1,
-    }) {
-        var _a, e_1, _b, _c;
-        return __awaiter(this, void 0, void 0, function* () {
+    static from(loc_1) {
+        return __awaiter(this, arguments, void 0, function* (loc, options = {
+            delimiter: ",",
+            headerCol: 1,
+        }) {
+            var _a, e_1, _b, _c;
             if (loc instanceof Array) {
                 return new Dataset(loc);
             }

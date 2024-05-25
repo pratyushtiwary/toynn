@@ -16,10 +16,12 @@ test("NArray Get Test", () => {
 
   const output2 = [9, 10];
   const output3 = 10;
+  const output4 = 16;
 
   expect(narray.get(0)).toStrictEqual(output1);
   expect(narray.get(1, 0)).toStrictEqual(output2);
   expect(narray.get(1, 0, 1)).toStrictEqual(output3);
+  expect(narray.get(-1, -1, -1)).toStrictEqual(output4);
 
   try {
     narray.get(4, 3, 2, 1);
