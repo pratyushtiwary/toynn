@@ -15,11 +15,11 @@ jobs:
           node-version: "18.x"
           registry-url: "https://registry.npmjs.org"
       - name: Installing Dependencies
-        run: npm install
+        run: yarn install
       - name: Run Lint
-        run: npm run lint
+        run: yarn lint
       - name: Running Tests
-        run: npm run test:coverage
+        run: yarn test:coverage
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         env:
