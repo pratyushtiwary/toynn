@@ -30,7 +30,7 @@ export class Optimizer {
 
   public process(
     x: Array<any> | Dataset | DatasetSlice,
-    y: Array<any> | Dataset | DatasetSlice
+    y: Array<any> | Dataset | DatasetSlice,
   ): OptimizerProcessReturn {
     return { x, y };
   }
@@ -59,7 +59,6 @@ export class Optimizer {
  *  - https://stackoverflow.com/a/13342725
  */
 export class GradientDescent extends Optimizer {
-
   protected momentum: number;
   protected weightsHistory: Array<NArray> = [];
   protected biasHistory: Array<NArray> = [];
@@ -76,7 +75,7 @@ export class GradientDescent extends Optimizer {
   protected calcUpdates(
     layers: Layer[],
     weightGradients: NArray[],
-    biasGradients: NArray[]
+    biasGradients: NArray[],
   ): Array<NArray[]> {
     let adjustedWeights = [],
       adjustedBiases = [];
@@ -136,7 +135,7 @@ export class GradientDescent extends Optimizer {
     for (let i = layers.length - 2; i >= 0; i--) {
       weightErrors[i] = layers[i + 1].weights.dot(weightGradients[i + 1].T);
       weightGradients[i] = weightErrors[i].T.mul(
-        layers[i].activationFunction.calcGradient(layersOp[i])
+        layers[i].activationFunction.calcGradient(layersOp[i]),
       );
 
       biasGradients[i] = layers[i].activationFunction.calcGradient(layersOp[i]);
@@ -160,7 +159,7 @@ export class GradientDescent extends Optimizer {
     const [adjustedBiases, adjustedWeights] = this.calcUpdates(
       layers,
       weightGradients,
-      biasGradients
+      biasGradients,
     );
 
     return {
@@ -208,7 +207,7 @@ export class GradientDescent extends Optimizer {
 export class StochasticGradientDescent extends GradientDescent {
   process(
     x: any[] | Dataset | DatasetSlice,
-    y: any[] | Dataset | DatasetSlice
+    y: any[] | Dataset | DatasetSlice,
   ): OptimizerProcessReturn {
     if (x.length !== y.length) {
       throw Error(`X and Y length mismatch
@@ -224,7 +223,7 @@ export class StochasticGradientDescent extends GradientDescent {
 
     if (!(arrangement instanceof Array)) {
       throw Error(
-        `SGD: Failed to shuffle data. utils.shuffle returned unexpected value.`
+        `SGD: Failed to shuffle data. utils.shuffle returned unexpected value.`,
       );
     }
 
@@ -265,7 +264,7 @@ class RMSProp extends StochasticGradientDescent {
   protected calcUpdates(
     layers: Layer[],
     weightGradients: NArray[],
-    biasGradients: NArray[]
+    biasGradients: NArray[],
   ): NArray[][] {
     let adjustedBiases = [],
       adjustedWeights = [];
@@ -280,7 +279,7 @@ class RMSProp extends StochasticGradientDescent {
         adjustedWeights[i] = layers[i].weights.sub(
           weightGradients[i]
             .div(this.weightsHistory[i].add(this.EPSILON).map(Math.sqrt))
-            .mul(this.alpha)
+            .mul(this.alpha),
         );
       }
 
@@ -292,7 +291,7 @@ class RMSProp extends StochasticGradientDescent {
       adjustedBiases[i] = layers[i].bias.sub(
         biasGradients[i]
           .div(this.biasHistory[i].add(this.EPSILON).map(Math.sqrt))
-          .mul(this.alpha)
+          .mul(this.alpha),
       );
     }
 

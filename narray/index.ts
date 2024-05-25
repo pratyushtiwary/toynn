@@ -12,7 +12,6 @@ export class NArray {
    * @param obj {Array<any> | NArray}
    */
   constructor(obj: Array<any> | NArray) {
-
     if (obj instanceof Array) {
       this.#arr = obj;
       this.#arr = Array.from(this.#arr);
@@ -28,10 +27,8 @@ export class NArray {
 
           How to fix this?
 
-          Make sure the number of elements in your array(${
-            this.length
-          }) is equals to the product of ${this.#computedShape}
-          `
+          Make sure the number of elements in your array(${this.length}) is equals to the product of ${this.#computedShape}
+          `,
         );
       }
     } else if (obj instanceof NArray) {
@@ -97,7 +94,7 @@ export class NArray {
       if (path.length === this.strides.length) {
         let finalIndex = 0;
         path.forEach((e, i) => {
-          if(e < 0){
+          if (e < 0) {
             e = this.shape[i] + e;
           }
           finalIndex += e * this.strides[i];
@@ -189,7 +186,7 @@ export class NArray {
         `strides must be same length as shape (${this.shape.length})
 
         How to fix this?
-        Make sure new strides have ${this.ndim} number of elements.`
+        Make sure new strides have ${this.ndim} number of elements.`,
       );
     }
 
@@ -380,7 +377,7 @@ export class NArray {
           `Failed to subtract because the passed object is not NArray
 
           How to fix this?
-          Try converting the passed object to NArray.`
+          Try converting the passed object to NArray.`,
         );
       }
 
@@ -460,7 +457,7 @@ export class NArray {
           `Failed to multiply because the passed object is not NArray
 
           How to fix this?
-          Try converting the passed object to NArray.`
+          Try converting the passed object to NArray.`,
         );
       }
 
@@ -571,7 +568,7 @@ export class NArray {
           `Shapes ${shape1} and ${shape2} are not aligned. ${shape1[1]}(dim=1) != ${shape2[0]}(dim=0).
 
           How to fix this?
-          Reshape your passed array with dimension 0 as ${shape1[1]}`
+          Reshape your passed array with dimension 0 as ${shape1[1]}`,
         );
       }
     }
@@ -588,7 +585,7 @@ export class NArray {
           How to fix this?
           Reshape your passed array with dimension ${y.ndim - 2} as ${
             shape1[shape1.length - 1]
-          }`
+          }`,
         );
       }
     }
@@ -670,7 +667,6 @@ export class NArray {
    * Reference: https://stackoverflow.com/a/32034565
    */
   transpose(): NArray {
-
     const final = new NArray(this.#arr);
     final.reshape(...Array.from(this.shape).reverse());
     final.strides = Array.from(this.strides).reverse();
@@ -694,7 +690,7 @@ export class NArray {
       shape = shape.map((e) => (e === -1 ? imaginaryDim : e));
     } else if (imaginaryDimFound > 1) {
       throw Error(
-        `Failed to reshape, only single imaginary dimension is supported`
+        `Failed to reshape, only single imaginary dimension is supported`,
       );
     }
     if (NArray.calcNoOfElems(...shape) !== this.length) {
@@ -702,7 +698,7 @@ export class NArray {
         `Array of dimension ${this.shape} can't be broadcasted into ${shape} dimension
 
         How to fix this?
-        The passed shape(${shape}) product is not equal to ${this.length}, make sure that you pass the new shape whose product is equal to ${this.length}`
+        The passed shape(${shape}) product is not equal to ${this.length}, make sure that you pass the new shape whose product is equal to ${this.length}`,
       );
     }
 
@@ -803,7 +799,7 @@ export class NArray {
   static arange(
     start: number = 0,
     end: undefined | number = undefined,
-    step: number = 1
+    step: number = 1,
   ): NArray {
     if (!end) {
       end = start;

@@ -34,8 +34,8 @@ export class Dataset {
         new NArray(
           this.get(i)
             .flatten()
-            .slice(...selection)
-        )
+            .slice(...selection),
+        ),
       );
     }
 
@@ -60,7 +60,7 @@ export class Dataset {
     options: DatasetOptions = {
       delimiter: ",",
       headerCol: 1,
-    }
+    },
   ) {
     if (loc instanceof Array) {
       return new Dataset(loc);
@@ -177,8 +177,8 @@ export class DatasetSlice {
         new NArray(
           this.get(i)
             .flatten()
-            .slice(...selection)
-        )
+            .slice(...selection),
+        ),
       );
     }
 

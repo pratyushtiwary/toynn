@@ -81,7 +81,7 @@ export class NN {
             How to fix this?
             Make sure that layer ${
               this.#layers.length + 1
-            }'s input size = ${prevOutputSize}`
+            }'s input size = ${prevOutputSize}`,
           );
         }
       }
@@ -263,16 +263,16 @@ export class NN {
 
         this.#layers[i].weights = new NArray(tempLayer.weights).reshape(
           tempLayer.shape[0],
-          tempLayer.shape[1]
+          tempLayer.shape[1],
         );
         this.#layers[i].bias = new NArray(tempLayer.bias).reshape(
           1,
-          tempLayer.shape[1]
+          tempLayer.shape[1],
         );
 
         tempActivationFunctionName = tempLayer.activationFunction.replace(
           /([\w\W]*)+\(+([\w\W]*)+\)/gi,
-          "$1"
+          "$1",
         );
 
         // check if activation function exists
@@ -282,7 +282,7 @@ export class NN {
           throw Error(
             `Failed to load activation function ${
               tempLayer.activationFunction
-            } for layer ${i + 1}`
+            } for layer ${i + 1}`,
           );
         }
 
@@ -291,19 +291,19 @@ export class NN {
             "[" +
             tempLayer.activationFunction.replace(
               /([\w\W]*)+\(+([\w\W]*)+\)/gi,
-              "$2"
+              "$2",
             ) +
             "]";
 
           activationFuntionParams = JSON.parse(
-            activationFuntionParams.replace(/\'/g, '"')
+            activationFuntionParams.replace(/\'/g, '"'),
           );
 
           tempActivationFunctionName =
             tempActivationFunctionName[0].toUpperCase() +
             tempActivationFunctionName.slice(1);
           tempActivationFunction = new functions[tempActivationFunctionName](
-            ...activationFuntionParams
+            ...activationFuntionParams,
           );
           this.#layers[i].activationFunction = tempActivationFunction;
         } else {

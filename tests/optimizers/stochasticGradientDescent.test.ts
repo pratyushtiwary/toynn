@@ -40,7 +40,7 @@ describe("StochasticGradientDescent tests", () => {
 
     const { x: processedX, y: processedY } = optimizer.process(
       [1, 2, 3],
-      [4, 5, 6]
+      [4, 5, 6],
     );
 
     if (processedX instanceof Array) {
@@ -63,7 +63,7 @@ describe("StochasticGradientDescent tests", () => {
 
     const { x: processedDatasetX, y: processedDatasetY } = optimizer.process(
       datasetX,
-      datasetY
+      datasetY,
     );
 
     if (processedDatasetX instanceof DatasetSlice) {
@@ -145,7 +145,7 @@ describe("StochasticGradientDescent tests", () => {
 
     const { x: processedX, y: processedY } = optimizer.process(
       [1, 2, 3],
-      [4, 5, 6]
+      [4, 5, 6],
     );
 
     if (processedX instanceof Array) {
@@ -168,7 +168,7 @@ describe("StochasticGradientDescent tests", () => {
 
     const { x: processedDatasetX, y: processedDatasetY } = optimizer.process(
       datasetX,
-      datasetY
+      datasetY,
     );
 
     if (processedDatasetX instanceof DatasetSlice) {

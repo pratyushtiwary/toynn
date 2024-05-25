@@ -23,14 +23,14 @@ test("StatError Test", () => {
 
   myCustomErrorReturn = myCustomErrorReturn.apply(errors.sum);
   expect(myCustomErrorReturn.result).toStrictEqual(
-    output.reduce((a, b) => a + b)
+    output.reduce((a, b) => a + b),
   );
 
   expect(myCustomErrorReturn.formula).toBe("sum(abs(yTrue - yPred))");
 
   try {
     myCustomErrorReturn = myCustomErrorReturn.apply((e: number[]) =>
-      e.reduce((a, b) => a + b)
+      e.reduce((a, b) => a + b),
     );
 
     expect(true).toBe(false);

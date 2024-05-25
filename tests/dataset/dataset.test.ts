@@ -40,7 +40,7 @@ fs.createReadStream = jest.fn((path) => {
 }) as jest.Mock;
 
 readline.createInterface = jest.fn(() =>
-  data.split("\n").map((e) => Promise.resolve(e))
+  data.split("\n").map((e) => Promise.resolve(e)),
 ) as jest.Mock;
 
 import dataset from "../../dataset";
@@ -63,7 +63,7 @@ describe("Dataset Tests", () => {
     expect(otherDataset.get(0).real).toStrictEqual(newData[0].real);
     expect(myDataset.toArray()).toStrictEqual(myData);
     expect(myDataset.slice(0).get(0).real).toStrictEqual(
-      myData[0].real.slice(0)
+      myData[0].real.slice(0),
     );
   });
 
@@ -73,7 +73,7 @@ describe("Dataset Tests", () => {
       {
         delimiter: ",",
         headerCol: 1,
-      }
+      },
     );
 
     try {
@@ -101,13 +101,13 @@ describe("Dataset Tests", () => {
     };
 
     expect(myDataset.get(0).real).toStrictEqual(
-      expectedData[0].map((e: number) => e + 1).real
+      expectedData[0].map((e: number) => e + 1).real,
     );
 
     myDataset.onGet = (element) => element;
     expect(myDataset.toArray()).toStrictEqual(expectedData);
     expect(myDataset.slice(0).get(0).real).toStrictEqual(
-      expectedData[0].real.slice(0)
+      expectedData[0].real.slice(0),
     );
   });
 
@@ -135,13 +135,13 @@ describe("Dataset Tests", () => {
     };
 
     expect(myDataset.get(0).real).toStrictEqual(
-      expectedData[0].map((e: number) => e + 1).real
+      expectedData[0].map((e: number) => e + 1).real,
     );
 
     myDataset.onGet = (element) => element;
     expect(myDataset.toArray()).toStrictEqual(expectedData);
     expect(myDataset.slice(0).get(0).real).toStrictEqual(
-      expectedData[0].real.slice(0)
+      expectedData[0].real.slice(0),
     );
   });
 });

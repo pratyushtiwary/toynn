@@ -17,7 +17,7 @@ describe("NArray Add Tests", () => {
     let myNArray2 = new NArray(myArray2);
 
     expect(myNArray.add(myNArray2).real).toStrictEqual(
-      myArray.map((e, i) => e + myArray2[i])
+      myArray.map((e, i) => e + myArray2[i]),
     );
   });
 

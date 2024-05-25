@@ -47,7 +47,7 @@ model.train({
   loss: toynn.errors.MSE,
 });
 
-console.log(model.structure)
+console.log(model.structure);
 
 // get accuracy
 let accuracy = 0,

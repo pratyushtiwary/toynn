@@ -7,7 +7,7 @@ describe("NArray Pow Tests", () => {
     let myNArray = new NArray(myArray);
 
     expect(myNArray.pow(2).real).toStrictEqual(
-      myArray.map((e) => Math.pow(e, 2))
+      myArray.map((e) => Math.pow(e, 2)),
     );
   });
 
@@ -19,7 +19,7 @@ describe("NArray Pow Tests", () => {
     let myNArray2 = new NArray(myArray2);
 
     expect(myNArray.pow(myNArray2).real).toStrictEqual(
-      myArray.map((e, i) => Math.pow(e, myArray2[i]))
+      myArray.map((e, i) => Math.pow(e, myArray2[i])),
     );
   });
 

@@ -100,7 +100,7 @@ describe("Utils Tests", () => {
     batch2.forEach((e, i) => {
       if (e instanceof DatasetSlice) {
         expect(e.toArray()).toStrictEqual(
-          testData2.toArray().slice(i * 2, (i + 1) * 2)
+          testData2.toArray().slice(i * 2, (i + 1) * 2),
         );
       } else {
         expect(`${i}th element is not a DatasetSlice!`).toBe(false);
@@ -116,7 +116,7 @@ describe("Utils Tests", () => {
     batch3.forEach((e, i) => {
       if (e instanceof DatasetSlice) {
         expect(e.toArray()).toStrictEqual(
-          testData3.toArray().slice(i * 2, (i + 1) * 2)
+          testData3.toArray().slice(i * 2, (i + 1) * 2),
         );
       } else {
         expect(`${i}th element is not a DatasetSlice!`).toBe(false);

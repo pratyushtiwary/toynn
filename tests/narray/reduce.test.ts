@@ -7,7 +7,7 @@ describe("NArray Reduce Tests", () => {
     let myNArray = new NArray(myArray);
 
     expect(myNArray.reduce((a, b) => a + b)).toBe(
-      myArray.reduce((a, b) => a + b)
+      myArray.reduce((a, b) => a + b),
     );
   });
 
@@ -17,7 +17,7 @@ describe("NArray Reduce Tests", () => {
     let myNArray = new NArray(myArray);
 
     expect(myNArray.reduce((a, b) => a * b)).toBe(
-      myArray.reduce((a, b) => a * b)
+      myArray.reduce((a, b) => a * b),
     );
   });
 });

@@ -19,7 +19,7 @@ export class StatError {
 
         How to fix this?
         Make sure that the passed yTrue Array and yPred Array are of the same size.
-        If you are using NArray try reshaping them.`
+        If you are using NArray try reshaping them.`,
       );
     }
     this.#yTrue = yTrue;

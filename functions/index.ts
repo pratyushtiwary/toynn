@@ -162,7 +162,7 @@ class Softmax extends ActivationFunction {
         Some the passed values are very large which results exponential sum of them to reach infinity.
 
         How can i fix this?
-        Either scale down the values or try different activation function`
+        Either scale down the values or try different activation function`,
       );
     }
     let result = x.map((e) => Math.pow(eulerNo, e) / summEx);
