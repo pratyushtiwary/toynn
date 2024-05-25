@@ -6,7 +6,7 @@ import functions, {
   ActivationFunction,
   ActivationFunctionType,
 } from "../functions";
-import NArray from "../narray";
+import NArray, {type Element} from "../narray";
 import { GradientDescent, Optimizer } from "../optimizers";
 
 let nLayer = 0;
@@ -37,19 +37,19 @@ interface ModelFileLayer {
 
 export class NN {
   #layers: Array<Layer> = [];
-  #name: String = undefined;
+  #name: string = undefined;
   #trained: boolean = false;
   #lastOptimizerUsed: Optimizer;
 
-  constructor(name: String) {
-    /**
-     * Takes in a name and allows users to create a skeleton which holds layer and activation function
-     * Object of this class also allows user to backpropogate and predict
-     *
-     * @param name: str -> Name of the model. This name will later be used to load and save model
-     *
-     * Reference: https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
-     */
+  /**
+   * Takes in a name and allows users to create a skeleton which holds layer and activation function
+   * Object of this class also allows user to backpropogate and predict
+   *
+   * @param name: str -> Name of the model. This name will later be used to load and save model
+   *
+   * Reference: https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
+   */
+  constructor(name: string) {
     this.#name = name;
   }
 
@@ -68,38 +68,38 @@ export class NN {
      * @param obj: <Layer, Function>
      */
     if (obj instanceof Layer) {
-      const [inputSize, _] = obj.shape;
+      const inputSize = obj.shape[0];
 
       if (this.#layers.length > 0) {
-        const [_, prevOutputSize] =
-          this.#layers[this.#layers.length - 1]?.shape;
+        const prevOutputSize =
+          this.#layers[this.#layers.length - 1]?.shape[1];
 
         if (inputSize !== prevOutputSize) {
           throw Error(
             `Layer's input size doesn't match with previous layer's output size! Make sure the output of previous layer is equal to the input of this layer
-            
+
             How to fix this?
             Make sure that layer ${
               this.#layers.length + 1
-            }'s input size = ${prevOutputSize}`
+            }'s input size = ${prevOutputSize}`,
           );
         }
       }
       this.#layers.push(obj);
     } else {
       throw Error(`Unable to add the passed object to the model's pipeline.
-      
+
       How to fix this?
       The object you passed to is not a Layer, try to pass Layer's object`);
     }
   }
 
-  forward(x: Array<any> | NArray): NArray {
+  forward(x: Array<Element> | NArray): NArray {
     if (!(x instanceof NArray) && x instanceof Array) {
       x = new NArray(x);
     } else if (!(x instanceof NArray)) {
       throw Error(`Invalid input for model ${this.name}
-      
+
       How to fix this?
       Convert your x to NArray`);
     }
@@ -126,9 +126,9 @@ export class NN {
   }: TrainInput) {
     this.#trained = true;
     optimizer.alpha = alpha;
-    let losses = [],
-      accuracies = [],
-      l: Array<any>;
+    const losses = [],
+      accuracies = [];
+    let l: Array<Element>;
     let tempX: NArray, tempY: NArray;
     for (let i = 0; i < epochs; i++) {
       ({ x, y } = optimizer.process(x, y));
@@ -158,7 +158,7 @@ export class NN {
           throw Error(`Make sure y's elements are of type NArray`);
         }
 
-        let out = this.forward(tempX);
+        const out = this.forward(tempX);
         l.push(loss(tempY.flatten(), out.flatten()).result);
         optimizer.optimize({
           x: tempX,
@@ -176,7 +176,7 @@ export class NN {
     return [losses, accuracies];
   }
 
-  get structure(): String {
+  get structure(): string {
     let structure = ``;
 
     this.#layers.forEach((e, i) => {
@@ -194,7 +194,7 @@ export class NN {
 
     explanation += `No. of layers: ${this.#layers.length}\n`;
 
-    explanation += `Each layers uses the formula: activationFunction(x*weigths + bias)\n`;
+    explanation += `Each layers uses the formula: activationFunction(x*weights + bias)\n`;
 
     this.#layers.forEach((e, i) => {
       if (i === 0) {
@@ -236,7 +236,7 @@ export class NN {
 
     if (fs.existsSync(finalPath) && !force) {
       throw Error(`File already exists at path ${finalPath}.
-      
+
       How to fix this?
       Try renaming the file at path ${finalPath}.`);
     }
@@ -246,11 +246,11 @@ export class NN {
 
   load(filePath: string) {
     try {
-      let data: ModelFile = JSON.parse(fs.readFileSync(filePath, "utf-8")),
-        tempLayer: ModelFileLayer,
+      const data: ModelFile = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+      let tempLayer: ModelFileLayer,
         tempActivationFunction: ActivationFunction,
         tempActivationFunctionName: string,
-        activationFuntionParams: string | Array<any>;
+        activationFuntionParams: string | Array<Element>;
 
       for (let i = 0; i < data.weights.length; i++) {
         tempLayer = {
@@ -263,16 +263,16 @@ export class NN {
 
         this.#layers[i].weights = new NArray(tempLayer.weights).reshape(
           tempLayer.shape[0],
-          tempLayer.shape[1]
+          tempLayer.shape[1],
         );
         this.#layers[i].bias = new NArray(tempLayer.bias).reshape(
           1,
-          tempLayer.shape[1]
+          tempLayer.shape[1],
         );
 
         tempActivationFunctionName = tempLayer.activationFunction.replace(
           /([\w\W]*)+\(+([\w\W]*)+\)/gi,
-          "$1"
+          "$1",
         );
 
         // check if activation function exists
@@ -282,7 +282,7 @@ export class NN {
           throw Error(
             `Failed to load activation function ${
               tempLayer.activationFunction
-            } for layer ${i + 1}`
+            } for layer ${i + 1}`,
           );
         }
 
@@ -291,19 +291,19 @@ export class NN {
             "[" +
             tempLayer.activationFunction.replace(
               /([\w\W]*)+\(+([\w\W]*)+\)/gi,
-              "$2"
+              "$2",
             ) +
             "]";
 
           activationFuntionParams = JSON.parse(
-            activationFuntionParams.replace(/\'/g, '"')
+            activationFuntionParams.replace(/\'/g, '"'),
           );
 
           tempActivationFunctionName =
             tempActivationFunctionName[0].toUpperCase() +
             tempActivationFunctionName.slice(1);
           tempActivationFunction = new functions[tempActivationFunctionName](
-            ...activationFuntionParams
+            ...activationFuntionParams,
           );
           this.#layers[i].activationFunction = tempActivationFunction;
         } else {
@@ -312,7 +312,7 @@ export class NN {
       }
     } catch (e) {
       throw Error(`Failed to load model.
-      
+
       Error: ${e}`);
     }
   }
@@ -324,15 +324,15 @@ export class Layer {
   inputSize: number = 0;
   outputSize: number = 0;
   #activationFunction: ActivationFunction = undefined;
-  name: String = undefined;
+  name: string = undefined;
 
+  /**
+   * Single layer in the neural network
+   *
+   * @param inputSize: int
+   * @param outputSize: int
+   */
   constructor(inputSize: number, outputSize: number) {
-    /**
-     * Single layer in the neural network
-     *
-     * @param inputSize: int
-     * @param outputSize: int
-     */
     this.inputSize = inputSize;
     this.outputSize = outputSize;
     nLayer++;
@@ -342,7 +342,7 @@ export class Layer {
   }
 
   #generateWeights(x: number, y: number): NArray {
-    let tempWeights = [];
+    const tempWeights = [];
 
     for (let i = 0; i < x * y; i++) {
       tempWeights[i] = NArray.randn();
@@ -362,27 +362,27 @@ export class Layer {
   set weights(newWeights: NArray) {
     if (!(newWeights instanceof NArray)) {
       throw Error(`Weights should be of type NArray.
-      
+
       How to fix this?
       Convert your new weights to NArray by using new NArray(yourNewWeights)`);
     }
     if (newWeights.ndim !== 2) {
       throw Error(`Weights should be a 2-dim NArray
-      
+
       How to fix this?
       Try reshaping your weights`);
     }
 
     if (newWeights.shape[0] !== this.inputSize) {
       throw Error(`Shape mismatch the input size.
-      
+
       How to fix this?
       Make sure your weights 0th dim is of size ${this.inputSize}`);
     }
 
     if (newWeights.shape[1] !== this.outputSize) {
       throw Error(`Shape mismatch the output size.
-      
+
       How to fix this?
       Make sure your weights 1st dim is of size ${this.outputSize}`);
     }
@@ -393,27 +393,27 @@ export class Layer {
   set bias(newBias: NArray) {
     if (!(newBias instanceof NArray)) {
       throw Error(`Bias should be of type NArray.
-      
+
       How to fix this?
       Convert your new weights to NArray by using new NArray(yourNewWeights)`);
     }
     if (newBias.ndim !== 2) {
       throw Error(`Bias should be a 2-dim NArray
-      
+
       How to fix this?
       Try reshaping your weights`);
     }
 
     if (newBias.shape[0] !== 1) {
       throw Error(`Shape mismatch.
-      
+
       How to fix this?
       Make sure your bias 0th dim is of size 1`);
     }
 
     if (newBias.shape[1] !== this.outputSize) {
       throw Error(`Shape mismatch the output size.
-      
+
       How to fix this?
       Make sure your bias 1st dim is of size ${this.outputSize}`);
     }
@@ -421,18 +421,18 @@ export class Layer {
     this.#bias = newBias;
   }
 
-  forward(x: Array<any> | NArray): NArray {
+  forward(x: Array<Element> | NArray): NArray {
     if (!(x instanceof NArray) && x instanceof Array) {
       x = new NArray(x);
     } else if (!(x instanceof NArray)) {
       throw Error(`Invalid input for layer ${this.name || nLayer}
-      
+
       Make sure x is of type NArray`);
     }
 
     if (x.length !== this.inputSize) {
       throw Error(`${x.length}(no. of elems) != ${this.inputSize}(inputSize)
-      
+
       How to fix this?
       Make sure the length of x(${x.length}) = ${this.inputSize}`);
     }
@@ -442,16 +442,16 @@ export class Layer {
       z1 = this.#activationFunction.calculate(z1);
     } else {
       throw Error(`Failed to compute output from ActivationFunction.
-      
+
       How to fix this?
       Make sure you are setting the activation function for layer ${this.name}`);
     }
     if (!(z1 instanceof NArray)) {
       throw Error(`Invalid result for layer ${this.name}.
-      
+
       What does this mean?
       While trying to compute result for Layer ${this.name} a number is returned rather than an NArray
-      
+
       How can you fix it?
       Try raising an issue if you see this error along with the code for neural network and your training dataset on https://github.com/pratyushtiwary/toynn`);
     }
@@ -466,7 +466,7 @@ export class Layer {
   set activationFunction(func: ActivationFunctionType) {
     if (!(func instanceof ActivationFunction)) {
       throw Error(`Invalid activation function.
-      
+
       How to fix this?
       Make sure you've passed object of type ActivationFunction`);
     }

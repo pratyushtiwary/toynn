@@ -3,7 +3,7 @@ import errors, { StatError, type StatErrorReturn } from "../../errors";
 test("StatError Test", () => {
   const yTrue = [1, 2, 3, 4];
   const yPred = [1.1, 1.95, 3, 4.01];
-  let myCustomError: StatError = new StatError(yTrue, yPred);
+  const myCustomError: StatError = new StatError(yTrue, yPred);
   let myCustomErrorReturn: StatErrorReturn = undefined;
 
   try {
@@ -23,14 +23,14 @@ test("StatError Test", () => {
 
   myCustomErrorReturn = myCustomErrorReturn.apply(errors.sum);
   expect(myCustomErrorReturn.result).toStrictEqual(
-    output.reduce((a, b) => a + b)
+    output.reduce((a, b) => a + b),
   );
 
   expect(myCustomErrorReturn.formula).toBe("sum(abs(yTrue - yPred))");
 
   try {
     myCustomErrorReturn = myCustomErrorReturn.apply((e: number[]) =>
-      e.reduce((a, b) => a + b)
+      e.reduce((a, b) => a + b),
     );
 
     expect(true).toBe(false);

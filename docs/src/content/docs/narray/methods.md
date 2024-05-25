@@ -35,7 +35,7 @@ Calling it without any path specified will return the whole Array in the shape o
 
 **It is a costly function and takes more time than any other function.**
 
-**Negative indexing is not supported**
+**You can also use negative index to get element**
 
 ### map
 

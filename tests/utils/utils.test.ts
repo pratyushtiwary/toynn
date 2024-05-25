@@ -100,7 +100,7 @@ describe("Utils Tests", () => {
     batch2.forEach((e, i) => {
       if (e instanceof DatasetSlice) {
         expect(e.toArray()).toStrictEqual(
-          testData2.toArray().slice(i * 2, (i + 1) * 2)
+          testData2.toArray().slice(i * 2, (i + 1) * 2),
         );
       } else {
         expect(`${i}th element is not a DatasetSlice!`).toBe(false);
@@ -116,7 +116,7 @@ describe("Utils Tests", () => {
     batch3.forEach((e, i) => {
       if (e instanceof DatasetSlice) {
         expect(e.toArray()).toStrictEqual(
-          testData3.toArray().slice(i * 2, (i + 1) * 2)
+          testData3.toArray().slice(i * 2, (i + 1) * 2),
         );
       } else {
         expect(`${i}th element is not a DatasetSlice!`).toBe(false);
@@ -182,11 +182,6 @@ describe("Utils Tests", () => {
       ...trainY2.toArray(),
       ...testY2.toArray(),
     ]);
-
-    const [trainX3, testX3, trainY3, testY3] = utils.trainTestSplit(X, y, {
-      testSize: 20, // 20%
-      shuffle: true,
-    });
 
     expect(trainX2.length).toBe(4);
     expect(testX2.length).toBe(1);

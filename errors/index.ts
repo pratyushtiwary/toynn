@@ -1,36 +1,42 @@
 export type StatErrorInput = Array<number>;
 
+export type StatErrorApplyFunction = (result: Array<number> | number) => Array<number> | number
+export type StatErrorUseFunction = (result: number) => number
+
+export type StatErrorApply = (func: StatErrorApplyFunction) => StatErrorReturn
+
 export interface StatErrorReturn {
-  apply: Function;
+  apply: StatErrorApply;
   result: number | Array<number>;
-  formula: String;
+  formula: string;
 }
 
 export class StatError {
   #yTrue: Array<number> = undefined;
   #yPred: Array<number> = undefined;
   result: Array<number> | number = undefined;
-  formula: String = undefined;
+  formula: string = undefined;
 
   constructor(yTrue: StatErrorInput, yPred: StatErrorInput) {
     if (yTrue.length !== yPred.length) {
       throw Error(
         `Array length mismatch, make sure yTrue.length == yPred.length
-        
+
         How to fix this?
         Make sure that the passed yTrue Array and yPred Array are of the same size.
-        If you are using NArray try reshaping them.`
+        If you are using NArray try reshaping them.`,
       );
     }
     this.#yTrue = yTrue;
     this.#yPred = yPred;
   }
 
-  apply(func: Function): StatErrorReturn {
-    /**
-     * Takes in a function and use it to compute result value
-     * Can be chained
-     */
+  /**
+   * Takes in a function and use it to compute result value
+   *
+   * Can be chained
+   */
+  apply(func: StatErrorApplyFunction): StatErrorReturn {
     this.result = func(this.result);
     if (func.name === "") {
       throw Error("Anonymous functions are not supported");
@@ -44,11 +50,12 @@ export class StatError {
     };
   }
 
-  use(func: Function = undefined): StatErrorReturn {
-    /**
-     * Takes in a function and use it to transform loss value for each row
-     * Can't be chanined
-     */
+  /**
+   * Takes in a function and use it to transform loss value for each row
+   *
+   * Can't be chanined
+   */
+  use(func: StatErrorUseFunction = undefined): StatErrorReturn {
     this.result = [];
     let temp: number;
     this.#yTrue.forEach((e, i) => {

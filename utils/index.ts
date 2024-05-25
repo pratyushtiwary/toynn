@@ -1,4 +1,5 @@
 import { Dataset, DatasetSlice } from "../dataset";
+import { type Element } from "../narray";
 
 export interface TrainTestSplitInput {
   testSize: number;
@@ -10,11 +11,11 @@ const utils = {
    * Reference: https://stackoverflow.com/a/11935263
    */
   shuffle: (
-    arr: number | Array<any> | Dataset | DatasetSlice
+    arr: number | Array<Element> | Dataset | DatasetSlice,
   ): Array<number> | DatasetSlice => {
-    let shuffled: Array<any> | DatasetSlice,
+    let shuffled: Array<Element> | DatasetSlice,
       i: number,
-      temp: any,
+      temp: Element,
       index: number;
     if (arr instanceof Dataset || arr instanceof DatasetSlice) {
       shuffled = [];
@@ -55,7 +56,7 @@ const utils = {
     return shuffled;
   },
   onehotEncode: (x: number, classes: number): Array<number> => {
-    let result = [];
+    const result = [];
 
     for (let i = 0; i < classes; i++) {
       if (i === x) {
@@ -68,15 +69,15 @@ const utils = {
     return result;
   },
   createBatch: (
-    array: Array<any> | Dataset | DatasetSlice,
-    batchSize: number
-  ): Array<Array<any>> => {
+    array: Array<Element> | Dataset | DatasetSlice,
+    batchSize: number,
+  ): Array<Array<Element>> => {
     if (batchSize <= 0) {
       throw Error(`Invalid batchSize. Make sure batchSize > 0`);
     }
-    let batches = [],
-      temp: Array<any> | DatasetSlice,
-      n = Math.floor(array.length / batchSize),
+    const batches = [],
+      n = Math.floor(array.length / batchSize);
+    let temp: Array<Element> | DatasetSlice,
       i: number,
       arrangement = [];
 
@@ -117,7 +118,7 @@ const utils = {
   trainTestSplit: (
     X: Dataset,
     y: Dataset,
-    { testSize, shuffle = false }: TrainTestSplitInput
+    { testSize, shuffle = false }: TrainTestSplitInput,
   ): DatasetSlice[] => {
     if (X.length !== y.length) {
       throw Error(`Failed to split because X.length != y.length`);
@@ -127,18 +128,14 @@ const utils = {
       testSize = testSize / 100;
     } else if (testSize > 100) {
       throw Error(
-        `Failed to split because testSize is invalid. Make sure testSize is less than 100`
+        `Failed to split because testSize is invalid. Make sure testSize is less than 100`,
       );
     }
-    let testStart = X.length - Math.floor(X.length * testSize);
-    let trainX: DatasetSlice,
-      testX: DatasetSlice,
-      trainY: DatasetSlice,
-      testY: DatasetSlice;
-    let trainArrangement = [],
+    const testStart = X.length - Math.floor(X.length * testSize);
+    const trainArrangement = [],
       testArrangement = [];
     if (shuffle) {
-      let final = utils.shuffle(X.length);
+      const final = utils.shuffle(X.length);
 
       for (let i = 0; i < X.length; i++) {
         if (i < testStart) {
@@ -156,10 +153,10 @@ const utils = {
         }
       }
     }
-    trainX = new DatasetSlice(X, trainArrangement);
-    testX = new DatasetSlice(X, testArrangement);
-    trainY = new DatasetSlice(y, trainArrangement);
-    testY = new DatasetSlice(y, testArrangement);
+    const trainX = new DatasetSlice(X, trainArrangement),
+      testX = new DatasetSlice(X, testArrangement),
+      trainY = new DatasetSlice(y, trainArrangement),
+      testY = new DatasetSlice(y, testArrangement);
 
     return [trainX, testX, trainY, testY];
   },

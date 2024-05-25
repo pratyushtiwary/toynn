@@ -4,11 +4,11 @@ export type ActivationFunctionResult = NArray;
 export type ActivationFunctionInput = NArray;
 
 export interface ActivationFunctionType {
-  formula: String;
-  gradient: String;
+  formula: string;
+  gradient: string;
   calcGradient: (x: ActivationFunctionResult) => ActivationFunctionResult;
   calculate: (x: ActivationFunctionInput) => ActivationFunctionResult;
-  toString: () => String;
+  toString: () => string;
 }
 
 export class ActivationFunction {
@@ -18,41 +18,43 @@ export class ActivationFunction {
    * Reference: https://www.analyticsvidhya.com/blog/2020/01/fundamentals-deep-learning-activation-functions-when-to-use-them/
    */
 
-  get formula(): String {
+  get formula(): string {
     throw Error(`Formula for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the formula getter with the formula.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
   }
 
-  get gradient(): String {
+  get gradient(): string {
     throw Error(`Gradient for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the gradient getter with the gradient formula.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   calcGradient(x: ActivationFunctionResult): ActivationFunctionResult {
     throw Error(`Gradient Calculation for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the calcGradient function.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   calculate(x: ActivationFunctionInput): ActivationFunctionResult {
     throw Error(`Calculation for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the calculate function.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
   }
 
-  toString(): String {
+  toString(): string {
     throw Error(`Name for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the toString function.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
@@ -74,7 +76,7 @@ class Sigmoid extends ActivationFunction {
   }
 
   calculate(x: ActivationFunctionInput): ActivationFunctionResult {
-    let result = x.map((e: number) => 1 / (1 + Math.pow(Math.E, -e)));
+    const result = x.map((e: number) => 1 / (1 + Math.pow(Math.E, -e)));
 
     return new NArray(result);
   }
@@ -98,7 +100,7 @@ class Relu extends ActivationFunction {
   }
 
   calculate(x: ActivationFunctionInput): ActivationFunctionResult {
-    let result = x.map((e: number) => Math.max(0, e));
+    const result = x.map((e: number) => Math.max(0, e));
 
     return new NArray(result);
   }
@@ -122,7 +124,7 @@ class LeakyRelu extends ActivationFunction {
   }
 
   calculate(x: ActivationFunctionInput): ActivationFunctionResult {
-    let result = x.map((e: number) => Math.max(0.01 * e, e));
+    const result = x.map((e: number) => Math.max(0.01 * e, e));
 
     return new NArray(result);
   }
@@ -139,7 +141,7 @@ class Softmax extends ActivationFunction {
 
   get gradient() {
     return `x.diag().sub(x.T.dot(x)).sum(0)
-    
+
     Note: X is a 1 dimensional array
     Axis 0 means column wise sum`;
   }
@@ -153,19 +155,19 @@ class Softmax extends ActivationFunction {
 
   calculate(x: ActivationFunctionInput): ActivationFunctionResult {
     const eulerNo = Math.E;
-    let summEx = x.map((e) => Math.pow(eulerNo, e)).reduce((a, b) => a + b);
+    const summEx = x.map((e) => Math.pow(eulerNo, e)).reduce((a, b) => a + b);
     if (summEx === Infinity) {
       console.warn(
         `Softmax Activation Function results might come in NaN or Infinity, try using different activation function.
-        
+
         What does this means?
         Some the passed values are very large which results exponential sum of them to reach infinity.
-        
+
         How can i fix this?
-        Either scale down the values or try different activation function`
+        Either scale down the values or try different activation function`,
       );
     }
-    let result = x.map((e) => Math.pow(eulerNo, e) / summEx);
+    const result = x.map((e) => Math.pow(eulerNo, e) / summEx);
 
     return new NArray(result);
   }
@@ -190,7 +192,7 @@ class Tanh extends ActivationFunction {
   }
 
   calculate(x: ActivationFunctionInput): ActivationFunctionResult {
-    let result = x.map((e) => 2 / (1 + Math.pow(Math.E, -2 * e)) - 1);
+    const result = x.map((e) => 2 / (1 + Math.pow(Math.E, -2 * e)) - 1);
 
     return new NArray(result);
   }
@@ -221,7 +223,7 @@ class Linear extends ActivationFunction {
   }
 
   calculate(x: ActivationFunctionInput): ActivationFunctionResult {
-    let result = x.map((e: number) => e * this.#a);
+    const result = x.map((e: number) => e * this.#a);
 
     return new NArray(result);
   }

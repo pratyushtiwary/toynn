@@ -59,6 +59,7 @@ export const cache = {
 
     const keys = Object.keys(registry);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     keys.forEach((e: any) => {
       if (cache.entryExpired(registry, e)) {
         registry = cache.delete(registry, e);
@@ -82,11 +83,11 @@ export const cache = {
     // create a new entry in registry or update the entry
     let registry = cache.loadRegistry();
     const cachePath = globalThis.__cache_path;
-    let entry = registry[name];
+    const entry = registry[name];
 
     if (entry) {
       // update entry
-      let loc = path.join(cachePath, entry.name);
+      const loc = path.join(cachePath, entry.name);
 
       // check if entry is expired
       if (cache.entryExpired(registry, name)) {
@@ -102,7 +103,7 @@ export const cache = {
       // add new entry
       let newFileName = randomUUID().split("-").join("");
       newFileName += "." + name.split(".").at(-1);
-      let newFilePath = path.join(cachePath, newFileName);
+      const newFilePath = path.join(cachePath, newFileName);
 
       fs.writeFileSync(newFilePath, content, "utf-8");
 
@@ -121,7 +122,7 @@ export const cache = {
     let loc = undefined;
     // before loading perform garbage collection
     cache.clean();
-    let registry = cache.loadRegistry();
+    const registry = cache.loadRegistry();
     const cachePath = globalThis.__cache_path;
 
     // check if name exists in registry

@@ -1,18 +1,24 @@
 globalThis.NArray_printThreshold = 5;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Element = any;
+export type NArrayInput = Array<Element>
+export type NArrayReduceFunction = (a: number, b: number) => number 
+export type NArrayMapFunction = (e: Element, i?: number) => Element 
+export type NArrayForEachFunction = (e: Element, i?: number) => void 
+
 export class NArray {
-  #arr: Array<any> = [];
+  #arr: NArrayInput = [];
   #computedShape: undefined | Array<number> = undefined;
   #length: undefined | number = undefined;
   #computedStrides: undefined | Array<number> = undefined;
   #ndim: undefined | number = undefined;
 
-  constructor(obj: Array<any> | NArray) {
-    /**
-     * Numerical Array implementation which allows user to perform advance computational stuff
-     * @param obj:<Array, NArray>
-     */
-
+  /**
+   * Numerical Array implementation which allows user to perform advance computational stuff
+   * @param obj {NArrayInput | NArray}
+   */
+  constructor(obj: NArrayInput | NArray) {
     if (obj instanceof Array) {
       this.#arr = obj;
       this.#arr = Array.from(this.#arr);
@@ -25,13 +31,11 @@ export class NArray {
       if (this.length !== NArray.calcNoOfElems(...this.#computedShape)) {
         throw Error(
           `The passed array doesn't seems to follow a fixed shape. NArray's need to have a fixed shape.
-          
+
           How to fix this?
-          
-          Make sure the number of elements in your array(${
-            this.length
-          }) is equals to the product of ${this.#computedShape}
-          `
+
+          Make sure the number of elements in your array(${this.length}) is equals to the product of ${this.#computedShape}
+          `,
         );
       }
     } else if (obj instanceof NArray) {
@@ -41,7 +45,7 @@ export class NArray {
       this.#ndim = obj.ndim;
     } else {
       throw Error(`Unsupported object type.
-      
+
       How to fix this?
 
       Looks like you've tried converting ${typeof obj} to an NArray.
@@ -51,11 +55,11 @@ export class NArray {
     }
   }
 
-  #computeShape(x: Array<any>): Array<number> {
-    /**
-     * Recursively compute shape for provided array
-     * @param x: Array
-     */
+  /**
+   * Recursively compute shape for provided array
+   * @param x: Array
+   */
+  #computeShape(x: NArrayInput): Array<number> {
     let size = [];
 
     if (x instanceof Array) {
@@ -69,13 +73,13 @@ export class NArray {
     }
   }
 
+  /**
+   * Provided a shape it calculates number of strides
+   * @param shape: Array
+   */
   #computeStrides(...shape: Array<number>): Array<number> {
-    /**
-     * Provided a shape it calculates number of strides
-     * @param shape: Array
-     */
-    let final = [],
-      temp;
+    const final = [];
+    let temp: number[];
     for (let i = 1; i <= shape.length; i++) {
       if (i === shape.length) {
         final.push(1);
@@ -87,22 +91,25 @@ export class NArray {
     return final;
   }
 
-  #get(...path: Array<number>): Array<any> {
-    /**
-     * Recusively gets value for the specified path
-     *
-     * Used by the get function
-     */
+  /**
+   * Recusively gets value for the specified path
+   *
+   * Used by the get function
+   */
+  #get(...path: Array<number>): NArrayInput {
     if (path.length <= this.strides.length) {
       if (path.length === this.strides.length) {
         let finalIndex = 0;
         path.forEach((e, i) => {
+          if (e < 0) {
+            e = this.shape[i] + e;
+          }
           finalIndex += e * this.strides[i];
         });
         return this.#arr[finalIndex];
       } else {
-        let final = [],
-          currShape = this.shape[path.length];
+        const final = [];
+        let currShape = this.shape[path.length];
 
         if (path.length + 1 === this.strides.length) {
           currShape = this.shape[path.length];
@@ -114,17 +121,17 @@ export class NArray {
       }
     } else {
       throw Error(`Range out of index.
-      
+
       How to fix this?
       Your NArray is of dimension ${this.ndim} put you are trying to access ${path.length} dimension data. Try changing the path passed to ${this.ndim} dimension.`);
     }
   }
 
+  /**
+   * Calculate number of elements in an array by summing up the shape
+   * @param shape: Array -> shape of the array
+   */
   static calcNoOfElems(...shape: Array<number>): number {
-    /**
-     * Calculate number of elements in an array by summing up the shape
-     * @param shape: Array -> shape of the array
-     */
     let noOfElems = 1;
 
     for (let i = 0; i < shape.length; i++) {
@@ -134,11 +141,11 @@ export class NArray {
     return noOfElems;
   }
 
-  #flatten(x: Array<any> = this.#arr): Array<any> {
-    /**
-     * Recursively flattens passed array
-     * @param x: Array -> defaults to value by which object is initialized
-     */
+  /**
+   * Recursively flattens passed array
+   * @param x: Array -> defaults to value by which object is initialized
+   */
+  #flatten(x: NArrayInput = this.#arr): NArrayInput {
     let final = [];
     let temp;
     if (!(x[0] instanceof Array)) {
@@ -178,43 +185,43 @@ export class NArray {
   set strides(newStrides: Array<number>) {
     if (!(newStrides instanceof Array)) {
       throw Error(`Failed to change stride
-      
+
       How to fix this?
       Try chaning the newStrides passed into an array.`);
     } else if (newStrides.length !== this.shape.length) {
       throw Error(
         `strides must be same length as shape (${this.shape.length})
-        
+
         How to fix this?
-        Make sure new strides have ${this.ndim} number of elements.`
+        Make sure new strides have ${this.ndim} number of elements.`,
       );
     }
 
     this.#computedStrides = newStrides;
   }
 
-  flatten(): Array<any> {
-    /**
-     * Returns flat Array
-     */
+  /**
+   * Returns flat Array
+   */
+  flatten(): NArrayInput {
     return this.#arr;
   }
 
-  reduce(func: Function): number {
-    let f = this.#arr.reduce((a, b) => func(a, b));
+  reduce(func: NArrayReduceFunction): number {
+    const f = this.#arr.reduce((a, b) => func(a, b));
     return f;
   }
 
-  map(func: Function): NArray {
-    let f = this.#arr.map((e, i) => func(e, i));
+  map(func: NArrayMapFunction): NArray {
+    const f = this.#arr.map((e, i) => func(e, i));
     return new NArray(f).reshape(...this.shape);
   }
 
-  forEach(func: Function): void {
+  forEach(func: NArrayForEachFunction): void {
     this.#arr.forEach((e, i) => func(e, i));
   }
 
-  max(): { index: number; element: any } {
+  max(): { index: number; element: Element } {
     let maxIndex = 0,
       maxElem = this.#arr[0];
 
@@ -231,7 +238,7 @@ export class NArray {
   sum(axis: number = undefined): NArray {
     if (axis > this.ndim - 1 || axis < 0) {
       throw Error(`Axis out of bound
-      
+
       How to fix this?
       Try changing axis to a number between 0 and ${this.ndim - 1}.`);
     }
@@ -244,8 +251,8 @@ export class NArray {
       breakage = this.shape[axis],
       prevBreakage = this.strides[axis - 1];
 
-    let final: Array<any> = [],
-      temp = 0,
+    const final: NArrayInput = [];
+    let temp = 0,
       i = 0,
       j = 0;
 
@@ -283,14 +290,13 @@ export class NArray {
   diag(): NArray {
     if (this.ndim > 2) {
       throw Error(`NArray should be either 1d or 2d
-      
+
       How to fix this?
       Try reshaping your NArray to convert it into 1d or 2d NArray.`);
     }
     if (this.ndim === 1) {
-      let final = [],
-        j = 0,
-        k = 0;
+      const final = [];
+      let j = 0;
 
       final[0] = this.#arr[0];
 
@@ -307,9 +313,9 @@ export class NArray {
 
       return new NArray(final).reshape(this.length, this.length);
     } else if (this.ndim === 2) {
-      let smaller =
+      const smaller =
         this.shape[0] < this.shape[1] ? this.shape[0] : this.shape[1];
-      let final = [];
+      const final = [];
       final[0] = this.#arr[0];
       for (let i = 1; i < smaller; i++) {
         final[i] = this.#arr[this.shape[1] * i + i];
@@ -320,16 +326,16 @@ export class NArray {
   }
 
   add(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>;
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput;
     if (typeof y === "number") {
-      let temp: number = y;
+      const temp: number = y;
       final = this.map((e) => e + temp);
     } else if (y.length === 1) {
-      let temp: number = y.flatten()[0];
+      const temp: number = y.flatten()[0];
       final = this.map((e) => e + temp);
     } else if (this.length === 1) {
-      let temp: number = this.#arr[0];
+      const temp: number = this.#arr[0];
       final = y.map((e) => temp + e);
       return final.reshape(...y.shape);
     } else {
@@ -343,7 +349,7 @@ export class NArray {
 
       if (this.length !== y.length) {
         throw Error(`Shape mismatch, failed to add.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
       }
@@ -359,31 +365,31 @@ export class NArray {
   }
 
   sub(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>;
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput;
     if (typeof y === "number") {
-      let temp: number = y;
+      const temp: number = y;
       final = this.map((e: number) => e - temp);
     } else if (y.length === 1) {
-      let temp: number = y.flatten()[0];
+      const temp: number = y.flatten()[0];
       final = this.map((e) => e - temp);
     } else if (this.length === 1) {
-      let temp: number = this.#arr[0];
+      const temp: number = this.#arr[0];
       final = y.map((e) => temp - e);
       return final.reshape(...y.shape);
     } else {
       if (!(y instanceof NArray)) {
         throw Error(
           `Failed to subtract because the passed object is not NArray
-          
+
           How to fix this?
-          Try converting the passed object to NArray.`
+          Try converting the passed object to NArray.`,
         );
       }
 
       if (this.length !== y.length) {
         throw Error(`Shape mismatch, failed to subtract.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
       }
@@ -399,28 +405,28 @@ export class NArray {
   }
 
   div(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>;
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput;
     if (typeof y === "number") {
       return this.map((e) => e / y);
     } else if (y.length === 1) {
-      let temp: number = y.flatten()[0];
+      const temp: number = y.flatten()[0];
       final = this.map((e) => e / temp);
     } else if (this.length === 1) {
-      let temp: number = this.#arr[0];
+      const temp: number = this.#arr[0];
       final = y.map((e) => temp / e);
       return final.reshape(...y.shape);
     } else {
       if (!(y instanceof NArray)) {
         throw Error(`Failed to divide because the passed object is not NArray
-        
+
         How to fix this?
         Try converting the passed object to NArray.`);
       }
 
       if (this.length !== y.length) {
         throw Error(`Shape mismatch, failed to divide.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
       }
@@ -438,8 +444,8 @@ export class NArray {
   }
 
   mul(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>,
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput,
       temp: number;
     if (typeof y === "number") {
       temp = y;
@@ -455,15 +461,15 @@ export class NArray {
       if (!(y instanceof NArray)) {
         throw Error(
           `Failed to multiply because the passed object is not NArray
-          
+
           How to fix this?
-          Try converting the passed object to NArray.`
+          Try converting the passed object to NArray.`,
         );
       }
 
       if (y.shape[y.shape.length - 1] !== this.shape[this.shape.length - 1]) {
         throw Error(`Shapes are not aligned. Failed to multiply.
-        
+
         How to fix this?
         Make sure the passed NArray object is of ${this.ndim} dimension and ${
           this.ndim - 1
@@ -472,7 +478,7 @@ export class NArray {
 
       if (this.length !== y.length) {
         throw Error(`Shape mismatch, failed to multiply.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
       }
@@ -489,28 +495,28 @@ export class NArray {
   }
 
   pow(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>;
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput;
     if (typeof y === "number") {
       final = this.map((e: number) => Math.pow(e, y));
     } else if (y.length === 1) {
-      let temp: number = y.flatten()[0];
+      const temp: number = y.flatten()[0];
       final = this.map((e) => Math.pow(e, temp));
     } else if (this.length === 1) {
-      let temp: number = this.#arr[0];
+      const temp: number = this.#arr[0];
       final = y.map((e) => Math.pow(temp, e));
       return final.reshape(...y.shape);
     } else {
       if (!(y instanceof NArray)) {
         throw Error(`Failed to X^Y because the passed object is not NArray
-        
+
         How to fix this?
         Try converting the passed object to NArray.`);
       }
 
       if (this.length !== y.length) {
         throw Error(`Shape mismatch, failed to X^Y.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
       }
@@ -529,7 +535,7 @@ export class NArray {
   dot(y: number | NArray): NArray {
     if (!(y instanceof NArray)) {
       throw Error(`Failed to dot because the passed object is not NArray
-      
+
       How to fix this?
       Try converting the passed object to NArray.`);
     }
@@ -540,7 +546,7 @@ export class NArray {
     if (y.ndim === 1 || this.ndim === 1) {
       if (this.shape[this.shape.length - 1] !== y.shape[y.shape.length - 1]) {
         throw Error(`Shapes are not aligned. Failed to dot
-        
+
         How to fix this?
         Make sure ${y.ndim - 1} dimension(${
           y.shape[y.shape.length - 1]
@@ -557,7 +563,7 @@ export class NArray {
 
     if (this.ndim !== y.ndim) {
       throw Error(`Passed NArray is not of same dimension.
-      
+
       How to fix this?
       Reshape the passed NArray to ${this.ndim} dimension`);
     }
@@ -566,9 +572,9 @@ export class NArray {
       if (shape1[1] !== shape2[0]) {
         throw Error(
           `Shapes ${shape1} and ${shape2} are not aligned. ${shape1[1]}(dim=1) != ${shape2[0]}(dim=0).
-          
+
           How to fix this?
-          Reshape your passed array with dimension 0 as ${shape1[1]}`
+          Reshape your passed array with dimension 0 as ${shape1[1]}`,
         );
       }
     }
@@ -581,11 +587,11 @@ export class NArray {
           }(dim=${this.ndim - 1}) != ${shape2[shape2.length - 2]}(dim=${
             y.ndim - 2
           })
-          
+
           How to fix this?
           Reshape your passed array with dimension ${y.ndim - 2} as ${
             shape1[shape1.length - 1]
-          }`
+          }`,
         );
       }
     }
@@ -596,20 +602,21 @@ export class NArray {
       shape2[shape2.length - 1],
     ];
 
-    let final: Array<any> = [],
-      temp = 0,
+    const final: NArrayInput = [];
+    let temp = 0,
       i = 0,
       j = 0,
       k = 0,
       l = 0,
       m = 0,
       n = 0,
-      arr2 = y.flatten(),
-      length = y.length,
       tempShape1 = shape1.filter((e) => e !== 1),
       tempShape2 = shape2.filter((e) => e !== 1),
       breakage =
-        tempShape2[tempShape2.length - 1] * tempShape2[tempShape2.length - 2];
+      tempShape2[tempShape2.length - 1] * tempShape2[tempShape2.length - 2];
+      
+    const arr2 = y.flatten(),
+      length = y.length;
 
     if (
       (shape2[shape2.length - 1] === 1 && tempShape2.length === 1) ||
@@ -661,24 +668,23 @@ export class NArray {
     return new NArray(final).reshape(...newShape);
   }
 
+  /**
+   * Returns transpose of the NArray
+   *
+   * Reference: https://stackoverflow.com/a/32034565
+   */
   transpose(): NArray {
-    /**
-     * Returns transpose of the NArray
-     *
-     * Reference: https://stackoverflow.com/a/32034565
-     */
-
     const final = new NArray(this.#arr);
     final.reshape(...Array.from(this.shape).reverse());
     final.strides = Array.from(this.strides).reverse();
     return final;
   }
 
+  /**
+   * Broadcast array into provided shape
+   * @param dims: Array -> shape to broadcast array into
+   */
   reshape(...shape: Array<number>): this {
-    /**
-     * Broadcast array into provided shape
-     * @param dims: Array -> shape to broadcast array into
-     */
     // check if there is any imaginary dimension(-1) given
     const imaginaryDimFound = shape.filter((e) => e === -1).length;
     const tempShape = shape.filter((e) => e !== -1);
@@ -691,15 +697,15 @@ export class NArray {
       shape = shape.map((e) => (e === -1 ? imaginaryDim : e));
     } else if (imaginaryDimFound > 1) {
       throw Error(
-        `Failed to reshape, only single imaginary dimension is supported`
+        `Failed to reshape, only single imaginary dimension is supported`,
       );
     }
     if (NArray.calcNoOfElems(...shape) !== this.length) {
       throw Error(
         `Array of dimension ${this.shape} can't be broadcasted into ${shape} dimension
-        
+
         How to fix this?
-        The passed shape(${shape}) product is not equal to ${this.length}, make sure that you pass the new shape whose product is equal to ${this.length}`
+        The passed shape(${shape}) product is not equal to ${this.length}, make sure that you pass the new shape whose product is equal to ${this.length}`,
       );
     }
 
@@ -709,22 +715,22 @@ export class NArray {
     return this;
   }
 
+  /**
+   * Returns transpose of the NArray
+   */
   get T(): NArray {
-    /**
-     * Returns transpose of the NArray
-     */
     return this.transpose();
   }
 
-  get(...path: Array<number>): Array<any> {
-    /**
-     * Allows to fetch values from specified index
-     * @param path: Array -> index path
-     *
-     * Usage:
-     *  k = NArray.arange(1,33).reshape(2,2,2,4);
-     *  console.log(k.get(0,0));
-     */
+  /**
+   * Allows to fetch values from specified index
+   * @param path: Array -> index path
+   *
+   * Usage:
+   *  k = NArray.arange(1,33).reshape(2,2,2,4);
+   *  console.log(k.get(0,0));
+   */
+  get(...path: Array<number>): NArrayInput {
     let final = [];
     if (path.length === 0) {
       for (let i = 0; i < this.shape[0]; i++) {
@@ -736,20 +742,20 @@ export class NArray {
     return final;
   }
 
-  get real(): Array<any> {
+  get real(): NArrayInput {
     return this.get();
   }
 
-  jsonify(): String {
-    /**
-     * Returns jsonified string of the array
-     *
-     * Used for printing purposes
-     */
+  /**
+   * Returns jsonified string of the array
+   *
+   * Used for printing purposes
+   */
+  jsonify(): string {
     return JSON.stringify(this.real, null, 4);
   }
 
-  toString(): String {
+  toString(): string {
     if (this.length > globalThis.NArray_printThreshold) {
       let finalStr = "";
 
@@ -772,15 +778,15 @@ export class NArray {
     return JSON.stringify(this.real);
   }
 
-  valueOf(): Array<any> {
+  valueOf(): NArrayInput {
     return this.real;
   }
 
+  /**
+   * Returns a provided dimension NArray with all of its values as 0
+   * @param dims: Array -> shape of the new NArray
+   */
   static zeros(...shape: Array<number>): NArray {
-    /**
-     * Returns a provided dimension NArray with all of its values as 0
-     * @param dims: Array -> shape of the new NArray
-     */
     const temp = [];
     const elems = NArray.calcNoOfElems(...shape);
 
@@ -791,17 +797,17 @@ export class NArray {
     return new NArray(temp).reshape(...shape);
   }
 
+  /**
+   * Returns a flat NArray with elements ranging from start -> end with specified step increment
+   * @param start: int -> start of the range
+   * @param end: int -> end of the range
+   * @param step: int -> stride
+   */
   static arange(
     start: number = 0,
     end: undefined | number = undefined,
-    step: number = 1
+    step: number = 1,
   ): NArray {
-    /**
-     * Returns a flat NArray with elements ranging from start -> end with specified step increment
-     * @param start: int -> start of the range
-     * @param end: int -> end of the range
-     * @param step: int -> stride
-     */
     if (!end) {
       end = start;
       start = 0;
@@ -820,10 +826,10 @@ export class NArray {
     return new NArray(values);
   }
 
+  /**
+   * Returns random number as per normal distribution
+   */
   static randn(mean: number = 0, stdev: number = 1): number {
-    /**
-     * Returns random number as per normal distribution
-     */
     const u1 = Math.random();
     const u2 = Math.random();
 

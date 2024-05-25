@@ -1,11 +1,11 @@
 import { Dataset, DatasetSlice } from "../dataset";
-import NArray from "../narray";
+import NArray, {type Element} from "../narray";
 import { Layer } from "../nn";
 import utils from "../utils";
 
 export interface OptimizerProcessReturn {
-  x: Array<any> | Dataset | DatasetSlice;
-  y: Array<any> | Dataset | DatasetSlice;
+  x: Array<Element> | Dataset | DatasetSlice;
+  y: Array<Element> | Dataset | DatasetSlice;
 }
 
 export interface OptimizerInput {
@@ -29,37 +29,37 @@ export class Optimizer {
   alpha: number = undefined;
 
   public process(
-    x: Array<any> | Dataset | DatasetSlice,
-    y: Array<any> | Dataset | DatasetSlice
+    x: Array<Element> | Dataset | DatasetSlice,
+    y: Array<Element> | Dataset | DatasetSlice,
   ): OptimizerProcessReturn {
     return { x, y };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public optimize({ x, y, layers }: OptimizerInput): void {
     throw Error(`Method not implemented!
-    
+
     How can you fix this?
     Try overloading the optimize method.`);
   }
 
-  public get steps(): Array<String> {
+  public get steps(): Array<string> {
     throw Error(`Steps not implemented.
-    
+
     How to fix this?
     If you are the developer, try overwritting the steps getter,
     Else, try raising an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
   }
 }
 
+/**
+ *
+ * References:
+ *  - https://www.geeksforgeeks.org/how-to-implement-a-gradient-descent-in-python-to-find-a-local-minimum/,
+ *  - https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
+ *  - https://stackoverflow.com/a/13342725
+ */
 export class GradientDescent extends Optimizer {
-  /**
-   *
-   * References:
-   *  - https://www.geeksforgeeks.org/how-to-implement-a-gradient-descent-in-python-to-find-a-local-minimum/,
-   *  - https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
-   *  - https://stackoverflow.com/a/13342725
-   */
-
   protected momentum: number;
   protected weightsHistory: Array<NArray> = [];
   protected biasHistory: Array<NArray> = [];
@@ -76,9 +76,9 @@ export class GradientDescent extends Optimizer {
   protected calcUpdates(
     layers: Layer[],
     weightGradients: NArray[],
-    biasGradients: NArray[]
+    biasGradients: NArray[],
   ): Array<NArray[]> {
-    let adjustedWeights = [],
+    const adjustedWeights = [],
       adjustedBiases = [];
 
     for (let i = 0; i < layers.length; i++) {
@@ -103,11 +103,11 @@ export class GradientDescent extends Optimizer {
   }
 
   _optimize({ x, y, layers }: OptimizerInput): OptimizerOutput {
-    let layersOp = [], // keeps track of each layer's output
-      recent: NArray,
+    const layersOp = [], // keeps track of each layer's output
       weightGradients: NArray[] = [],
       biasGradients: NArray[] = [],
       weightErrors: NArray[] = []; // keeps track of weights errors
+    let recent: NArray;
 
     layers.forEach((e, i) => {
       if (i === 0) {
@@ -136,7 +136,7 @@ export class GradientDescent extends Optimizer {
     for (let i = layers.length - 2; i >= 0; i--) {
       weightErrors[i] = layers[i + 1].weights.dot(weightGradients[i + 1].T);
       weightGradients[i] = weightErrors[i].T.mul(
-        layers[i].activationFunction.calcGradient(layersOp[i])
+        layers[i].activationFunction.calcGradient(layersOp[i]),
       );
 
       biasGradients[i] = layers[i].activationFunction.calcGradient(layersOp[i]);
@@ -160,7 +160,7 @@ export class GradientDescent extends Optimizer {
     const [adjustedBiases, adjustedWeights] = this.calcUpdates(
       layers,
       weightGradients,
-      biasGradients
+      biasGradients,
     );
 
     return {
@@ -207,24 +207,24 @@ export class GradientDescent extends Optimizer {
 
 export class StochasticGradientDescent extends GradientDescent {
   process(
-    x: any[] | Dataset | DatasetSlice,
-    y: any[] | Dataset | DatasetSlice
+    x: Element[] | Dataset | DatasetSlice,
+    y: Element[] | Dataset | DatasetSlice,
   ): OptimizerProcessReturn {
     if (x.length !== y.length) {
       throw Error(`X and Y length mismatch
-      
+
       How can you fix it?
       Make sure that the X and Y passed are of the same length.`);
     }
-    let shuffledX: any[] | DatasetSlice, shuffledY: any[] | DatasetSlice;
+    let shuffledX: Element[] | DatasetSlice, shuffledY: Element[] | DatasetSlice;
 
-    let xLen = x.length;
+    const xLen = x.length;
 
     const arrangement = utils.shuffle(xLen);
 
     if (!(arrangement instanceof Array)) {
       throw Error(
-        `SGD: Failed to shuffle data. utils.shuffle returned unexpected value.`
+        `SGD: Failed to shuffle data. utils.shuffle returned unexpected value.`,
       );
     }
 
@@ -265,9 +265,9 @@ class RMSProp extends StochasticGradientDescent {
   protected calcUpdates(
     layers: Layer[],
     weightGradients: NArray[],
-    biasGradients: NArray[]
+    biasGradients: NArray[],
   ): NArray[][] {
-    let adjustedBiases = [],
+    const adjustedBiases = [],
       adjustedWeights = [];
 
     for (let i = 0; i < layers.length; i++) {
@@ -280,7 +280,7 @@ class RMSProp extends StochasticGradientDescent {
         adjustedWeights[i] = layers[i].weights.sub(
           weightGradients[i]
             .div(this.weightsHistory[i].add(this.EPSILON).map(Math.sqrt))
-            .mul(this.alpha)
+            .mul(this.alpha),
         );
       }
 
@@ -292,7 +292,7 @@ class RMSProp extends StochasticGradientDescent {
       adjustedBiases[i] = layers[i].bias.sub(
         biasGradients[i]
           .div(this.biasHistory[i].add(this.EPSILON).map(Math.sqrt))
-          .mul(this.alpha)
+          .mul(this.alpha),
       );
     }
 

@@ -47,6 +47,8 @@ model.train({
   loss: toynn.errors.MSE,
 });
 
+console.log(model.structure);
+
 // get accuracy
 let accuracy = 0,
   prediction;
@@ -59,4 +61,4 @@ for (let i = 0; i < testX.length; i++) {
   }
 }
 
-console.log(`Accuracy: ${accuracy / testX.length}%`);
+console.log(`Accuracy: ${(accuracy / testX.length) * 100}%`);

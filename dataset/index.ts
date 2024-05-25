@@ -1,7 +1,7 @@
 import fs from "fs";
 import readline from "readline";
 import { URL } from "url";
-import NArray from "../narray";
+import NArray, {type Element} from "../narray";
 import cache from "../utils/cache";
 
 export interface DatasetOptions {
@@ -11,7 +11,7 @@ export interface DatasetOptions {
 
 export class Dataset {
   #length: number;
-  #data: Array<any>;
+  #data: Array<Element>;
   constructor(array: Array<NArray>) {
     this.#data = array;
     this.#length = array.length;
@@ -22,20 +22,20 @@ export class Dataset {
   }
 
   get(index: number): NArray {
-    let data = this.#data.at(index);
+    const data = this.#data.at(index);
     return this.onGet(new NArray(data));
   }
 
   slice(...selection: Array<number>): Dataset {
-    let final = [];
+    const final = [];
 
     for (let i = 0; i < this.length; i++) {
       final.push(
         new NArray(
           this.get(i)
             .flatten()
-            .slice(...selection)
-        )
+            .slice(...selection),
+        ),
       );
     }
 
@@ -47,7 +47,7 @@ export class Dataset {
   }
 
   toArray(): Array<NArray> {
-    let final: Array<NArray> = [];
+    const final: Array<NArray> = [];
     for (let i = 0; i < this.length; i++) {
       final.push(this.get(i));
     }
@@ -60,7 +60,7 @@ export class Dataset {
     options: DatasetOptions = {
       delimiter: ",",
       headerCol: 1,
-    }
+    },
   ) {
     if (loc instanceof Array) {
       return new Dataset(loc);
@@ -72,8 +72,8 @@ export class Dataset {
 
     function parseLine(line: string): NArray {
       try {
-        let parsedLine = line.split(options.delimiter);
-        let finalParsedLine = parsedLine.map((e) => {
+        const parsedLine = line.split(options.delimiter);
+        const finalParsedLine = parsedLine.map((e) => {
           const temp = parseFloat(e);
 
           if (!Number.isNaN(temp)) return temp;
@@ -97,7 +97,7 @@ export class Dataset {
     }
     if (isURL) {
       // check if contents are cached
-      let temp = cache.load(loc);
+      const temp = cache.load(loc);
       if (temp) {
         loc = temp;
         isURL = false;
@@ -170,15 +170,15 @@ export class DatasetSlice {
   }
 
   slice(...selection: Array<number>): Dataset {
-    let final = [];
+    const final = [];
 
     for (let i = 0; i < this.length; i++) {
       final.push(
         new NArray(
           this.get(i)
             .flatten()
-            .slice(...selection)
-        )
+            .slice(...selection),
+        ),
       );
     }
 
@@ -190,7 +190,7 @@ export class DatasetSlice {
   }
 
   toArray(): Array<NArray> {
-    let final: Array<NArray> = [];
+    const final: Array<NArray> = [];
     for (let i = 0; i < this.length; i++) {
       final.push(this.get(i));
     }
