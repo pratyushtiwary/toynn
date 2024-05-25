@@ -15,41 +15,41 @@
         }
     </style>
 </head>
-    
+
 <body>
 <div class='wrapper'>
     <div class='pad1'>
         <h1><a href="../index.html">All files</a> / <a href="index.html">nn</a> index.js</h1>
         <div class='clearfix'>
-            
+
             <div class='fl pad1y space-right2'>
                 <span class="strong">83.56% </span>
                 <span class="quiet">Statements</span>
                 <span class='fraction'>183/219</span>
             </div>
-        
-            
+
+
             <div class='fl pad1y space-right2'>
                 <span class="strong">66.66% </span>
                 <span class="quiet">Branches</span>
                 <span class='fraction'>112/168</span>
             </div>
-        
-            
+
+
             <div class='fl pad1y space-right2'>
                 <span class="strong">85.71% </span>
                 <span class="quiet">Functions</span>
                 <span class='fraction'>30/35</span>
             </div>
-        
-            
+
+
             <div class='fl pad1y space-right2'>
                 <span class="strong">87.62% </span>
                 <span class="quiet">Lines</span>
                 <span class='fraction'>177/202</span>
             </div>
-        
-            
+
+
         </div>
         <p class="quiet">
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
@@ -967,7 +967,7 @@ class NN {
                 const [_, prevOutputSize] = (_a = __classPrivateFieldGet(this, _NN_layers, "f")[__classPrivateFieldGet(this, _NN_layers, "f").length - 1]) === null || _a === void 0 ? <span class="branch-0 cbranch-no" title="branch not covered" >void 0 </span>: _a.shape;
                 if (inputSize !== prevOutputSize) {
                     throw Error(`Layer's input size doesn't match with previous layer's output size! Make sure the output of previous layer is equal to the input of this layer
-            
+
             How to fix this?
             Make sure that layer ${__classPrivateFieldGet(this, _NN_layers, "f").length + 1}'s input size = ${prevOutputSize}`);
                 }
@@ -976,7 +976,7 @@ class NN {
         }
         else {
             throw Error(`Unable to add the passed object to the model's pipeline.
-      
+
       How to fix this?
       The object you passed to is not a Layer, try to pass Layer's object`);
         }
@@ -987,7 +987,7 @@ class NN {
         }
         else <span class="missing-if-branch" title="if path not taken" >I</span>if (!(x instanceof narray_1.default)) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Invalid input for model ${this.name}</span>
-      
+
       How to fix this?
       Convert your x to NArray`);
         }
@@ -1095,7 +1095,7 @@ class NN {
         });
         if (fs_1.default.existsSync(finalPath) &amp;&amp; !force) {
             throw Error(`File already exists at path ${finalPath}.
-      
+
       How to fix this?
       Try renaming the file at path ${finalPath}.`);
         }
@@ -1139,7 +1139,7 @@ class NN {
         }
         catch (e) {
             throw Error(`Failed to load model.
-      
+
       Error: ${e}`);
         }
     }
@@ -1176,25 +1176,25 @@ class Layer {
     set weights(newWeights) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!(newWeights instanceof narray_1.default)) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Weights should be of type NArray.</span>
-      
+
       How to fix this?
       Convert your new weights to NArray by using new NArray(yourNewWeights)`);
         }
         if (newWeights.ndim !== 2) {
             throw Error(`Weights should be a 2-dim NArray
-      
+
       How to fix this?
       Try reshaping your weights`);
         }
         <span class="missing-if-branch" title="if path not taken" >I</span>if (newWeights.shape[0] !== this.inputSize) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Shape mismatch the input size.</span>
-      
+
       How to fix this?
       Make sure your weights 0th dim is of size ${this.inputSize}`);
         }
         if (newWeights.shape[1] !== this.outputSize) {
             throw Error(`Shape mismatch the output size.
-      
+
       How to fix this?
       Make sure your weights 1st dim is of size ${this.outputSize}`);
         }
@@ -1203,25 +1203,25 @@ class Layer {
     set bias(newBias) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!(newBias instanceof narray_1.default)) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Bias should be of type NArray.</span>
-      
+
       How to fix this?
       Convert your new weights to NArray by using new NArray(yourNewWeights)`);
         }
         if (newBias.ndim !== 2) {
             throw Error(`Bias should be a 2-dim NArray
-      
+
       How to fix this?
       Try reshaping your weights`);
         }
         <span class="missing-if-branch" title="if path not taken" >I</span>if (newBias.shape[0] !== 1) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Shape mismatch.</span>
-      
+
       How to fix this?
       Make sure your bias 0th dim is of size 1`);
         }
         if (newBias.shape[1] !== this.outputSize) {
             throw Error(`Shape mismatch the output size.
-      
+
       How to fix this?
       Make sure your bias 1st dim is of size ${this.outputSize}`);
         }
@@ -1233,12 +1233,12 @@ class Layer {
         }
         else <span class="missing-if-branch" title="if path not taken" >I</span>if (!(x instanceof narray_1.default)) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Invalid input for layer ${this.name || nLayer}</span>
-      
+
       Make sure x is of type NArray`);
         }
         if (x.length !== this.inputSize) {
             throw Error(`${x.length}(no. of elems) != ${this.inputSize}(inputSize)
-      
+
       How to fix this?
       Make sure the length of x(${x.length}) = ${this.inputSize}`);
         }
@@ -1249,16 +1249,16 @@ class Layer {
         }
         else <span class="missing-if-branch" title="else path not taken" >E</span>{
 <span class="cstat-no" title="statement not covered" >            throw Error(`Failed to compute output from ActivationFunction.</span>
-      
+
       How to fix this?
       Make sure you are setting the activation function for layer ${this.name}`);
         }
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!(z1 instanceof narray_1.default)) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Invalid result for layer ${this.name}.</span>
-      
+
       What does this mean?
       While trying to compute result for Layer ${this.name} a number is returned rather than an NArray
-      
+
       How can you fix it?
       Try raising an issue if you see this error along with the code for neural network and your training dataset on https://github.com/pratyushtiwary/toynn`);
         }
@@ -1271,7 +1271,7 @@ class Layer {
     set activationFunction(func) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!(func instanceof functions_1.ActivationFunction)) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Invalid activation function.</span>
-      
+
       How to fix this?
       Make sure you've passed object of type ActivationFunction`);
         }
@@ -1312,4 +1312,3 @@ exports.default = { NN, Layer };
         <script src="../block-navigation.js"></script>
     </body>
 </html>
-    

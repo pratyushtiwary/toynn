@@ -25,35 +25,35 @@ class ActivationFunction {
      */
     get formula() {
         throw Error(`Formula for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the formula getter with the formula.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
     }
     get gradient() {
         throw Error(`Gradient for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the gradient getter with the gradient formula.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
     }
     calcGradient(x) {
         throw Error(`Gradient Calculation for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the calcGradient function.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
     }
     calculate(x) {
         throw Error(`Calculation for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the calculate function.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
     }
     toString() {
         throw Error(`Name for the activation function is not defined.
-    
+
     How to fix this?
     If you are the developer of this activation function, try overwritting the toString function.
     If you are not the developer of this activation function, try using other activations functions, also try to raise an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
@@ -121,7 +121,7 @@ class Softmax extends ActivationFunction {
     }
     get gradient() {
         return `x.diag().sub(x.T.dot(x)).sum(0)
-    
+
     Note: X is a 1 dimensional array
     Axis 0 means column wise sum`;
     }
@@ -136,10 +136,10 @@ class Softmax extends ActivationFunction {
         let summEx = x.map((e) => Math.pow(eulerNo, e)).reduce((a, b) => a + b);
         if (summEx === Infinity) {
             console.warn(`Softmax Activation Function results might come in NaN or Infinity, try using different activation function.
-        
+
         What does this means?
         Some the passed values are very large which results exponential sum of them to reach infinity.
-        
+
         How can i fix this?
         Either scale down the values or try different activation function`);
         }

@@ -15,41 +15,41 @@
         }
     </style>
 </head>
-    
+
 <body>
 <div class='wrapper'>
     <div class='pad1'>
         <h1><a href="../index.html">All files</a> / <a href="index.html">narray</a> index.js</h1>
         <div class='clearfix'>
-            
+
             <div class='fl pad1y space-right2'>
                 <span class="strong">86.96% </span>
                 <span class="quiet">Statements</span>
                 <span class='fraction'>367/422</span>
             </div>
-        
-            
+
+
             <div class='fl pad1y space-right2'>
                 <span class="strong">79.45% </span>
                 <span class="quiet">Branches</span>
                 <span class='fraction'>174/219</span>
             </div>
-        
-            
+
+
             <div class='fl pad1y space-right2'>
                 <span class="strong">87.14% </span>
                 <span class="quiet">Functions</span>
                 <span class='fraction'>61/70</span>
             </div>
-        
-            
+
+
             <div class='fl pad1y space-right2'>
                 <span class="strong">88.25% </span>
                 <span class="quiet">Lines</span>
                 <span class='fraction'>308/349</span>
             </div>
-        
-            
+
+
         </div>
         <p class="quiet">
             Press <em>n</em> or <em>j</em> to go to the next uncovered block, <em>b</em>, <em>p</em> or <em>k</em> for the previous block.
@@ -1473,9 +1473,9 @@ class NArray {
             __classPrivateFieldSet(this, _NArray_arr, __classPrivateFieldGet(this, _NArray_instances, "m", _NArray_flatten).call(this, __classPrivateFieldGet(this, _NArray_arr, "f")), "f");
             if (this.length !== _a.calcNoOfElems(...__classPrivateFieldGet(this, _NArray_computedShape, "f"))) {
                 throw Error(`The passed array doesn't seems to follow a fixed shape. NArray's need to have a fixed shape.
-          
+
           How to fix this?
-          
+
           Make sure the number of elements in your array(${this.length}) is equals to the product of ${__classPrivateFieldGet(this, _NArray_computedShape, "f")}
           `);
             }
@@ -1488,7 +1488,7 @@ class NArray {
         }
         else <span class="missing-if-branch" title="else path not taken" >E</span>{
 <span class="cstat-no" title="statement not covered" >            throw Error(`Unsupported object type.</span>
-      
+
       How to fix this?
 &nbsp;
       Looks like you've tried converting ${typeof obj} to an NArray.
@@ -1526,13 +1526,13 @@ class NArray {
     set strides(newStrides) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!(newStrides instanceof Array)) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Failed to change stride</span>
-      
+
       How to fix this?
       Try chaning the newStrides passed into an array.`);
         }
         else <span class="missing-if-branch" title="if path not taken" >I</span>if (newStrides.length !== this.shape.length) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`strides must be same length as shape (${this.shape.length})</span>
-        
+
         How to fix this?
         Make sure new strides have ${this.ndim} number of elements.`);
         }
@@ -1568,7 +1568,7 @@ class NArray {
     sum(axis = undefined) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (axis &gt; this.ndim - 1 || axis &lt; 0) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Axis out of bound</span>
-      
+
       How to fix this?
       Try changing axis to a number between 0 and ${this.ndim - 1}.`);
         }
@@ -1612,7 +1612,7 @@ class NArray {
     diag() {
         if (this.ndim &gt; 2) {
             throw Error(`NArray should be either 1d or 2d
-      
+
       How to fix this?
       Try reshaping your NArray to convert it into 1d or 2d NArray.`);
         }
@@ -1667,7 +1667,7 @@ class NArray {
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to add.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -1695,13 +1695,13 @@ class NArray {
         else {
             <span class="missing-if-branch" title="if path not taken" >I</span>if (!(y instanceof _a)) {
 <span class="cstat-no" title="statement not covered" >                throw Error(`Failed to subtract because the passed object is not NArray</span>
-          
+
           How to fix this?
           Try converting the passed object to NArray.`);
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to subtract.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -1728,13 +1728,13 @@ class NArray {
         else {
             <span class="missing-if-branch" title="if path not taken" >I</span>if (!(y instanceof _a)) {
 <span class="cstat-no" title="statement not covered" >                throw Error(`Failed to divide because the passed object is not NArray</span>
-        
+
         How to fix this?
         Try converting the passed object to NArray.`);
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to divide.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -1763,19 +1763,19 @@ class NArray {
         else {
             <span class="missing-if-branch" title="if path not taken" >I</span>if (!(y instanceof _a)) {
 <span class="cstat-no" title="statement not covered" >                throw Error(`Failed to multiply because the passed object is not NArray</span>
-          
+
           How to fix this?
           Try converting the passed object to NArray.`);
             }
             if (y.shape[y.shape.length - 1] !== this.shape[this.shape.length - 1]) {
                 throw Error(`Shapes are not aligned. Failed to multiply.
-        
+
         How to fix this?
         Make sure the passed NArray object is of ${this.ndim} dimension and ${this.ndim - 1} dimension is equals to ${this.shape[this.shape.length - 1]}`);
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to multiply.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -1803,13 +1803,13 @@ class NArray {
         else {
             <span class="missing-if-branch" title="if path not taken" >I</span>if (!(y instanceof _a)) {
 <span class="cstat-no" title="statement not covered" >                throw Error(`Failed to X^Y because the passed object is not NArray</span>
-        
+
         How to fix this?
         Try converting the passed object to NArray.`);
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to X^Y.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -1823,7 +1823,7 @@ class NArray {
     dot(y) {
         <span class="missing-if-branch" title="if path not taken" >I</span>if (!(y instanceof _a)) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Failed to dot because the passed object is not NArray</span>
-      
+
       How to fix this?
       Try converting the passed object to NArray.`);
         }
@@ -1833,7 +1833,7 @@ class NArray {
         if (y.ndim === 1 || this.ndim === 1) {
             <span class="missing-if-branch" title="if path not taken" >I</span>if (this.shape[this.shape.length - 1] !== y.shape[y.shape.length - 1]) {
 <span class="cstat-no" title="statement not covered" >                throw Error(`Shapes are not aligned. Failed to dot</span>
-        
+
         How to fix this?
         Make sure ${y.ndim - 1} dimension(${y.shape[y.shape.length - 1]}) is equal to ${this.ndim - 1} dimension(${this.shape[this.shape.length - 1]})`);
             }
@@ -1842,14 +1842,14 @@ class NArray {
         const shape1 = this.shape, shape2 = y.shape;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (this.ndim !== y.ndim) {
 <span class="cstat-no" title="statement not covered" >            throw Error(`Passed NArray is not of same dimension.</span>
-      
+
       How to fix this?
       Reshape the passed NArray to ${this.ndim} dimension`);
         }
         if (this.ndim === 2) {
             if (shape1[1] !== shape2[0]) {
                 throw Error(`Shapes ${shape1} and ${shape2} are not aligned. ${shape1[1]}(dim=1) != ${shape2[0]}(dim=0).
-          
+
           How to fix this?
           Reshape your passed array with dimension 0 as ${shape1[1]}`);
             }
@@ -1857,7 +1857,7 @@ class NArray {
         if (this.ndim &gt; 2 || y.ndim &gt; 2) {
             if (shape1[shape1.length - 1] !== shape2[shape2.length - 2]) {
                 throw Error(`Shapes ${shape1} and ${shape2} are not aligned. ${shape1[shape1.length - 1]}(dim=${this.ndim - 1}) != ${shape2[shape2.length - 2]}(dim=${y.ndim - 2})
-          
+
           How to fix this?
           Reshape your passed array with dimension ${y.ndim - 2} as ${shape1[shape1.length - 1]}`);
             }
@@ -1937,7 +1937,7 @@ class NArray {
         }
         if (_a.calcNoOfElems(...shape) !== this.length) {
             throw Error(`Array of dimension ${this.shape} can't be broadcasted into ${shape} dimension
-        
+
         How to fix this?
         The passed shape(${shape}) product is not equal to ${this.length}, make sure that you pass the new shape whose product is equal to ${this.length}`);
         }
@@ -2097,7 +2097,7 @@ _a = NArray, _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(),
     }
     else {
         throw Error(`Range out of index.
-      
+
       How to fix this?
       Your NArray is of dimension ${this.ndim} put you are trying to access ${path.length} dimension data. Try changing the path passed to ${this.ndim} dimension.`);
     }
@@ -2140,4 +2140,3 @@ exports.default = NArray;
         <script src="../block-navigation.js"></script>
     </body>
 </html>
-    

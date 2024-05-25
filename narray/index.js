@@ -36,9 +36,9 @@ class NArray {
             __classPrivateFieldSet(this, _NArray_arr, __classPrivateFieldGet(this, _NArray_instances, "m", _NArray_flatten).call(this, __classPrivateFieldGet(this, _NArray_arr, "f")), "f");
             if (this.length !== _a.calcNoOfElems(...__classPrivateFieldGet(this, _NArray_computedShape, "f"))) {
                 throw Error(`The passed array doesn't seems to follow a fixed shape. NArray's need to have a fixed shape.
-          
+
           How to fix this?
-          
+
           Make sure the number of elements in your array(${this.length}) is equals to the product of ${__classPrivateFieldGet(this, _NArray_computedShape, "f")}
           `);
             }
@@ -51,7 +51,7 @@ class NArray {
         }
         else {
             throw Error(`Unsupported object type.
-      
+
       How to fix this?
 
       Looks like you've tried converting ${typeof obj} to an NArray.
@@ -89,13 +89,13 @@ class NArray {
     set strides(newStrides) {
         if (!(newStrides instanceof Array)) {
             throw Error(`Failed to change stride
-      
+
       How to fix this?
       Try chaning the newStrides passed into an array.`);
         }
         else if (newStrides.length !== this.shape.length) {
             throw Error(`strides must be same length as shape (${this.shape.length})
-        
+
         How to fix this?
         Make sure new strides have ${this.ndim} number of elements.`);
         }
@@ -131,7 +131,7 @@ class NArray {
     sum(axis = undefined) {
         if (axis > this.ndim - 1 || axis < 0) {
             throw Error(`Axis out of bound
-      
+
       How to fix this?
       Try changing axis to a number between 0 and ${this.ndim - 1}.`);
         }
@@ -175,7 +175,7 @@ class NArray {
     diag() {
         if (this.ndim > 2) {
             throw Error(`NArray should be either 1d or 2d
-      
+
       How to fix this?
       Try reshaping your NArray to convert it into 1d or 2d NArray.`);
         }
@@ -230,7 +230,7 @@ class NArray {
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to add.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -258,13 +258,13 @@ class NArray {
         else {
             if (!(y instanceof _a)) {
                 throw Error(`Failed to subtract because the passed object is not NArray
-          
+
           How to fix this?
           Try converting the passed object to NArray.`);
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to subtract.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -291,13 +291,13 @@ class NArray {
         else {
             if (!(y instanceof _a)) {
                 throw Error(`Failed to divide because the passed object is not NArray
-        
+
         How to fix this?
         Try converting the passed object to NArray.`);
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to divide.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -326,19 +326,19 @@ class NArray {
         else {
             if (!(y instanceof _a)) {
                 throw Error(`Failed to multiply because the passed object is not NArray
-          
+
           How to fix this?
           Try converting the passed object to NArray.`);
             }
             if (y.shape[y.shape.length - 1] !== this.shape[this.shape.length - 1]) {
                 throw Error(`Shapes are not aligned. Failed to multiply.
-        
+
         How to fix this?
         Make sure the passed NArray object is of ${this.ndim} dimension and ${this.ndim - 1} dimension is equals to ${this.shape[this.shape.length - 1]}`);
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to multiply.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -366,13 +366,13 @@ class NArray {
         else {
             if (!(y instanceof _a)) {
                 throw Error(`Failed to X^Y because the passed object is not NArray
-        
+
         How to fix this?
         Try converting the passed object to NArray.`);
             }
             if (this.length !== y.length) {
                 throw Error(`Shape mismatch, failed to X^Y.
-        
+
         How to fix this?
         Make sure y.shape = ${this.shape}`);
             }
@@ -386,7 +386,7 @@ class NArray {
     dot(y) {
         if (!(y instanceof _a)) {
             throw Error(`Failed to dot because the passed object is not NArray
-      
+
       How to fix this?
       Try converting the passed object to NArray.`);
         }
@@ -396,7 +396,7 @@ class NArray {
         if (y.ndim === 1 || this.ndim === 1) {
             if (this.shape[this.shape.length - 1] !== y.shape[y.shape.length - 1]) {
                 throw Error(`Shapes are not aligned. Failed to dot
-        
+
         How to fix this?
         Make sure ${y.ndim - 1} dimension(${y.shape[y.shape.length - 1]}) is equal to ${this.ndim - 1} dimension(${this.shape[this.shape.length - 1]})`);
             }
@@ -405,14 +405,14 @@ class NArray {
         const shape1 = this.shape, shape2 = y.shape;
         if (this.ndim !== y.ndim) {
             throw Error(`Passed NArray is not of same dimension.
-      
+
       How to fix this?
       Reshape the passed NArray to ${this.ndim} dimension`);
         }
         if (this.ndim === 2) {
             if (shape1[1] !== shape2[0]) {
                 throw Error(`Shapes ${shape1} and ${shape2} are not aligned. ${shape1[1]}(dim=1) != ${shape2[0]}(dim=0).
-          
+
           How to fix this?
           Reshape your passed array with dimension 0 as ${shape1[1]}`);
             }
@@ -420,7 +420,7 @@ class NArray {
         if (this.ndim > 2 || y.ndim > 2) {
             if (shape1[shape1.length - 1] !== shape2[shape2.length - 2]) {
                 throw Error(`Shapes ${shape1} and ${shape2} are not aligned. ${shape1[shape1.length - 1]}(dim=${this.ndim - 1}) != ${shape2[shape2.length - 2]}(dim=${y.ndim - 2})
-          
+
           How to fix this?
           Reshape your passed array with dimension ${y.ndim - 2} as ${shape1[shape1.length - 1]}`);
             }
@@ -500,7 +500,7 @@ class NArray {
         }
         if (_a.calcNoOfElems(...shape) !== this.length) {
             throw Error(`Array of dimension ${this.shape} can't be broadcasted into ${shape} dimension
-        
+
         How to fix this?
         The passed shape(${shape}) product is not equal to ${this.length}, make sure that you pass the new shape whose product is equal to ${this.length}`);
         }
@@ -660,7 +660,7 @@ _a = NArray, _NArray_arr = new WeakMap(), _NArray_computedShape = new WeakMap(),
     }
     else {
         throw Error(`Range out of index.
-      
+
       How to fix this?
       Your NArray is of dimension ${this.ndim} put you are trying to access ${path.length} dimension data. Try changing the path passed to ${this.ndim} dimension.`);
     }

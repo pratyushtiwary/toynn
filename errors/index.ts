@@ -16,7 +16,7 @@ export class StatError {
     if (yTrue.length !== yPred.length) {
       throw Error(
         `Array length mismatch, make sure yTrue.length == yPred.length
-        
+
         How to fix this?
         Make sure that the passed yTrue Array and yPred Array are of the same size.
         If you are using NArray try reshaping them.`
@@ -28,7 +28,7 @@ export class StatError {
 
   /**
    * Takes in a function and use it to compute result value
-   * 
+   *
    * Can be chained
    */
   apply(func: Function): StatErrorReturn {
@@ -47,7 +47,7 @@ export class StatError {
 
   /**
    * Takes in a function and use it to transform loss value for each row
-   * 
+   *
    * Can't be chanined
    */
   use(func: Function = undefined): StatErrorReturn {

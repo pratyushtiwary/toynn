@@ -21,7 +21,7 @@ class StatError {
         this.formula = undefined;
         if (yTrue.length !== yPred.length) {
             throw Error(`Array length mismatch, make sure yTrue.length == yPred.length
-        
+
         How to fix this?
         Make sure that the passed yTrue Array and yPred Array are of the same size.
         If you are using NArray try reshaping them.`);

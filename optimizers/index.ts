@@ -37,14 +37,14 @@ export class Optimizer {
 
   public optimize({ x, y, layers }: OptimizerInput): void {
     throw Error(`Method not implemented!
-    
+
     How can you fix this?
     Try overloading the optimize method.`);
   }
 
   public get steps(): Array<String> {
     throw Error(`Steps not implemented.
-    
+
     How to fix this?
     If you are the developer, try overwritting the steps getter,
     Else, try raising an issue regarding the same on https://github.com/pratyushtiwary/toynn.`);
@@ -212,7 +212,7 @@ export class StochasticGradientDescent extends GradientDescent {
   ): OptimizerProcessReturn {
     if (x.length !== y.length) {
       throw Error(`X and Y length mismatch
-      
+
       How can you fix it?
       Make sure that the X and Y passed are of the same length.`);
     }

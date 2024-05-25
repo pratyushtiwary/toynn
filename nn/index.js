@@ -82,7 +82,7 @@ class NN {
                 const [_, prevOutputSize] = (_a = __classPrivateFieldGet(this, _NN_layers, "f")[__classPrivateFieldGet(this, _NN_layers, "f").length - 1]) === null || _a === void 0 ? void 0 : _a.shape;
                 if (inputSize !== prevOutputSize) {
                     throw Error(`Layer's input size doesn't match with previous layer's output size! Make sure the output of previous layer is equal to the input of this layer
-            
+
             How to fix this?
             Make sure that layer ${__classPrivateFieldGet(this, _NN_layers, "f").length + 1}'s input size = ${prevOutputSize}`);
                 }
@@ -91,7 +91,7 @@ class NN {
         }
         else {
             throw Error(`Unable to add the passed object to the model's pipeline.
-      
+
       How to fix this?
       The object you passed to is not a Layer, try to pass Layer's object`);
         }
@@ -102,7 +102,7 @@ class NN {
         }
         else if (!(x instanceof narray_1.default)) {
             throw Error(`Invalid input for model ${this.name}
-      
+
       How to fix this?
       Convert your x to NArray`);
         }
@@ -210,7 +210,7 @@ class NN {
         });
         if (fs_1.default.existsSync(finalPath) && !force) {
             throw Error(`File already exists at path ${finalPath}.
-      
+
       How to fix this?
       Try renaming the file at path ${finalPath}.`);
         }
@@ -254,7 +254,7 @@ class NN {
         }
         catch (e) {
             throw Error(`Failed to load model.
-      
+
       Error: ${e}`);
         }
     }
@@ -291,25 +291,25 @@ class Layer {
     set weights(newWeights) {
         if (!(newWeights instanceof narray_1.default)) {
             throw Error(`Weights should be of type NArray.
-      
+
       How to fix this?
       Convert your new weights to NArray by using new NArray(yourNewWeights)`);
         }
         if (newWeights.ndim !== 2) {
             throw Error(`Weights should be a 2-dim NArray
-      
+
       How to fix this?
       Try reshaping your weights`);
         }
         if (newWeights.shape[0] !== this.inputSize) {
             throw Error(`Shape mismatch the input size.
-      
+
       How to fix this?
       Make sure your weights 0th dim is of size ${this.inputSize}`);
         }
         if (newWeights.shape[1] !== this.outputSize) {
             throw Error(`Shape mismatch the output size.
-      
+
       How to fix this?
       Make sure your weights 1st dim is of size ${this.outputSize}`);
         }
@@ -318,25 +318,25 @@ class Layer {
     set bias(newBias) {
         if (!(newBias instanceof narray_1.default)) {
             throw Error(`Bias should be of type NArray.
-      
+
       How to fix this?
       Convert your new weights to NArray by using new NArray(yourNewWeights)`);
         }
         if (newBias.ndim !== 2) {
             throw Error(`Bias should be a 2-dim NArray
-      
+
       How to fix this?
       Try reshaping your weights`);
         }
         if (newBias.shape[0] !== 1) {
             throw Error(`Shape mismatch.
-      
+
       How to fix this?
       Make sure your bias 0th dim is of size 1`);
         }
         if (newBias.shape[1] !== this.outputSize) {
             throw Error(`Shape mismatch the output size.
-      
+
       How to fix this?
       Make sure your bias 1st dim is of size ${this.outputSize}`);
         }
@@ -348,12 +348,12 @@ class Layer {
         }
         else if (!(x instanceof narray_1.default)) {
             throw Error(`Invalid input for layer ${this.name || nLayer}
-      
+
       Make sure x is of type NArray`);
         }
         if (x.length !== this.inputSize) {
             throw Error(`${x.length}(no. of elems) != ${this.inputSize}(inputSize)
-      
+
       How to fix this?
       Make sure the length of x(${x.length}) = ${this.inputSize}`);
         }
@@ -364,16 +364,16 @@ class Layer {
         }
         else {
             throw Error(`Failed to compute output from ActivationFunction.
-      
+
       How to fix this?
       Make sure you are setting the activation function for layer ${this.name}`);
         }
         if (!(z1 instanceof narray_1.default)) {
             throw Error(`Invalid result for layer ${this.name}.
-      
+
       What does this mean?
       While trying to compute result for Layer ${this.name} a number is returned rather than an NArray
-      
+
       How can you fix it?
       Try raising an issue if you see this error along with the code for neural network and your training dataset on https://github.com/pratyushtiwary/toynn`);
         }
@@ -386,7 +386,7 @@ class Layer {
     set activationFunction(func) {
         if (!(func instanceof functions_1.ActivationFunction)) {
             throw Error(`Invalid activation function.
-      
+
       How to fix this?
       Make sure you've passed object of type ActivationFunction`);
         }
