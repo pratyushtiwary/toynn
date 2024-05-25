@@ -16,6 +16,8 @@ jobs:
           registry-url: "https://registry.npmjs.org"
       - name: Installing Dependencies
         run: npm ci
+      - name: Linting
+        run: npm run lint
       - name: Building Package
         run: npm run build
       - name: Publish Package to NPM
