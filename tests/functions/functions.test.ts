@@ -134,7 +134,7 @@ describe("test in-build activation functions", () => {
     ];
 
     const formula = "exp(xi)/sum(exp(x))";
-    const gradient = `x.diag().sub(x.T.dot(x)).sum(0)\n    \n    Note: X is a 1 dimensional array\n    Axis 0 means column wise sum`;
+    const gradient = `x.diag().sub(x.T.dot(x)).sum(0)\n\n    Note: X is a 1 dimensional array\n    Axis 0 means column wise sum`;
 
     const calculation1 = softmax1.calculate(value),
       calculation2 = softmax2.calculate(value);

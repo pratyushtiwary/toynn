@@ -2,7 +2,7 @@ import NArray from "../../narray";
 
 describe("NArray Dot Tests", () => {
   test("1d Arrays", () => {
-    let narray1 = new NArray([1, 2, 3, 4, 5, 6, 7, 8]),
+    const narray1 = new NArray([1, 2, 3, 4, 5, 6, 7, 8]),
       narray2 = new NArray([2, 4, 6, 8, 10, 12, 14, 16]);
 
     const output = [408]; // taken from numpy
@@ -11,7 +11,7 @@ describe("NArray Dot Tests", () => {
   });
 
   test("2d Arrays", () => {
-    let narray1 = new NArray([1, 2, 3, 4, 5, 6, 7, 8]),
+    const narray1 = new NArray([1, 2, 3, 4, 5, 6, 7, 8]),
       narray2 = new NArray([2, 4, 6, 8, 10, 12, 14, 16]);
 
     // try illegal dot product
@@ -43,7 +43,7 @@ describe("NArray Dot Tests", () => {
   });
 
   test("Nd Arrays", () => {
-    let narray1 = new NArray([
+    const narray1 = new NArray([
         1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
       ]),
       narray2 = new NArray([

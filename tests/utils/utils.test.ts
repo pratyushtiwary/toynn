@@ -183,11 +183,6 @@ describe("Utils Tests", () => {
       ...testY2.toArray(),
     ]);
 
-    const [trainX3, testX3, trainY3, testY3] = utils.trainTestSplit(X, y, {
-      testSize: 20, // 20%
-      shuffle: true,
-    });
-
     expect(trainX2.length).toBe(4);
     expect(testX2.length).toBe(1);
     expect(trainY2.length).toBe(4);

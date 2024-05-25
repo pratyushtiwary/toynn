@@ -1,7 +1,14 @@
 globalThis.NArray_printThreshold = 5;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Element = any;
+export type NArrayInput = Array<Element>
+export type NArrayReduceFunction = (a: number, b: number) => number 
+export type NArrayMapFunction = (e: Element, i?: number) => Element 
+export type NArrayForEachFunction = (e: Element, i?: number) => void 
+
 export class NArray {
-  #arr: Array<any> = [];
+  #arr: NArrayInput = [];
   #computedShape: undefined | Array<number> = undefined;
   #length: undefined | number = undefined;
   #computedStrides: undefined | Array<number> = undefined;
@@ -9,9 +16,9 @@ export class NArray {
 
   /**
    * Numerical Array implementation which allows user to perform advance computational stuff
-   * @param obj {Array<any> | NArray}
+   * @param obj {NArrayInput | NArray}
    */
-  constructor(obj: Array<any> | NArray) {
+  constructor(obj: NArrayInput | NArray) {
     if (obj instanceof Array) {
       this.#arr = obj;
       this.#arr = Array.from(this.#arr);
@@ -52,7 +59,7 @@ export class NArray {
    * Recursively compute shape for provided array
    * @param x: Array
    */
-  #computeShape(x: Array<any>): Array<number> {
+  #computeShape(x: NArrayInput): Array<number> {
     let size = [];
 
     if (x instanceof Array) {
@@ -71,8 +78,8 @@ export class NArray {
    * @param shape: Array
    */
   #computeStrides(...shape: Array<number>): Array<number> {
-    let final = [],
-      temp;
+    const final = [];
+    let temp: number[];
     for (let i = 1; i <= shape.length; i++) {
       if (i === shape.length) {
         final.push(1);
@@ -89,7 +96,7 @@ export class NArray {
    *
    * Used by the get function
    */
-  #get(...path: Array<number>): Array<any> {
+  #get(...path: Array<number>): NArrayInput {
     if (path.length <= this.strides.length) {
       if (path.length === this.strides.length) {
         let finalIndex = 0;
@@ -101,8 +108,8 @@ export class NArray {
         });
         return this.#arr[finalIndex];
       } else {
-        let final = [],
-          currShape = this.shape[path.length];
+        const final = [];
+        let currShape = this.shape[path.length];
 
         if (path.length + 1 === this.strides.length) {
           currShape = this.shape[path.length];
@@ -138,7 +145,7 @@ export class NArray {
    * Recursively flattens passed array
    * @param x: Array -> defaults to value by which object is initialized
    */
-  #flatten(x: Array<any> = this.#arr): Array<any> {
+  #flatten(x: NArrayInput = this.#arr): NArrayInput {
     let final = [];
     let temp;
     if (!(x[0] instanceof Array)) {
@@ -196,25 +203,25 @@ export class NArray {
   /**
    * Returns flat Array
    */
-  flatten(): Array<any> {
+  flatten(): NArrayInput {
     return this.#arr;
   }
 
-  reduce(func: Function): number {
-    let f = this.#arr.reduce((a, b) => func(a, b));
+  reduce(func: NArrayReduceFunction): number {
+    const f = this.#arr.reduce((a, b) => func(a, b));
     return f;
   }
 
-  map(func: Function): NArray {
-    let f = this.#arr.map((e, i) => func(e, i));
+  map(func: NArrayMapFunction): NArray {
+    const f = this.#arr.map((e, i) => func(e, i));
     return new NArray(f).reshape(...this.shape);
   }
 
-  forEach(func: Function): void {
+  forEach(func: NArrayForEachFunction): void {
     this.#arr.forEach((e, i) => func(e, i));
   }
 
-  max(): { index: number; element: any } {
+  max(): { index: number; element: Element } {
     let maxIndex = 0,
       maxElem = this.#arr[0];
 
@@ -244,8 +251,8 @@ export class NArray {
       breakage = this.shape[axis],
       prevBreakage = this.strides[axis - 1];
 
-    let final: Array<any> = [],
-      temp = 0,
+    const final: NArrayInput = [];
+    let temp = 0,
       i = 0,
       j = 0;
 
@@ -288,9 +295,8 @@ export class NArray {
       Try reshaping your NArray to convert it into 1d or 2d NArray.`);
     }
     if (this.ndim === 1) {
-      let final = [],
-        j = 0,
-        k = 0;
+      const final = [];
+      let j = 0;
 
       final[0] = this.#arr[0];
 
@@ -307,9 +313,9 @@ export class NArray {
 
       return new NArray(final).reshape(this.length, this.length);
     } else if (this.ndim === 2) {
-      let smaller =
+      const smaller =
         this.shape[0] < this.shape[1] ? this.shape[0] : this.shape[1];
-      let final = [];
+      const final = [];
       final[0] = this.#arr[0];
       for (let i = 1; i < smaller; i++) {
         final[i] = this.#arr[this.shape[1] * i + i];
@@ -320,16 +326,16 @@ export class NArray {
   }
 
   add(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>;
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput;
     if (typeof y === "number") {
-      let temp: number = y;
+      const temp: number = y;
       final = this.map((e) => e + temp);
     } else if (y.length === 1) {
-      let temp: number = y.flatten()[0];
+      const temp: number = y.flatten()[0];
       final = this.map((e) => e + temp);
     } else if (this.length === 1) {
-      let temp: number = this.#arr[0];
+      const temp: number = this.#arr[0];
       final = y.map((e) => temp + e);
       return final.reshape(...y.shape);
     } else {
@@ -359,16 +365,16 @@ export class NArray {
   }
 
   sub(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>;
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput;
     if (typeof y === "number") {
-      let temp: number = y;
+      const temp: number = y;
       final = this.map((e: number) => e - temp);
     } else if (y.length === 1) {
-      let temp: number = y.flatten()[0];
+      const temp: number = y.flatten()[0];
       final = this.map((e) => e - temp);
     } else if (this.length === 1) {
-      let temp: number = this.#arr[0];
+      const temp: number = this.#arr[0];
       final = y.map((e) => temp - e);
       return final.reshape(...y.shape);
     } else {
@@ -399,15 +405,15 @@ export class NArray {
   }
 
   div(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>;
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput;
     if (typeof y === "number") {
       return this.map((e) => e / y);
     } else if (y.length === 1) {
-      let temp: number = y.flatten()[0];
+      const temp: number = y.flatten()[0];
       final = this.map((e) => e / temp);
     } else if (this.length === 1) {
-      let temp: number = this.#arr[0];
+      const temp: number = this.#arr[0];
       final = y.map((e) => temp / e);
       return final.reshape(...y.shape);
     } else {
@@ -438,8 +444,8 @@ export class NArray {
   }
 
   mul(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>,
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput,
       temp: number;
     if (typeof y === "number") {
       temp = y;
@@ -489,15 +495,15 @@ export class NArray {
   }
 
   pow(y: number | NArray): NArray {
-    let final: Array<any> | NArray = [],
-      r: Array<any>;
+    let final: NArrayInput | NArray = [],
+      r: NArrayInput;
     if (typeof y === "number") {
       final = this.map((e: number) => Math.pow(e, y));
     } else if (y.length === 1) {
-      let temp: number = y.flatten()[0];
+      const temp: number = y.flatten()[0];
       final = this.map((e) => Math.pow(e, temp));
     } else if (this.length === 1) {
-      let temp: number = this.#arr[0];
+      const temp: number = this.#arr[0];
       final = y.map((e) => Math.pow(temp, e));
       return final.reshape(...y.shape);
     } else {
@@ -596,20 +602,21 @@ export class NArray {
       shape2[shape2.length - 1],
     ];
 
-    let final: Array<any> = [],
-      temp = 0,
+    const final: NArrayInput = [];
+    let temp = 0,
       i = 0,
       j = 0,
       k = 0,
       l = 0,
       m = 0,
       n = 0,
-      arr2 = y.flatten(),
-      length = y.length,
       tempShape1 = shape1.filter((e) => e !== 1),
       tempShape2 = shape2.filter((e) => e !== 1),
       breakage =
-        tempShape2[tempShape2.length - 1] * tempShape2[tempShape2.length - 2];
+      tempShape2[tempShape2.length - 1] * tempShape2[tempShape2.length - 2];
+      
+    const arr2 = y.flatten(),
+      length = y.length;
 
     if (
       (shape2[shape2.length - 1] === 1 && tempShape2.length === 1) ||
@@ -723,7 +730,7 @@ export class NArray {
    *  k = NArray.arange(1,33).reshape(2,2,2,4);
    *  console.log(k.get(0,0));
    */
-  get(...path: Array<number>): Array<any> {
+  get(...path: Array<number>): NArrayInput {
     let final = [];
     if (path.length === 0) {
       for (let i = 0; i < this.shape[0]; i++) {
@@ -735,7 +742,7 @@ export class NArray {
     return final;
   }
 
-  get real(): Array<any> {
+  get real(): NArrayInput {
     return this.get();
   }
 
@@ -744,11 +751,11 @@ export class NArray {
    *
    * Used for printing purposes
    */
-  jsonify(): String {
+  jsonify(): string {
     return JSON.stringify(this.real, null, 4);
   }
 
-  toString(): String {
+  toString(): string {
     if (this.length > globalThis.NArray_printThreshold) {
       let finalStr = "";
 
@@ -771,7 +778,7 @@ export class NArray {
     return JSON.stringify(this.real);
   }
 
-  valueOf(): Array<any> {
+  valueOf(): NArrayInput {
     return this.real;
   }
 

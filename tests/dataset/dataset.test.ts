@@ -56,7 +56,7 @@ describe("Dataset Tests", () => {
 
     const newData = [new NArray([1, 1, 1])];
     const otherDataset = await dataset.Dataset.from(newData);
-    otherDataset.onGet = (_) => {
+    otherDataset.onGet = () => {
       return newData[0];
     };
 

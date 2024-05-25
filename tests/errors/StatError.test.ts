@@ -3,7 +3,7 @@ import errors, { StatError, type StatErrorReturn } from "../../errors";
 test("StatError Test", () => {
   const yTrue = [1, 2, 3, 4];
   const yPred = [1.1, 1.95, 3, 4.01];
-  let myCustomError: StatError = new StatError(yTrue, yPred);
+  const myCustomError: StatError = new StatError(yTrue, yPred);
   let myCustomErrorReturn: StatErrorReturn = undefined;
 
   try {

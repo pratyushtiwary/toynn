@@ -50,9 +50,9 @@ describe("RMSProp tests", () => {
       expect(true).toBe(false);
     }
 
-    let datasetX = new Dataset([new NArray([1, 2, 3]), new NArray([4, 5, 6])]);
+    const datasetX = new Dataset([new NArray([1, 2, 3]), new NArray([4, 5, 6])]);
 
-    let datasetY = new Dataset([new NArray([1, 2, 3]), new NArray([4, 5, 6])]);
+    const datasetY = new Dataset([new NArray([1, 2, 3]), new NArray([4, 5, 6])]);
 
     const { x: processedDatasetX, y: processedDatasetY } = optimizer.process(
       datasetX,

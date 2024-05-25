@@ -20,7 +20,7 @@ export default function createMockCache(registryData: RegistryData) {
       return registry[name]?.cachedAt === 0;
     }),
     clean: jest.fn(() => {}),
-    delete: jest.fn((registry: Object, name: string) => {
+    delete: jest.fn((registry: object, name: string) => {
       delete registry[name];
 
       return registry;

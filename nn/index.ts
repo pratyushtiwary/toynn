@@ -6,7 +6,7 @@ import functions, {
   ActivationFunction,
   ActivationFunctionType,
 } from "../functions";
-import NArray from "../narray";
+import NArray, {type Element} from "../narray";
 import { GradientDescent, Optimizer } from "../optimizers";
 
 let nLayer = 0;
@@ -37,7 +37,7 @@ interface ModelFileLayer {
 
 export class NN {
   #layers: Array<Layer> = [];
-  #name: String = undefined;
+  #name: string = undefined;
   #trained: boolean = false;
   #lastOptimizerUsed: Optimizer;
 
@@ -49,7 +49,7 @@ export class NN {
    *
    * Reference: https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/,
    */
-  constructor(name: String) {
+  constructor(name: string) {
     this.#name = name;
   }
 
@@ -68,11 +68,11 @@ export class NN {
      * @param obj: <Layer, Function>
      */
     if (obj instanceof Layer) {
-      const [inputSize, _] = obj.shape;
+      const inputSize = obj.shape[0];
 
       if (this.#layers.length > 0) {
-        const [_, prevOutputSize] =
-          this.#layers[this.#layers.length - 1]?.shape;
+        const prevOutputSize =
+          this.#layers[this.#layers.length - 1]?.shape[1];
 
         if (inputSize !== prevOutputSize) {
           throw Error(
@@ -94,7 +94,7 @@ export class NN {
     }
   }
 
-  forward(x: Array<any> | NArray): NArray {
+  forward(x: Array<Element> | NArray): NArray {
     if (!(x instanceof NArray) && x instanceof Array) {
       x = new NArray(x);
     } else if (!(x instanceof NArray)) {
@@ -126,9 +126,9 @@ export class NN {
   }: TrainInput) {
     this.#trained = true;
     optimizer.alpha = alpha;
-    let losses = [],
-      accuracies = [],
-      l: Array<any>;
+    const losses = [],
+      accuracies = [];
+    let l: Array<Element>;
     let tempX: NArray, tempY: NArray;
     for (let i = 0; i < epochs; i++) {
       ({ x, y } = optimizer.process(x, y));
@@ -158,7 +158,7 @@ export class NN {
           throw Error(`Make sure y's elements are of type NArray`);
         }
 
-        let out = this.forward(tempX);
+        const out = this.forward(tempX);
         l.push(loss(tempY.flatten(), out.flatten()).result);
         optimizer.optimize({
           x: tempX,
@@ -176,7 +176,7 @@ export class NN {
     return [losses, accuracies];
   }
 
-  get structure(): String {
+  get structure(): string {
     let structure = ``;
 
     this.#layers.forEach((e, i) => {
@@ -246,11 +246,11 @@ export class NN {
 
   load(filePath: string) {
     try {
-      let data: ModelFile = JSON.parse(fs.readFileSync(filePath, "utf-8")),
-        tempLayer: ModelFileLayer,
+      const data: ModelFile = JSON.parse(fs.readFileSync(filePath, "utf-8"));
+      let tempLayer: ModelFileLayer,
         tempActivationFunction: ActivationFunction,
         tempActivationFunctionName: string,
-        activationFuntionParams: string | Array<any>;
+        activationFuntionParams: string | Array<Element>;
 
       for (let i = 0; i < data.weights.length; i++) {
         tempLayer = {
@@ -324,7 +324,7 @@ export class Layer {
   inputSize: number = 0;
   outputSize: number = 0;
   #activationFunction: ActivationFunction = undefined;
-  name: String = undefined;
+  name: string = undefined;
 
   /**
    * Single layer in the neural network
@@ -342,7 +342,7 @@ export class Layer {
   }
 
   #generateWeights(x: number, y: number): NArray {
-    let tempWeights = [];
+    const tempWeights = [];
 
     for (let i = 0; i < x * y; i++) {
       tempWeights[i] = NArray.randn();
@@ -421,7 +421,7 @@ export class Layer {
     this.#bias = newBias;
   }
 
-  forward(x: Array<any> | NArray): NArray {
+  forward(x: Array<Element> | NArray): NArray {
     if (!(x instanceof NArray) && x instanceof Array) {
       x = new NArray(x);
     } else if (!(x instanceof NArray)) {

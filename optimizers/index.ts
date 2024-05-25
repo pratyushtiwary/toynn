@@ -1,11 +1,11 @@
 import { Dataset, DatasetSlice } from "../dataset";
-import NArray from "../narray";
+import NArray, {type Element} from "../narray";
 import { Layer } from "../nn";
 import utils from "../utils";
 
 export interface OptimizerProcessReturn {
-  x: Array<any> | Dataset | DatasetSlice;
-  y: Array<any> | Dataset | DatasetSlice;
+  x: Array<Element> | Dataset | DatasetSlice;
+  y: Array<Element> | Dataset | DatasetSlice;
 }
 
 export interface OptimizerInput {
@@ -29,12 +29,13 @@ export class Optimizer {
   alpha: number = undefined;
 
   public process(
-    x: Array<any> | Dataset | DatasetSlice,
-    y: Array<any> | Dataset | DatasetSlice,
+    x: Array<Element> | Dataset | DatasetSlice,
+    y: Array<Element> | Dataset | DatasetSlice,
   ): OptimizerProcessReturn {
     return { x, y };
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public optimize({ x, y, layers }: OptimizerInput): void {
     throw Error(`Method not implemented!
 
@@ -42,7 +43,7 @@ export class Optimizer {
     Try overloading the optimize method.`);
   }
 
-  public get steps(): Array<String> {
+  public get steps(): Array<string> {
     throw Error(`Steps not implemented.
 
     How to fix this?
@@ -77,7 +78,7 @@ export class GradientDescent extends Optimizer {
     weightGradients: NArray[],
     biasGradients: NArray[],
   ): Array<NArray[]> {
-    let adjustedWeights = [],
+    const adjustedWeights = [],
       adjustedBiases = [];
 
     for (let i = 0; i < layers.length; i++) {
@@ -102,11 +103,11 @@ export class GradientDescent extends Optimizer {
   }
 
   _optimize({ x, y, layers }: OptimizerInput): OptimizerOutput {
-    let layersOp = [], // keeps track of each layer's output
-      recent: NArray,
+    const layersOp = [], // keeps track of each layer's output
       weightGradients: NArray[] = [],
       biasGradients: NArray[] = [],
       weightErrors: NArray[] = []; // keeps track of weights errors
+    let recent: NArray;
 
     layers.forEach((e, i) => {
       if (i === 0) {
@@ -206,8 +207,8 @@ export class GradientDescent extends Optimizer {
 
 export class StochasticGradientDescent extends GradientDescent {
   process(
-    x: any[] | Dataset | DatasetSlice,
-    y: any[] | Dataset | DatasetSlice,
+    x: Element[] | Dataset | DatasetSlice,
+    y: Element[] | Dataset | DatasetSlice,
   ): OptimizerProcessReturn {
     if (x.length !== y.length) {
       throw Error(`X and Y length mismatch
@@ -215,9 +216,9 @@ export class StochasticGradientDescent extends GradientDescent {
       How can you fix it?
       Make sure that the X and Y passed are of the same length.`);
     }
-    let shuffledX: any[] | DatasetSlice, shuffledY: any[] | DatasetSlice;
+    let shuffledX: Element[] | DatasetSlice, shuffledY: Element[] | DatasetSlice;
 
-    let xLen = x.length;
+    const xLen = x.length;
 
     const arrangement = utils.shuffle(xLen);
 
@@ -266,7 +267,7 @@ class RMSProp extends StochasticGradientDescent {
     weightGradients: NArray[],
     biasGradients: NArray[],
   ): NArray[][] {
-    let adjustedBiases = [],
+    const adjustedBiases = [],
       adjustedWeights = [];
 
     for (let i = 0; i < layers.length; i++) {

@@ -36,9 +36,9 @@ describe("GradientDescent tests", () => {
       y: [4, 5, 6],
     });
 
-    let datasetX = new Dataset([new NArray([1, 2, 3])]);
+    const datasetX = new Dataset([new NArray([1, 2, 3])]);
 
-    let datasetY = new Dataset([new NArray([4, 5, 6])]);
+    const datasetY = new Dataset([new NArray([4, 5, 6])]);
 
     expect(optimizer.process(datasetX, datasetY)).toStrictEqual({
       x: datasetX,
@@ -107,9 +107,9 @@ describe("GradientDescent tests", () => {
       y: [4, 5, 6],
     });
 
-    let datasetX = new Dataset([new NArray([1, 2, 3])]);
+    const datasetX = new Dataset([new NArray([1, 2, 3])]);
 
-    let datasetY = new Dataset([new NArray([4, 5, 6])]);
+    const datasetY = new Dataset([new NArray([4, 5, 6])]);
 
     expect(optimizer.process(datasetX, datasetY)).toStrictEqual({
       x: datasetX,

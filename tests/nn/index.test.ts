@@ -34,6 +34,7 @@ test("NN Test", () => {
   }
 
   try {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     model.add(1);
 

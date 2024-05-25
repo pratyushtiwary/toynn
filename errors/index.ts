@@ -1,16 +1,21 @@
 export type StatErrorInput = Array<number>;
 
+export type StatErrorApplyFunction = (result: Array<number> | number) => Array<number> | number
+export type StatErrorUseFunction = (result: number) => number
+
+export type StatErrorApply = (func: StatErrorApplyFunction) => StatErrorReturn
+
 export interface StatErrorReturn {
-  apply: Function;
+  apply: StatErrorApply;
   result: number | Array<number>;
-  formula: String;
+  formula: string;
 }
 
 export class StatError {
   #yTrue: Array<number> = undefined;
   #yPred: Array<number> = undefined;
   result: Array<number> | number = undefined;
-  formula: String = undefined;
+  formula: string = undefined;
 
   constructor(yTrue: StatErrorInput, yPred: StatErrorInput) {
     if (yTrue.length !== yPred.length) {
@@ -31,7 +36,7 @@ export class StatError {
    *
    * Can be chained
    */
-  apply(func: Function): StatErrorReturn {
+  apply(func: StatErrorApplyFunction): StatErrorReturn {
     this.result = func(this.result);
     if (func.name === "") {
       throw Error("Anonymous functions are not supported");
@@ -50,7 +55,7 @@ export class StatError {
    *
    * Can't be chanined
    */
-  use(func: Function = undefined): StatErrorReturn {
+  use(func: StatErrorUseFunction = undefined): StatErrorReturn {
     this.result = [];
     let temp: number;
     this.#yTrue.forEach((e, i) => {
