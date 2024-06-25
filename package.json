@@ -38,6 +38,6 @@
   },
   "homepage": "https://toynn.vercel.app/",
   "dependencies": {
-    "@types/node": "^20.14.0"
+    "@types/node": "^20.14.1"
   }
 }
