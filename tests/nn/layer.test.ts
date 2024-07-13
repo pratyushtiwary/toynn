@@ -88,7 +88,7 @@ describe("Layer Tests", () => {
     const op = layer.forward([[1, 2]]);
 
     expect(op).toStrictEqual(
-      new NArray([[0.38223789826303217, -1.4211215977710612]]),
+      new NArray([[0.38223789826303217, -1.4211215977710612]])
     );
   });
 

@@ -112,7 +112,7 @@ describe("Cache tests", () => {
     };
 
     expect(cache.delete({ ...mockRegistry }, "test.csv")).toStrictEqual(
-      newRegistry,
+      newRegistry
     );
 
     expect(cache.saveRegistry).toHaveBeenCalledWith(newRegistry);
@@ -138,7 +138,7 @@ describe("Cache tests", () => {
 
     // entry exists and is not expired
     expect(cache.save("test.csv", "hello world")).toStrictEqual(
-      mockRegistry["test.csv"],
+      mockRegistry["test.csv"]
     );
     expect(cache.saveRegistry).toHaveBeenCalled();
 

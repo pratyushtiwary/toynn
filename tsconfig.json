@@ -4,7 +4,12 @@
     "esModuleInterop": true,
     "target": "es6",
     "moduleResolution": "node",
-    "sourceMap": false
+    "sourceMap": true,
+	"outDir": "dist",
+	"declaration": true,
+	"paths": {
+		"@/*": ["./*"]
+	},
   },
   "exclude": ["./docs", "tests", "jest.config.ts"],
   "lib": ["es2015"]

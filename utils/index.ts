@@ -1,5 +1,6 @@
-import { Dataset, DatasetSlice } from "../dataset";
-import { type Element } from "../narray";
+import { Dataset, DatasetSlice } from "@/dataset";
+
+import type { Element } from "@/narray/types";
 
 export interface TrainTestSplitInput {
   testSize: number;
@@ -11,7 +12,7 @@ const utils = {
    * Reference: https://stackoverflow.com/a/11935263
    */
   shuffle: (
-    arr: number | Array<Element> | Dataset | DatasetSlice,
+    arr: number | Array<Element> | Dataset | DatasetSlice
   ): Array<number> | DatasetSlice => {
     let shuffled: Array<Element> | DatasetSlice,
       i: number,
@@ -70,7 +71,7 @@ const utils = {
   },
   createBatch: (
     array: Array<Element> | Dataset | DatasetSlice,
-    batchSize: number,
+    batchSize: number
   ): Array<Array<Element>> => {
     if (batchSize <= 0) {
       throw Error(`Invalid batchSize. Make sure batchSize > 0`);
@@ -118,7 +119,7 @@ const utils = {
   trainTestSplit: (
     X: Dataset,
     y: Dataset,
-    { testSize, shuffle = false }: TrainTestSplitInput,
+    { testSize, shuffle = false }: TrainTestSplitInput
   ): DatasetSlice[] => {
     if (X.length !== y.length) {
       throw Error(`Failed to split because X.length != y.length`);
@@ -128,7 +129,7 @@ const utils = {
       testSize = testSize / 100;
     } else if (testSize > 100) {
       throw Error(
-        `Failed to split because testSize is invalid. Make sure testSize is less than 100`,
+        `Failed to split because testSize is invalid. Make sure testSize is less than 100`
       );
     }
     const testStart = X.length - Math.floor(X.length * testSize);

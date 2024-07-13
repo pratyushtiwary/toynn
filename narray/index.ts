@@ -1,11 +1,12 @@
-globalThis.NArray_printThreshold = 5;
+import type {
+  Element,
+  NArrayInput,
+  NArrayReduceFunction,
+  NArrayMapFunction,
+  NArrayForEachFunction,
+} from "@/narray/types";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Element = any;
-export type NArrayInput = Array<Element>
-export type NArrayReduceFunction = (a: number, b: number) => number 
-export type NArrayMapFunction = (e: Element, i?: number) => Element 
-export type NArrayForEachFunction = (e: Element, i?: number) => void 
+globalThis.NArray_printThreshold = 5;
 
 export class NArray {
   #arr: NArrayInput = [];
@@ -34,8 +35,10 @@ export class NArray {
 
           How to fix this?
 
-          Make sure the number of elements in your array(${this.length}) is equals to the product of ${this.#computedShape}
-          `,
+          Make sure the number of elements in your array(${
+            this.length
+          }) is equals to the product of ${this.#computedShape}
+          `
         );
       }
     } else if (obj instanceof NArray) {
@@ -193,7 +196,7 @@ export class NArray {
         `strides must be same length as shape (${this.shape.length})
 
         How to fix this?
-        Make sure new strides have ${this.ndim} number of elements.`,
+        Make sure new strides have ${this.ndim} number of elements.`
       );
     }
 
@@ -383,7 +386,7 @@ export class NArray {
           `Failed to subtract because the passed object is not NArray
 
           How to fix this?
-          Try converting the passed object to NArray.`,
+          Try converting the passed object to NArray.`
         );
       }
 
@@ -463,7 +466,7 @@ export class NArray {
           `Failed to multiply because the passed object is not NArray
 
           How to fix this?
-          Try converting the passed object to NArray.`,
+          Try converting the passed object to NArray.`
         );
       }
 
@@ -574,7 +577,7 @@ export class NArray {
           `Shapes ${shape1} and ${shape2} are not aligned. ${shape1[1]}(dim=1) != ${shape2[0]}(dim=0).
 
           How to fix this?
-          Reshape your passed array with dimension 0 as ${shape1[1]}`,
+          Reshape your passed array with dimension 0 as ${shape1[1]}`
         );
       }
     }
@@ -591,7 +594,7 @@ export class NArray {
           How to fix this?
           Reshape your passed array with dimension ${y.ndim - 2} as ${
             shape1[shape1.length - 1]
-          }`,
+          }`
         );
       }
     }
@@ -613,8 +616,8 @@ export class NArray {
       tempShape1 = shape1.filter((e) => e !== 1),
       tempShape2 = shape2.filter((e) => e !== 1),
       breakage =
-      tempShape2[tempShape2.length - 1] * tempShape2[tempShape2.length - 2];
-      
+        tempShape2[tempShape2.length - 1] * tempShape2[tempShape2.length - 2];
+
     const arr2 = y.flatten(),
       length = y.length;
 
@@ -697,7 +700,7 @@ export class NArray {
       shape = shape.map((e) => (e === -1 ? imaginaryDim : e));
     } else if (imaginaryDimFound > 1) {
       throw Error(
-        `Failed to reshape, only single imaginary dimension is supported`,
+        `Failed to reshape, only single imaginary dimension is supported`
       );
     }
     if (NArray.calcNoOfElems(...shape) !== this.length) {
@@ -705,7 +708,7 @@ export class NArray {
         `Array of dimension ${this.shape} can't be broadcasted into ${shape} dimension
 
         How to fix this?
-        The passed shape(${shape}) product is not equal to ${this.length}, make sure that you pass the new shape whose product is equal to ${this.length}`,
+        The passed shape(${shape}) product is not equal to ${this.length}, make sure that you pass the new shape whose product is equal to ${this.length}`
       );
     }
 
@@ -806,7 +809,7 @@ export class NArray {
   static arange(
     start: number = 0,
     end: undefined | number = undefined,
-    step: number = 1,
+    step: number = 1
   ): NArray {
     if (!end) {
       end = start;

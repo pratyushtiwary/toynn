@@ -1,4 +1,5 @@
-import errors, { type StatErrorReturn } from "../../errors";
+import errors from "../../errors";
+import type { StatErrorReturn } from "../../errors/types";
 
 describe("In-built errors tests", () => {
   const yTrue = [4, 8, 10, 5];

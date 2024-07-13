@@ -40,22 +40,22 @@ fs.createReadStream = jest.fn((path) => {
 }) as jest.Mock;
 
 readline.createInterface = jest.fn(() =>
-  data.split("\n").map((e) => Promise.resolve(e)),
+  data.split("\n").map((e) => Promise.resolve(e))
 ) as jest.Mock;
 
-import dataset from "../../dataset";
+import { Dataset } from "../../dataset";
 
 describe("Dataset Tests", () => {
   test("Create dataset from NArray Array", async () => {
     const myData = [new NArray([1, 2, 3])];
 
-    const myDataset = new dataset.Dataset(myData);
+    const myDataset = new Dataset(myData);
 
     expect(myDataset.get(0).real).toStrictEqual(myData[0].real);
     expect(myDataset.length).toBe(myData.length);
 
     const newData = [new NArray([1, 1, 1])];
-    const otherDataset = await dataset.Dataset.from(newData);
+    const otherDataset = await Dataset.from(newData);
     otherDataset.onGet = () => {
       return newData[0];
     };
@@ -63,62 +63,25 @@ describe("Dataset Tests", () => {
     expect(otherDataset.get(0).real).toStrictEqual(newData[0].real);
     expect(myDataset.toArray()).toStrictEqual(myData);
     expect(myDataset.slice(0).get(0).real).toStrictEqual(
-      myData[0].real.slice(0),
+      myData[0].real.slice(0)
     );
   });
 
   test("Create dataset from url", async () => {
-    const myDataset = await dataset.Dataset.from(
-      "https://example.com/test.csv",
-      {
-        delimiter: ",",
-        headerCol: 1,
-      },
-    );
-
-    try {
-      await dataset.Dataset.from("ftp://example.com/test.csv");
-      expect(true).toBe(false);
-    } catch (_) {
-      expect(true).toBe(true);
-    }
-
-    try {
-      await dataset.Dataset.from("https://example.com/test1.csv");
-      expect(true).toBe(false);
-    } catch (_) {
-      expect(true).toBe(true);
-    }
-
-    expect(myDataset.get(0).real).toStrictEqual(expectedData[0].real);
-    expect(myDataset.length).toBe(expectedData.length);
-
-    myDataset.onGet = (element) => {
-      const temp = element
-        .flatten()
-        .map((e) => (typeof e === "number" ? e + 1 : e));
-      return new NArray(temp);
-    };
-
-    expect(myDataset.get(0).real).toStrictEqual(
-      expectedData[0].map((e: number) => e + 1).real,
-    );
-
-    myDataset.onGet = (element) => element;
-    expect(myDataset.toArray()).toStrictEqual(expectedData);
-    expect(myDataset.slice(0).get(0).real).toStrictEqual(
-      expectedData[0].real.slice(0),
-    );
-  });
-
-  test("Create dataset from file", async () => {
-    const myDataset = await dataset.Dataset.from("./test.csv", {
+    const myDataset = await Dataset.from("https://example.com/test.csv", {
       delimiter: ",",
       headerCol: 1,
     });
 
     try {
-      await dataset.Dataset.from("./test1.csv");
+      await Dataset.from("ftp://example.com/test.csv");
+      expect(true).toBe(false);
+    } catch (_) {
+      expect(true).toBe(true);
+    }
+
+    try {
+      await Dataset.from("https://example.com/test1.csv");
       expect(true).toBe(false);
     } catch (_) {
       expect(true).toBe(true);
@@ -135,13 +98,47 @@ describe("Dataset Tests", () => {
     };
 
     expect(myDataset.get(0).real).toStrictEqual(
-      expectedData[0].map((e: number) => e + 1).real,
+      expectedData[0].map((e: number) => e + 1).real
     );
 
     myDataset.onGet = (element) => element;
     expect(myDataset.toArray()).toStrictEqual(expectedData);
     expect(myDataset.slice(0).get(0).real).toStrictEqual(
-      expectedData[0].real.slice(0),
+      expectedData[0].real.slice(0)
+    );
+  });
+
+  test("Create dataset from file", async () => {
+    const myDataset = await Dataset.from("./test.csv", {
+      delimiter: ",",
+      headerCol: 1,
+    });
+
+    try {
+      await Dataset.from("./test1.csv");
+      expect(true).toBe(false);
+    } catch (_) {
+      expect(true).toBe(true);
+    }
+
+    expect(myDataset.get(0).real).toStrictEqual(expectedData[0].real);
+    expect(myDataset.length).toBe(expectedData.length);
+
+    myDataset.onGet = (element) => {
+      const temp = element
+        .flatten()
+        .map((e) => (typeof e === "number" ? e + 1 : e));
+      return new NArray(temp);
+    };
+
+    expect(myDataset.get(0).real).toStrictEqual(
+      expectedData[0].map((e: number) => e + 1).real
+    );
+
+    myDataset.onGet = (element) => element;
+    expect(myDataset.toArray()).toStrictEqual(expectedData);
+    expect(myDataset.slice(0).get(0).real).toStrictEqual(
+      expectedData[0].real.slice(0)
     );
   });
 });

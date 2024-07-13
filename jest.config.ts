@@ -5,6 +5,9 @@ const config: Config.InitialOptions = {
   transform: {
     "^.+\\.ts$": "ts-jest",
   },
+  moduleNameMapper: {
+    "@/(.*)": "../$1",
+  },
 };
 
 export default config;
