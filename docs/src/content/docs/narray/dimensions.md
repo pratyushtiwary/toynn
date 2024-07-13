@@ -17,4 +17,4 @@ console.log(myNArray.ndim);
 myNArray.ndim = 5; // ❌ invalid
 ```
 
-**You can only change the dimension by [reshaping](/narray/shapes) your NArray.**
+**You can only change the dimension by [reshaping](/narray/shape) your NArray.**

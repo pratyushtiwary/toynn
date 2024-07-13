@@ -22,7 +22,7 @@ const myModel = new toynn.NN("modelName");
 ### add
 
 ```
-Signature: add(obj: [Layer](/nn/layers))
+Signature: add(obj: Layer)
 ```
 
 Use this to add new [Layer](/nn/layers) to your model

@@ -157,4 +157,4 @@ Signature: toString(): string
 
 Returns string version of the NArray object.
 
-**The returned string version will be truncated based on [printThreshold](/narray/#static-functions)**
+**The returned string version will be truncated based on [printThreshold](/narray/#setprintthreshold)**

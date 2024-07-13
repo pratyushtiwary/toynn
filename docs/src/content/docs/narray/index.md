@@ -80,7 +80,7 @@ Returns random number as per the normal distribution
 Signature: setPrintThreshold(n: number)
 ```
 
-Sets the printThreshold for [toString()](/narray/toString)
+Sets the printThreshold for [toString()](/narray/methods#tostring)
 
 ## References
 
