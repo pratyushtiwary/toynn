@@ -1,6 +1,8 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
 
+import vercel from "@astrojs/vercel/serverless";
+
 // https://astro.build/config
 export default defineConfig({
   integrations: [
@@ -32,44 +34,65 @@ export default defineConfig({
         },
         {
           label: "NArray",
-          autogenerate: { directory: "narray" },
+          autogenerate: {
+            directory: "narray",
+          },
           collapsed: true,
         },
         {
           label: "Dataset",
-          autogenerate: { directory: "dataset" },
+          autogenerate: {
+            directory: "dataset",
+          },
           collapsed: true,
         },
         {
           label: "Errors",
-          autogenerate: { directory: "errors" },
+          autogenerate: {
+            directory: "errors",
+          },
           collapsed: true,
         },
         {
           label: "Functions",
-          autogenerate: { directory: "functions" },
+          autogenerate: {
+            directory: "functions",
+          },
           collapsed: true,
         },
         {
           label: "NN",
-          autogenerate: { directory: "nn" },
+          autogenerate: {
+            directory: "nn",
+          },
           collapsed: true,
         },
         {
           label: "Optimizers",
-          autogenerate: { directory: "optimizers" },
+          autogenerate: {
+            directory: "optimizers",
+          },
           collapsed: true,
         },
         {
           label: "Utils",
-          autogenerate: { directory: "utils" },
+          autogenerate: {
+            directory: "utils",
+          },
           collapsed: true,
         },
       ],
       lastUpdated: true,
     }),
   ],
-
   // Process images with sharp: https://docs.astro.build/en/guides/assets/#using-sharp
-  image: { service: { entrypoint: "astro/assets/services/sharp" } },
+  image: {
+    service: {
+      entrypoint: "astro/assets/services/sharp",
+    },
+  },
+  output: "server",
+  adapter: vercel({
+    imageService: true,
+  }),
 });
