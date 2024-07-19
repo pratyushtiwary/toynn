@@ -2,7 +2,7 @@
 title: Intro to NArray
 description: A guide to how you can use NArray
 sidebar:
-  order: 1
+    order: 1
 ---
 
 Numerical Array(NArray) is a tiny implementation of NumPY using JS. The whole thing is written in JS.
@@ -18,7 +18,7 @@ All functions of NumPY are not implemented
 After installing toynn you can import it directly from toynn package.
 
 ```js
-import { NArray } from "toynn";
+import { NArray } from 'toynn';
 
 const myNArray = NArray.arange(40).reshape(5, 8);
 const transposedNArray = myNArray.T; // you can also use transpose method
@@ -31,7 +31,7 @@ console.log(transposedNArray.real); // converts NArray to Array
 Only Arrays and other NArrays can be converted into NArray, passing anything else will result into an error.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myArray = [1, 2, 3, 4, 5];
 
@@ -80,11 +80,11 @@ Returns random number as per the normal distribution
 Signature: setPrintThreshold(n: number)
 ```
 
-Sets the printThreshold for [toString()](/narray/toString)
+Sets the printThreshold for [toString()](/narray/methods#tostring)
 
 ## References
 
 Some of the functionality is implemented using the awesome resources from the internet.
 
-- ✨ [Transpose is implemented using the logic explained in this answer,](https://stackoverflow.com/a/32034565),
-- ✨ [`randn` is implemented using the logic explained in this answer](https://stackoverflow.com/a/36481059)
+-   ✨ [Transpose is implemented using the logic explained in this answer,](https://stackoverflow.com/a/32034565),
+-   ✨ [`randn` is implemented using the logic explained in this answer](https://stackoverflow.com/a/36481059)

@@ -10,9 +10,9 @@ DatasetSlice is faster when it comes to shuffling than normal Arrays.
 ## Creating DatasetSlice
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
-const myDataset = await toynn.Dataset.from("./myData.csv");
+const myDataset = await toynn.Dataset.from('./myData.csv');
 
 console.log(myDataset.toArray().map((e) => e.flatten())); // => [[1,2],[3,4],[5,6]]
 const myDatasetSlice = new toynn.DatasetSlice(myDataset, [1, 0, 2]);

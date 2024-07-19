@@ -2,7 +2,7 @@
 title: Intro to Utils
 description: A guide to how you can use Utils
 sidebar:
-  order: 1
+    order: 1
 ---
 
 Utils methods acts as a helper, so that you don't have to implement commonly used function by yourself.
@@ -45,4 +45,4 @@ Returns Array of DatasetSlice[trainX,testX,trainY,testY] as per the specified co
 
 Some of the functionality is implemented using the awesome resources from the internet.
 
-- ✨ [Logic for shuffle is taken from here](https://stackoverflow.com/a/11935263)
+-   ✨ [Logic for shuffle is taken from here](https://stackoverflow.com/a/11935263)

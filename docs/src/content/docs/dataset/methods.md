@@ -2,7 +2,7 @@
 title: Dataset Methods
 description: A guide to all the methods supported by Dataset
 sidebar:
-  order: 2
+    order: 2
 ---
 
 Dataset comes with methods which allows you to manipulate your data.
@@ -30,7 +30,7 @@ Use this to slice a Dataset vertically(column-wise).
 Use this property to get the number of rows in your Dataset.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const obj = [new toynn.NArray([1, 2, 3, 4])];
 

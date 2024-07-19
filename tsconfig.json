@@ -1,11 +1,20 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "target": "es6",
-    "moduleResolution": "node",
-    "sourceMap": false
-  },
-  "exclude": ["./docs", "tests", "jest.config.ts"],
-  "lib": ["es2015"]
+    "compilerOptions": {
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "target": "es6",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "declaration": true,
+        "declarationMap": true,
+        "declarationDir": "types",
+        "removeComments": true,
+        "forceConsistentCasingInFileNames": true,
+        "paths": {
+            "@/*": ["./*"]
+        },
+        "plugins": [{ "transform": "typescript-transform-paths" }]
+    },
+    "exclude": ["./docs", "tests", "types", "jest.config.ts"],
+    "lib": ["es2015"]
 }

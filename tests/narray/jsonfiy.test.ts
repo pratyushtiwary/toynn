@@ -1,11 +1,11 @@
-import NArray from "../../narray";
+import NArray from '../../narray';
 
-test("NArray Jsonify Test", () => {
-  const myNarray = new NArray([
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
-  ]).reshape(2, 4, 2);
+test('NArray Jsonify Test', () => {
+    const myNarray = new NArray([
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,
+    ]).reshape(2, 4, 2);
 
-  const output = `[
+    const output = `[
     [
         [
             1,
@@ -44,5 +44,5 @@ test("NArray Jsonify Test", () => {
     ]
 ]`;
 
-  expect(myNarray.jsonify()).toBe(output);
+    expect(myNarray.jsonify()).toBe(output);
 });

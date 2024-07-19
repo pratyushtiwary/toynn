@@ -30,23 +30,23 @@
 ## Usage
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const X = [
-  new toynn.NArray([0, 0]).reshape(1, 2),
-  new toynn.NArray([0, 1]).reshape(1, 2),
-  new toynn.NArray([1, 0]).reshape(1, 2),
-  new toynn.NArray([1, 1]).reshape(1, 2),
+    new toynn.NArray([0, 0]).reshape(1, 2),
+    new toynn.NArray([0, 1]).reshape(1, 2),
+    new toynn.NArray([1, 0]).reshape(1, 2),
+    new toynn.NArray([1, 1]).reshape(1, 2),
 ];
 
 const y = [
-  new toynn.NArray([0]),
-  new toynn.NArray([0]),
-  new toynn.NArray([0]),
-  new toynn.NArray([1]),
+    new toynn.NArray([0]),
+    new toynn.NArray([0]),
+    new toynn.NArray([0]),
+    new toynn.NArray([1]),
 ];
 
-const model = new toynn.NN("and");
+const model = new toynn.NN('and');
 
 const layer1 = new toynn.Layer(2, 3);
 layer1.use(toynn.functions.linear);
@@ -57,12 +57,12 @@ model.add(layer1);
 model.add(layer2);
 
 model.train({
-  x: X,
-  y,
-  epochs: 500,
-  alpha: 0.001,
-  loss: toynn.errors.MSE,
-  verbose: true,
+    x: X,
+    y,
+    epochs: 500,
+    alpha: 0.001,
+    loss: toynn.errors.MSE,
+    verbose: true,
 });
 
 let newData = new toynn.NArray([1, 0]).reshape(1, 2);

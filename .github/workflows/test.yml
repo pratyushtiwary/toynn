@@ -1,28 +1,40 @@
 name: Test
 
 on:
-  pull_request:
-    branches: ["main"]
-
+    pull_request:
+        branches: ['main']
+    workflow_dispatch:
+        inputs:
+            logLevel:
+                description: 'Log level'
+                required: true
+                default: 'warning'
+                type: choice
+                options:
+                    - info
+                    - warning
+                    - debug
 jobs:
-  test:
-    runs-on: ubuntu-latest
+    test:
+        runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: "18.x"
-          registry-url: "https://registry.npmjs.org"
-      - name: Installing Dependencies
-        run: yarn install
-      - name: Run Lint
-        run: yarn lint
-      - name: Running Tests
-        run: yarn test:coverage
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-      - name: Train IRIS Model
-        run: node examples/irisModel.mjs
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: '18.x'
+                  registry-url: 'https://registry.npmjs.org'
+            - name: Installing Dependencies
+              run: yarn install
+            - name: Run Lint
+              run: yarn lint
+            - name: Running Tests
+              run: FORCE_COLOR=true yarn test:coverage
+            - name: Upload coverage to Codecov
+              uses: codecov/codecov-action@v3
+              env:
+                  CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+            - name: Build package
+              run: yarn build
+            - name: Train IRIS Model
+              run: node examples/irisModel.mjs

@@ -2,7 +2,7 @@
 title: Intro to Errors
 description: A guide to how you can use Errors
 sidebar:
-  order: 1
+    order: 1
 ---
 
 Errors contains statistical error functions.
@@ -12,7 +12,7 @@ Errors contains statistical error functions.
 ## Usage
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 let yTrue = [1, 2, 3, 4, 5];
 let yPred = [1.1, 1.99, 3, 4.05, 5];
@@ -39,9 +39,9 @@ You can use StatError class to create a custom error.
 
 You can use StatError class's object to create a custom error.
 
-- use(func: Function): StatErrorReturn : Takes in a function and use it to transform loss value for each row. Can't be chained,
+-   use(func: Function): StatErrorReturn : Takes in a function and use it to transform loss value for each row. Can't be chained,
 
-- apply(func: Function): StatErrorReturn : Takes in a function and use it to compute result value. Can be chained.
+-   apply(func: Function): StatErrorReturn : Takes in a function and use it to compute result value. Can be chained.
 
 **Note: You should always pass a named function inside use and apply or else they'll throw Error**
 
@@ -51,7 +51,7 @@ The RSS error function is implemented as follows:
 
 ```ts
 function RSS(yTrue: StatErrorInput, yPred: StatErrorInput): StatErrorReturn {
-  return new StatError(yTrue, yPred).use(square).apply(sum);
+    return new StatError(yTrue, yPred).use(square).apply(sum);
 }
 ```
 

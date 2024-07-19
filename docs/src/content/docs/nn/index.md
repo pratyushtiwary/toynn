@@ -2,7 +2,7 @@
 title: Intro to NN
 description: A guide to how you can use NN
 sidebar:
-  order: 1
+    order: 1
 ---
 
 NN acts as a skeleton which keeps your [Layers](/nn/layers) in place.
@@ -12,9 +12,9 @@ You can create a model without using this class by implementing custom logic.
 ## Usage
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
-const myModel = new toynn.NN("modelName");
+const myModel = new toynn.NN('modelName');
 ```
 
 ## Methods
@@ -22,7 +22,7 @@ const myModel = new toynn.NN("modelName");
 ### add
 
 ```
-Signature: add(obj: [Layer](/nn/layers))
+Signature: add(obj: Layer)
 ```
 
 Use this to add new [Layer](/nn/layers) to your model
@@ -51,11 +51,11 @@ Signature: train({
 
 Use this function to train your model.
 
-- Epochs: Amount of time the model will see your data,
-- Alpha: Learning Rate,
-- Verbose: If set to true, prints epoch number and accuracy,
-- Loss: Used to calculate loss, which is then used to calculate accuracy,
-- Optimizer: Element which optimizes your model
+-   Epochs: Amount of time the model will see your data,
+-   Alpha: Learning Rate,
+-   Verbose: If set to true, prints epoch number and accuracy,
+-   Loss: Used to calculate loss, which is then used to calculate accuracy,
+-   Optimizer: Element which optimizes your model
 
 ### explain
 
