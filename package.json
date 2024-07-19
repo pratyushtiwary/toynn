@@ -25,6 +25,7 @@
         "globals": "^15.3.0",
         "husky": "^9.0.11",
         "jest": "^29.6.2",
+        "prettier": "^3.3.3",
         "ts-jest": "^29.2.2",
         "ts-node": "^10.9.1",
         "typescript": "^5.1.6",
@@ -39,7 +40,6 @@
     },
     "homepage": "https://toynn.vercel.app/",
     "dependencies": {
-        "@types/node": "^20.14.9",
-        "prettier": "^3.3.3"
+        "@types/node": "^20.14.9"
     }
 }
