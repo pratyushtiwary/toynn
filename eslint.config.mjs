@@ -1,15 +1,10 @@
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
-
 export default [
-  {languageOptions: { globals: globals.browser }},
+  { languageOptions: { globals: globals.browser } },
   ...tseslint.configs.recommended,
   {
-    ignores: [
-      "**/*.js",
-      "coverage",
-      "docs"
-    ]
-  }
+    ignores: ["**/*.js", "**/*.js.map", "**/*.d.ts", "coverage", "docs"],
+  },
 ];
