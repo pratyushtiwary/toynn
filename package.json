@@ -3,10 +3,11 @@
     "version": "2.0.5",
     "description": "Neural Network Library for AI and ML newbies",
     "main": "index.js",
+    "types": "./types",
     "scripts": {
         "test": "jest",
         "test:coverage": "jest --coverage",
-        "build": "tsc",
+        "build": "tspc",
         "lint": "eslint .",
         "prepare": "husky",
         "prettier": "prettier . --write --list-different"
@@ -28,8 +29,10 @@
         "prettier": "^3.3.3",
         "ts-jest": "^29.2.2",
         "ts-node": "^10.9.1",
+        "ts-patch": "^3.2.1",
         "typescript": "^5.1.6",
-        "typescript-eslint": "^7.10.0"
+        "typescript-eslint": "^7.10.0",
+        "typescript-transform-paths": "^3.4.7"
     },
     "repository": {
         "type": "git",

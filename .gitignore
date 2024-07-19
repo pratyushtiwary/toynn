@@ -3,4 +3,5 @@ coverage/
 **/*.js
 **/*.js.map
 **/*.d.ts
+types
 *.tgz
