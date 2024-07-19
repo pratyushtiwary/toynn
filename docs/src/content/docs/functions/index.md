@@ -2,26 +2,26 @@
 title: Intro to Functions
 description: A guide to how you can use Functions
 sidebar:
-  order: 1
+    order: 1
 ---
 
 Functions contains Activation Functions which can be passed to Layer.
 
 ## Available Activation Functions
 
-- Sigmoid,
-- ReLU,
-- LeakyReLU,
-- Softmax,
-- Tanh,
-- Linear
+-   Sigmoid,
+-   ReLU,
+-   LeakyReLU,
+-   Softmax,
+-   Tanh,
+-   Linear
 
 You can use formula and gradient getter to get the respective values.
 
 ### Getting Function formula
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 console.log(toynn.functions.linear.formula); // a*x
 ```
@@ -29,7 +29,7 @@ console.log(toynn.functions.linear.formula); // a*x
 ### Getting Function gradient formula
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 console.log(toynn.functions.linear.gradient); // a*x
 ```
@@ -37,7 +37,7 @@ console.log(toynn.functions.linear.gradient); // a*x
 ### Calculate Result
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 console.log(toynn.functions.linear.calculate([1, 2, 3, 4])); // NArray{}
 ```
@@ -45,7 +45,7 @@ console.log(toynn.functions.linear.calculate([1, 2, 3, 4])); // NArray{}
 ### Calculate Gradient
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const result = toynn.functions.linear.calculate([1, 2, 3, 4]); // NArray{}
 
@@ -96,34 +96,34 @@ Return string version of how the object should be intialized.
 
 ```ts
 class Linear extends ActivationFunction {
-  #a = undefined;
+    #a = undefined;
 
-  constructor(a = 1) {
-    super();
-    this.#a = a;
-  }
+    constructor(a = 1) {
+        super();
+        this.#a = a;
+    }
 
-  get formula() {
-    return "a*x";
-  }
+    get formula() {
+        return 'a*x';
+    }
 
-  get gradient() {
-    return "a";
-  }
+    get gradient() {
+        return 'a';
+    }
 
-  calcGradient(x: ActivationFunctionResult): ActivationFunctionResult {
-    return x.map(() => this.#a);
-  }
+    calcGradient(x: ActivationFunctionResult): ActivationFunctionResult {
+        return x.map(() => this.#a);
+    }
 
-  calculate(x: ActivationFunctionInput): ActivationFunctionResult {
-    let result = x.map((e: number) => e * this.#a);
+    calculate(x: ActivationFunctionInput): ActivationFunctionResult {
+        let result = x.map((e: number) => e * this.#a);
 
-    return new NArray(result);
-  }
+        return new NArray(result);
+    }
 
-  toString() {
-    return `linear(${this.#a})`;
-  }
+    toString() {
+        return `linear(${this.#a})`;
+    }
 }
 ```
 
@@ -131,5 +131,5 @@ class Linear extends ActivationFunction {
 
 Some of the functionality is implemented using the awesome resources from the internet.
 
-- ✨ [Most of the activation function's formula and gradient is taken from here](https://www.analyticsvidhya.com/blog/2020/01/fundamentals-deep-learning-activation-functions-when-to-use-them/),
-- ✨ [Gradient for softmax is taken from here](https://github.com/2015xli/multilayer-perceptron/blob/master/multilayer-perceptron-batch.ipynb)
+-   ✨ [Most of the activation function's formula and gradient is taken from here](https://www.analyticsvidhya.com/blog/2020/01/fundamentals-deep-learning-activation-functions-when-to-use-them/),
+-   ✨ [Gradient for softmax is taken from here](https://github.com/2015xli/multilayer-perceptron/blob/master/multilayer-perceptron-batch.ipynb)

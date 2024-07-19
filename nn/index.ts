@@ -1,5 +1,5 @@
-import NN from "./nn";
-import Layer from "./layer";
+import NN from './nn';
+import Layer from './layer';
 
 export { NN, Layer };
 

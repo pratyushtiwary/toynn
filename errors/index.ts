@@ -1,5 +1,5 @@
-import StatError from "./base";
-import Errors from "./errors";
+import StatError from './base';
+import Errors from './errors';
 
 export const errors = Errors;
 

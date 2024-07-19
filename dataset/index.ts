@@ -1,5 +1,5 @@
-import Dataset from "./dataset";
-import DatasetSlice from "./datasetSlice";
+import Dataset from './dataset';
+import DatasetSlice from './datasetSlice';
 
 export { Dataset, DatasetSlice };
 

@@ -1,4 +1,4 @@
 export interface DatasetOptions {
-  delimiter?: string;
-  headerCol?: number;
+    delimiter?: string;
+    headerCol?: number;
 }

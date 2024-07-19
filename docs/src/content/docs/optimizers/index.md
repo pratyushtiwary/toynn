@@ -2,7 +2,7 @@
 title: Intro to Optimizers
 description: A guide to how you can use Optimizers
 sidebar:
-  order: 1
+    order: 1
 ---
 
 Optimizers allow your model to learn learnable parameters, like weights and biases. You can create a custom Optimizer or you can extend an already created Optimizer or you can use premade optimizers.
@@ -12,7 +12,7 @@ Optimizers allow your model to learn learnable parameters, like weights and bias
 ## Usage
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myOptimizer = new toynn.optimizers.GD({ momentum: 0.9 }); // GD is alias for GradientDescent
 
@@ -30,7 +30,7 @@ Alias: GD
 #### Usage
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myOptimizer = new toynn.optimizers.GD({ momentum: 0.9 }); // GD is alias for GradientDescent
 
@@ -128,8 +128,8 @@ class GradientDescent extends Optimizer {
 
 Some of the functionality is implemented using the awesome resources from the internet.
 
-- ✨ [Main intuition for Gradient Descent](https://www.geeksforgeeks.org/how-to-implement-a-gradient-descent-in-python-to-find-a-local-minimum/),
-- ✨ [Logic for weight updation is taken from here,](https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/),
-- ✨ [Logic for bias updation is taken from here,](https://stackoverflow.com/a/13342725),
-- ✨ [SGD Sampling Logic was taken from here,](https://stackoverflow.com/a/11935263),
-- ✨ [RMSProp implementation was taken from here](https://q-viper.github.io/2020/06/05/writing-popular-machine-learning-optimizers-from-scratch-on-python/#25-rms-prop)
+-   ✨ [Main intuition for Gradient Descent](https://www.geeksforgeeks.org/how-to-implement-a-gradient-descent-in-python-to-find-a-local-minimum/),
+-   ✨ [Logic for weight updation is taken from here,](https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/),
+-   ✨ [Logic for bias updation is taken from here,](https://stackoverflow.com/a/13342725),
+-   ✨ [SGD Sampling Logic was taken from here,](https://stackoverflow.com/a/11935263),
+-   ✨ [RMSProp implementation was taken from here](https://q-viper.github.io/2020/06/05/writing-popular-machine-learning-optimizers-from-scratch-on-python/#25-rms-prop)

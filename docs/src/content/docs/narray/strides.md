@@ -10,7 +10,7 @@ NArray automatically computes the stride when you create an object.
 You can manually change the stride.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myNArray = toynn.NArray.arange(32).reshape(4, -1);
 

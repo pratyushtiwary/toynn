@@ -22,7 +22,7 @@ Calling it without any path specified will return the whole Array in the shape o
 You can use this property to get Array version of your NArray.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myNArray = toynn.NArray.arange(32);
 

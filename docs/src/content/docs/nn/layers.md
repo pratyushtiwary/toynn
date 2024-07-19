@@ -10,7 +10,7 @@ Layer is encapsulation of a single layer in a neural network
 Layer's constructor takes an input and output size.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myLayer = new toynn.Layer(4, 5); // inputSize: 4, outputSize: 5
 ```
@@ -40,7 +40,7 @@ You can use it to set which [activation function](/functions/) should be used by
 You can use this property to get or set weights. If you are setting weights make sure you are passing NArray object.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myWeights = toynn.NArray.arange(500).reshape(50, 10);
 const myWeightsArray = myWeights.real; // this is now an Array
@@ -57,7 +57,7 @@ myLayer.weights = myWeightsArray; // ❌
 You can use this property to get or set bias. If you are setting weights make sure you are passing NArray object.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myBias = toynn.NArray.arange(10).reshape(1, 10);
 const myBiasArray = myBias.real; // this is now an Array
@@ -84,11 +84,11 @@ Returns shape of the Layer as array
 You can use it to name your layers
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myLayer = new toynn.Layer(50, 10);
 
-myLayer.name = "myLayer";
+myLayer.name = 'myLayer';
 
 console.log(myLayer.name); // myLayer
 ```
@@ -97,4 +97,4 @@ console.log(myLayer.name); // myLayer
 
 Some of the functionality is implemented using the awesome resources from the internet.
 
-- ✨ [Optimization for weights in gradient descent is taken from here along with Layer's logic](https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/)
+-   ✨ [Optimization for weights in gradient descent is taken from here along with Layer's logic](https://www.geeksforgeeks.org/implementation-of-neural-network-from-scratch-using-numpy/amp/)

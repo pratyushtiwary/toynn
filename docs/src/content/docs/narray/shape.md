@@ -8,11 +8,11 @@ Shapes define the structure of your NArray.
 Any newly created NArray automatically follows the shape of object which was used to create it.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myArray = [
-  [1, 2],
-  [3, 4],
+    [1, 2],
+    [3, 4],
 ]; // shape: 2,2
 
 const myNArray = new toynn.NArray(myArray);

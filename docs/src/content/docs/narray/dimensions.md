@@ -8,7 +8,7 @@ NArray automatically computes dimension when you create an object.
 You can check the dimension of your NArray using the `ndim` property.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myNArray = toynn.NArray.arange(32).reshape(4, -1);
 

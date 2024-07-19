@@ -2,7 +2,7 @@
 title: NArray Methods
 description: A guide to all the methods supported by NArray
 sidebar:
-  order: 2
+    order: 2
 ---
 
 NArray comes with a lot of methods to help your perform numerical operations.
@@ -103,8 +103,8 @@ Signature: dot(y: number|NArray): NArray
 
 Performs dot multiplication of NArrays.
 
-- If both NArrays are 1d then it uses mul(y)
-- If any of the NArray.ndim >= 2 then normal matrix dot product is done
+-   If both NArrays are 1d then it uses mul(y)
+-   If any of the NArray.ndim >= 2 then normal matrix dot product is done
 
 ### jsonify
 
@@ -122,8 +122,8 @@ Signature: sum(axis :undefined|number = undefined): NArray
 
 Returns the sum of the elements of NArray.
 
-- If the axis is not defined, returns the sum of all elements,
-- If the axis is defined, returns the sum of elements for the axis
+-   If the axis is not defined, returns the sum of all elements,
+-   If the axis is defined, returns the sum of elements for the axis
 
 ### max
 
@@ -134,7 +134,7 @@ Signature: max(): Object
 Returns the max element and its index as object.
 
 ```js
-import toynn from "toynn";
+import toynn from 'toynn';
 
 const myNArray = toynn.NArray.arange(32);
 
